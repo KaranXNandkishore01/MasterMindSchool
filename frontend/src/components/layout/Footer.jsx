@@ -1,5 +1,11 @@
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Globe, Hash, Link2, GraduationCap } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
+import sitelogo from '../../assets/sitelogo.png';
+import facebook from '../../assets/facebook.png';
+import instagram from '../../assets/instagram.png';
+import linkedin from '../../assets/linkedin.png';
+import whatsapp from '../../assets/whatsapp.png';
+import youtube from '../../assets/youtube.png';
 
 const Footer = () => {
   return (
@@ -9,21 +15,27 @@ const Footer = () => {
           
           <div className="col-span-1 md:col-span-1">
             <Link to="/" className="flex items-center gap-3 mb-4">
-              <GraduationCap className="h-10 w-10 text-yellow-400" />
+              <img src={sitelogo} alt="MMPS Logo" className="h-10 w-auto object-contain" />
               <span className="font-bold text-xl text-white tracking-wider">MMPS</span>
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed mb-6">
               Master Mind Public Higher Secondary School, Pipariya. Dedicated to academic excellence and holistic development since our inception.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Globe className="h-5 w-5" />
+              <a href="#" className="hover:opacity-80 transition-opacity" title="Facebook">
+                <img src={facebook} alt="Facebook" className="h-6 w-6 object-contain" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Hash className="h-5 w-5" />
+              <a href="#" className="hover:opacity-80 transition-opacity" title="Instagram">
+                <img src={instagram} alt="Instagram" className="h-6 w-6 object-contain" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Link2 className="h-5 w-5" />
+              <a href="#" className="hover:opacity-80 transition-opacity" title="YouTube">
+                <img src={youtube} alt="YouTube" className="h-6 w-6 object-contain" />
+              </a>
+              <a href="#" className="hover:opacity-80 transition-opacity" title="LinkedIn">
+                <img src={linkedin} alt="LinkedIn" className="h-6 w-6 object-contain" />
+              </a>
+              <a href="#" className="hover:opacity-80 transition-opacity" title="WhatsApp">
+                <img src={whatsapp} alt="WhatsApp" className="h-6 w-6 object-contain" />
               </a>
             </div>
           </div>

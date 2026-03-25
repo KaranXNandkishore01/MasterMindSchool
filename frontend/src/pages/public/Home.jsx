@@ -1,5 +1,6 @@
 import { ArrowRight, BookOpen, Users, Trophy, Target } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import heroBg from '../../assets/hero.png';
 
 const Home = () => {
   return (
@@ -8,7 +9,7 @@ const Home = () => {
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 bg-blue-950">
           <img 
-            src="/images/hero-bg.png" 
+            src={heroBg} 
             alt="School Campus" 
             className="w-full h-full object-cover select-none opacity-50 mix-blend-overlay"
           />

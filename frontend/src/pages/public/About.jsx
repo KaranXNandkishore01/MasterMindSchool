@@ -1,4 +1,5 @@
 import { Award, Target, Eye, ShieldCheck } from 'lucide-react';
+import schoolPhoto from '../../assets/schoolphoto.png';
 
 const About = () => {
   return (
@@ -21,10 +22,11 @@ const About = () => {
                 Over the decades, we have consistently produced top-ranking students who have gone on to excel in various professional fields across the globe. Our commitment to holistic education remains unwavering.
               </p>
             </div>
-            <div className="bg-blue-50 rounded-2xl p-8 border border-blue-100 flex items-center justify-center min-h-[300px]">
-              <div className="text-center">
-                <h3 className="text-6xl font-black text-blue-200 mb-2">30+</h3>
-                <p className="text-xl font-bold text-blue-800">Years of Excellence</p>
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl min-h-[300px] border-4 border-white">
+              <img src={schoolPhoto} alt="School Campus" className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg text-center">
+                <h3 className="text-3xl font-black text-blue-900 mb-1">30+</h3>
+                <p className="text-sm font-bold text-gray-700">Years of Excellence</p>
               </div>
             </div>
           </div>

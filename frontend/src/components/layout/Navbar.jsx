@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, GraduationCap } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import sitelogo from '../../assets/sitelogo.png';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +23,7 @@ const Navbar = () => {
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-3">
-              <GraduationCap className="h-10 w-10 text-yellow-400" />
+              <img src={sitelogo} alt="MMPS Logo" className="h-10 w-auto object-contain" />
               <div className="flex flex-col">
                 <span className="font-bold text-xl tracking-wider">MMPS PIPARIYA</span>
                 <span className="text-xs text-blue-200 uppercase tracking-widest hidden sm:block">Shaping the Future</span>
