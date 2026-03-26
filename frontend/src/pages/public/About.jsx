@@ -29,7 +29,7 @@ const About = () => {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl min-h-[350px] border-4 border-white">
               <img src={schoolPhoto} alt="School Campus" className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg text-center">
-                <h3 className="text-3xl font-black text-blue-900 mb-1">30+</h3>
+                <h3 className="text-3xl font-black text-blue-900 mb-1">20+</h3>
                 <p className="text-sm font-bold text-gray-700 uppercase tracking-widest">Years of Excellence</p>
               </div>
             </div>

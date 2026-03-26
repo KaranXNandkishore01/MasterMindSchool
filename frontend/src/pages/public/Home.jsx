@@ -103,7 +103,7 @@ const Home = () => {
             <div className="bg-blue-100 p-4 rounded-full mb-4 text-blue-700">
               <Users size={32} />
             </div>
-            <h3 className="text-3xl font-black text-blue-900">1200+</h3>
+            <h3 className="text-3xl font-black text-blue-900">5000+</h3>
             <p className="text-gray-600 font-medium mt-1">Students</p>
           </div>
           <div className="flex flex-col items-center text-center">
@@ -124,7 +124,7 @@ const Home = () => {
             <div className="bg-purple-100 p-4 rounded-full mb-4 text-purple-600">
               <Target size={32} />
             </div>
-            <h3 className="text-3xl font-black text-blue-900">30+</h3>
+            <h3 className="text-3xl font-black text-blue-900">20+</h3>
             <p className="text-gray-600 font-medium mt-1">Years Legacy</p>
           </div>
         </div>
