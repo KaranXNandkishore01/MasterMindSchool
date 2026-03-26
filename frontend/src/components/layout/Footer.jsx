@@ -19,22 +19,22 @@ const Footer = () => {
               <span className="font-bold text-xl text-white tracking-wider">MMPS</span>
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed mb-6">
-              Master Mind Public Higher Secondary School, Pipariya. Dedicated to academic excellence and holistic development since our inception.
+              Master Mind Public School, Pipariya. Link learning to life.<br/>Dedicated to academic excellence and holistic development since our inception.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="hover:opacity-80 transition-opacity" title="Facebook">
+              <a href="https://www.facebook.com/people/MasterMind-PublicSchool/pfbid02LdviifeoE2QCbAUbdBNL1P4BN57MxiXaA7sYKTPn9KAZhWkQswktA4oGWBbj8MRel/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="Facebook">
                 <img src={facebook} alt="Facebook" className="h-6 w-6 object-contain" />
               </a>
-              <a href="#" className="hover:opacity-80 transition-opacity" title="Instagram">
+              <a href="https://www.instagram.com/mastermindschool_pipariya/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="Instagram">
                 <img src={instagram} alt="Instagram" className="h-6 w-6 object-contain" />
               </a>
-              <a href="#" className="hover:opacity-80 transition-opacity" title="YouTube">
+              <a href="https://www.youtube.com/@mastermindschoolpipariyaon7350" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="YouTube">
                 <img src={youtube} alt="YouTube" className="h-6 w-6 object-contain" />
               </a>
               <a href="#" className="hover:opacity-80 transition-opacity" title="LinkedIn">
                 <img src={linkedin} alt="LinkedIn" className="h-6 w-6 object-contain" />
               </a>
-              <a href="#" className="hover:opacity-80 transition-opacity" title="WhatsApp">
+              <a href="https://whatsapp.com/channel/0029VbAXqYxBadmUEehN0A0M" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="WhatsApp Channel">
                 <img src={whatsapp} alt="WhatsApp" className="h-6 w-6 object-contain" />
               </a>
             </div>
@@ -65,11 +65,13 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-yellow-400 shrink-0 mt-0.5" />
-                <span className="text-sm">Main Road, Pipariya,<br/>Madhya Pradesh 461775</span>
+                <a href="https://maps.app.goo.gl/vUjrrdx9cuBK6nK68" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-white hover:underline transition-all">
+                  Main Road, Pipariya,<br/>Madhya Pradesh 461775
+                </a>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-yellow-400 shrink-0" />
-                <span className="text-sm">+91 98765 43210</span>
+                <a href="tel:8269420850" className="text-sm hover:text-yellow-400 transition-colors uppercase tracking-wider font-medium">8269420850</a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-yellow-400 shrink-0" />
@@ -81,7 +83,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
-          <p>&copy; {new Date().getFullYear()} Master Mind Public Higher Secondary School. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} MMPS Built and Designed by <a href="https://sites.google.com/view/thevisarggalaxy/home" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-white hover:underline transition-colors font-semibold">TheVisargGalaxy</a>. All rights reserved.</p>
           <div className="mt-4 md:mt-0 space-x-4">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>

@@ -56,6 +56,85 @@ const Facilities = () => {
           ))}
         </div>
       </div>
+
+      {/* Admissions Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
+        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.08)] border-t-4 border-yellow-500">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-blue-950 mb-4 tracking-tight">
+              Join the Master Mind Family – Admissions Open for 2025-26!
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              We welcome students who are eager to learn, grow, and become the best versions of themselves. At Master Mind Public School, we ensure a smooth, transparent, and parent-friendly admission process.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12">
+            <div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <span className="text-2xl">📚</span> Classes Offered
+              </h3>
+              <ul className="space-y-3 text-gray-600 mb-8">
+                <li><strong className="text-gray-800">Nursery to Class XII</strong></li>
+                <li><strong className="text-gray-800">Streams Available for Senior Secondary:</strong> Science | Commerce | Arts</li>
+                <li><strong className="text-gray-800">Session Begins:</strong> First week of July</li>
+              </ul>
+
+              <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <span className="text-2xl">📋</span> Documents Required
+              </h3>
+              <ul className="space-y-2 text-gray-600 list-disc list-inside">
+                <li>Birth Certificate (for Nursery to Class I)</li>
+                <li>Transfer Certificate (for Class II and above)</li>
+                <li>Previous Year’s Report Card</li>
+                <li>Aadhar Card (Student & Parent)</li>
+                <li>Passport-size Photographs (4 copies)</li>
+                <li>Caste Certificate (if applicable)</li>
+              </ul>
+            </div>
+
+            <div className="bg-blue-50 rounded-2xl p-8">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <span className="text-2xl">🧾</span> Admission Process
+              </h3>
+              <div className="space-y-4 text-gray-700">
+                <p><strong>Step 1:</strong> <a href="https://docs.google.com/forms/d/e/1FAIpQLSdcsCPrfDn5Xafwkq_xi5JiZygyOk_v3dvTOIsBjYzSEZGMrw/viewform" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-bold">Fill the enquiry or registration form online</a> or visit the school office</p>
+                <p><strong>Step 2:</strong> Attend a short interaction/entrance (as per class)</p>
+                <p><strong>Step 3:</strong> Submit required documents</p>
+                <p><strong>Step 4:</strong> Pay the admission fees and confirm your seat</p>
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-blue-200">
+                <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                  <span className="text-xl">💳</span> Fee Structure
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Fee details can be obtained from the school office or requested via our contact form.
+                </p>
+                <p className="text-sm font-semibold text-blue-800 flex items-start gap-2">
+                  <span className="text-lg">🎯</span> Scholarships and concessions available for meritorious students and siblings.
+                </p>
+                <div className="mt-6">
+                  <a 
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSdcsCPrfDn5Xafwkq_xi5JiZygyOk_v3dvTOIsBjYzSEZGMrw/viewform" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="inline-block bg-blue-900 text-white font-bold px-6 py-3 rounded-lg hover:bg-blue-800 transition-colors shadow-md"
+                  >
+                    Register Online Now
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-12 text-center bg-blue-900 text-white py-6 rounded-xl shadow-md">
+            <p className="text-xl font-bold italic">
+              “A school that invests in your child's future — Choose Master Mind today!”
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

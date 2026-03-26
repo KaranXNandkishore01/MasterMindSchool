@@ -20,15 +20,18 @@ const Contact = () => {
                   <MapPin className="w-6 h-6 text-yellow-400 shrink-0 mt-1" />
                   <div>
                     <h4 className="font-semibold text-lg mb-1">Our Location</h4>
-                    <p className="text-blue-100 leading-relaxed">Main Road, Pipariya,<br/>Madhya Pradesh 461775, India</p>
+                    <p className="text-blue-100 leading-relaxed">
+                      <a href="https://maps.app.goo.gl/vUjrrdx9cuBK6nK68" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline transition-all">
+                        Main Road, Pipariya,<br/>Madhya Pradesh 461775, India
+                      </a>
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
                   <Phone className="w-6 h-6 text-yellow-400 shrink-0 mt-1" />
                   <div>
                     <h4 className="font-semibold text-lg mb-1">Phone Number</h4>
-                    <p className="text-blue-100">+91 98765 43210</p>
-                    <p className="text-blue-100">+91 12345 67890</p>
+                    <a href="tel:8269420850" className="text-blue-100 hover:text-yellow-400 transition-colors block text-lg font-bold">8269420850</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -61,11 +64,11 @@ const Contact = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                  <input type="text" className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="John Doe" />
+                  <input type="text" className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Amit Sharma" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                  <input type="email" className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="john@example.com" />
+                  <input type="email" className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="amit.sharma@example.com" />
                 </div>
               </div>
               <div>
@@ -81,13 +84,16 @@ const Contact = () => {
               </button>
             </form>
             
-            {/* Map Placeholder */}
-            <div className="h-64 bg-gray-200 rounded-2xl w-full flex items-center justify-center border border-gray-300 overflow-hidden relative">
-               <div className="absolute inset-0 flex items-center justify-center flex-col text-gray-500">
-                  <MapPin size={48} className="mb-2 text-gray-400" />
-                  <span className="font-semibold">Interactive Map Placeholder</span>
-                  <span className="text-sm">Google Maps Integration</span>
-               </div>
+            {/* Google Map */}
+            <div className="h-64 rounded-2xl w-full border border-gray-300 overflow-hidden relative shadow-inner">
+               <iframe
+                 title="Google Maps"
+                 src="https://maps.google.com/maps?q=Master%20Mind%20Public%20Hr.%20Sec.%20School%20Pipariya&t=&z=17&ie=UTF8&iwloc=&output=embed"
+                 className="absolute inset-0 w-full h-full border-0"
+                 allowFullScreen=""
+                 loading="lazy"
+                 referrerPolicy="no-referrer-when-downgrade"
+               ></iframe>
             </div>
           </div>
         </div>

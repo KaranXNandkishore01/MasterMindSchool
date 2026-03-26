@@ -25,8 +25,8 @@ const Navbar = () => {
             <Link to="/" className="flex items-center gap-3">
               <img src={sitelogo} alt="MMPS Logo" className="h-10 w-auto object-contain" />
               <div className="flex flex-col">
-                <span className="font-bold text-xl tracking-wider">MMPS PIPARIYA</span>
-                <span className="text-xs text-blue-200 uppercase tracking-widest hidden sm:block">Shaping the Future</span>
+                <span className="font-bold text-lg md:text-xl tracking-wider">Master Mind Public School</span>
+                <span className="text-xs text-blue-200 tracking-widest hidden sm:block">Link learning to life.</span>
               </div>
             </Link>
           </div>
