@@ -31,7 +31,7 @@ const Footer = () => {
               <a href="https://www.youtube.com/@mastermindschoolpipariyaon7350" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="YouTube">
                 <img src={youtube} alt="YouTube" className="h-6 w-6 object-contain" />
               </a>
-              <a href="#" className="hover:opacity-80 transition-opacity" title="LinkedIn">
+              <a href="https://www.linkedin.com/in/lochan-sagar-prajapati-bb8880363/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="LinkedIn">
                 <img src={linkedin} alt="LinkedIn" className="h-6 w-6 object-contain" />
               </a>
               <a href="https://whatsapp.com/channel/0029VbAXqYxBadmUEehN0A0M" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="WhatsApp Channel">

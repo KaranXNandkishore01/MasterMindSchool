@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import PublicLayout from './components/layout/PublicLayout';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/routing/ProtectedRoute';
+import ScrollToTop from './components/common/ScrollToTop';
 
 import Home from './pages/public/Home';
 import About from './pages/public/About';
@@ -30,6 +31,7 @@ import ParentCommunication from './pages/parent/ParentCommunication';
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/login" element={<Login />} />
         

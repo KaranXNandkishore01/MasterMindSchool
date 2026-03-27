@@ -1,6 +1,7 @@
 import { ArrowRight, BookOpen, Users, Trophy, Target, ImageIcon, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import AdmissionPopup from '../../components/common/AdmissionPopup';
 import heroBg from '../../assets/hero.png';
 import bannerImg from '../../assets/banner.png';
 import mlaImg from '../../assets/MLA.png';
@@ -9,9 +10,21 @@ import educatorsImg from "../../assets/sir&ma'am.png";
 import mentorsImg from '../../assets/mentors.png';
 import top1Img from '../../assets/top1.png';
 import top3Img from '../../assets/top3.png';
+import directorSirImg from '../../assets/Directorsir.png';
+import familyImg from '../../assets/family.png';
+import principalImg from '../../assets/principal.png';
+import mlaSirImg from '../../assets/MLAsir.png';
 
 const Home = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [showAdmissionPopup, setShowAdmissionPopup] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowAdmissionPopup(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const galleryImages = [
     { src: mlaImg, title: "Official Visit", category: "Events" },
@@ -20,10 +33,16 @@ const Home = () => {
     { src: mentorsImg, title: "Guidance & Mentorship", category: "Team" },
     { src: top1Img, title: "Academic Excellence", category: "Achievements" },
     { src: top3Img, title: "Top Performers", category: "Results" },
+    { src: familyImg, title: "Our School Family", category: "Community" },
+    { src: mlaSirImg, title: "MLA Mr. Thakur Das Ji Nagwanshi and Mr. Arvind Ji Rai Formal Visit to motivate students.", category: "Events" },
   ];
 
   return (
     <div className="w-full">
+      <AdmissionPopup 
+        isOpen={showAdmissionPopup} 
+        onClose={() => setShowAdmissionPopup(false)} 
+      />
       {/* Lightbox Modal */}
       {selectedImage && (
         <div 
@@ -141,7 +160,7 @@ const Home = () => {
               {/* Director's Message */}
               <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
                 <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full shrink-0 flex items-center justify-center overflow-hidden border-4 border-yellow-200 shadow-inner">
-                  <span className="text-4xl md:text-5xl text-blue-600 font-black">LP</span>
+                  <img src={directorSirImg} alt="Director Mr. Lochan Sagar Prajapati" className="w-full h-full object-cover" />
                 </div>
                 <div className="text-center md:text-left">
                   <h2 className="text-2xl md:text-3xl font-extrabold text-blue-950 mb-1">Director's Vision</h2>
@@ -160,7 +179,7 @@ const Home = () => {
               {/* Principal's Message */}
               <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
                 <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full shrink-0 flex items-center justify-center overflow-hidden border-4 border-yellow-200 shadow-inner">
-                  <span className="text-4xl md:text-5xl text-blue-600 font-black">AP</span>
+                  <img src={principalImg} alt="Principal Mrs. Anita Prajapati" className="w-full h-full object-cover" />
                 </div>
                 <div className="text-center md:text-left">
                   <h2 className="text-2xl md:text-3xl font-extrabold text-blue-950 mb-1">Principal's Desk</h2>
@@ -215,9 +234,9 @@ const Home = () => {
       {/* Gallery Section */}
       <section className="py-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-16 gap-6 text-center md:text-left">
             <div className="max-w-xl">
-              <h2 className="text-yellow-500 font-bold uppercase tracking-[0.2em] text-sm mb-3 flex items-center gap-2">
+              <h2 className="text-yellow-500 font-bold uppercase tracking-[0.2em] text-sm mb-3 flex items-center justify-center md:justify-start gap-2">
                 <ImageIcon size={18} /> Glimpses of MMPS
               </h2>
               <h1 className="text-4xl md:text-5xl font-black text-blue-950 tracking-tight leading-tight">
