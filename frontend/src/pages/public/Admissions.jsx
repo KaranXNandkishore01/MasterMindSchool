@@ -5,7 +5,7 @@ const Admissions = () => {
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
       <div className="bg-blue-900 py-20 px-4 text-center">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight uppercase">Admissions Open 2025-26</h1>
+        <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight uppercase">Admissions Open 2026-27</h1>
         <p className="text-blue-200 max-w-3xl mx-auto text-lg md:text-xl font-light">
           Join the Master Mind Family – A center of excellence where we link learning to life.
         </p>
@@ -79,7 +79,7 @@ const Admissions = () => {
             <div className="bg-gradient-to-br from-blue-900 to-blue-950 rounded-3xl p-8 md:p-12 text-center text-white shadow-2xl overflow-hidden relative">
               <div className="absolute top-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full -ml-32 -mt-32"></div>
               <h2 className="text-3xl font-bold mb-4 relative z-10">Ready to Enroll Your Child?</h2>
-              <p className="text-blue-100 mb-10 text-lg relative z-10">Application phase for Session 2025-26 is now ACTIVE.</p>
+              <p className="text-blue-100 mb-10 text-lg relative z-10">Application phase for Session 2026-27 is now ACTIVE.</p>
               <a 
                 href="https://docs.google.com/forms/d/e/1FAIpQLSdcsCPrfDn5Xafwkq_xi5JiZygyOk_v3dvTOIsBjYzSEZGMrw/viewform" 
                 target="_blank" 

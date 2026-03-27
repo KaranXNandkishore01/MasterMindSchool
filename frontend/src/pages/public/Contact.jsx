@@ -1,6 +1,28 @@
-import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
+import React, { useState } from 'react';
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, X } from 'lucide-react';
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Simulate form submission
+    console.log('Form submitted:', formData);
+    setSubmitted(true);
+    setFormData({ name: '', email: '', subject: '', message: '' });
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
       <div className="bg-blue-900 py-20 px-4 text-center">
@@ -58,28 +80,76 @@ const Contact = () => {
           </div>
 
           {/* Contact Form & Map */}
-          <div className="p-10 lg:w-2/3 flex flex-col">
+          <div className="p-10 lg:w-2/3 flex flex-col relative">
+            {/* Success Popup */}
+            {submitted && (
+              <div className="absolute inset-x-0 top-10 flex justify-center z-50 px-10">
+                <div className="bg-green-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 animate-bounce">
+                  <CheckCircle2 size={24} className="text-green-200" />
+                  <span className="font-bold text-lg">Thanks for your feedback!</span>
+                  <button onClick={() => setSubmitted(false)} className="hover:bg-green-700 p-1 rounded-full transition-colors">
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+            )}
+
             <h2 className="text-3xl font-bold text-gray-800 mb-6">Send us a Message</h2>
-            <form className="space-y-6 flex-grow mb-10">
+            <form onSubmit={handleSubmit} className="space-y-6 flex-grow mb-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                  <input type="text" className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Amit Sharma" />
+                  <input 
+                    type="text" 
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" 
+                    placeholder="Amit Sharma" 
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                  <input type="email" className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="amit.sharma@example.com" />
+                  <input 
+                    type="email" 
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" 
+                    placeholder="amit.sharma@example.com" 
+                  />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
-                <input type="text" className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="How can we help?" />
+                <input 
+                  type="text" 
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" 
+                  placeholder="How can we help?" 
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                <textarea rows="4" className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none" placeholder="Your message here..."></textarea>
+                <textarea 
+                  rows="4" 
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none" 
+                  placeholder="Your message here..."
+                ></textarea>
               </div>
-              <button type="button" className="bg-yellow-500 hover:bg-yellow-400 text-blue-900 font-bold px-8 py-3 rounded-xl transition-all transform hover:-translate-y-1 shadow-md flex items-center gap-2">
+              <button 
+                type="submit" 
+                className="bg-yellow-500 hover:bg-yellow-400 text-blue-900 font-bold px-8 py-3 rounded-xl transition-all transform hover:-translate-y-1 shadow-md flex items-center gap-2"
+              >
                 Send Message <Send size={18} />
               </button>
             </form>

@@ -85,7 +85,7 @@ const Facilities = () => {
         <div className="bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.08)] border-t-4 border-yellow-500">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-extrabold text-blue-950 mb-4 tracking-tight">
-              Join the Master Mind Family – Admissions Open for 2025-26!
+              Join the Master Mind Family – Admissions Open for 2026-27!
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               We welcome students who are eager to learn, grow, and become the best versions of themselves. At Master Mind Public School, we ensure a smooth, transparent, and parent-friendly admission process.

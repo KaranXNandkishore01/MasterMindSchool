@@ -28,7 +28,7 @@ const AdmissionPopup = ({ isOpen, onClose }) => {
               <GraduationCap className="text-blue-900 w-8 h-8" />
             </div>
             <div>
-              <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest block mb-1">Session 2025-26</span>
+              <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest block mb-1">Session 2026-27</span>
               <h2 className="text-2xl font-black tracking-tight leading-none">ADMISSIONS OPEN</h2>
             </div>
           </div>
