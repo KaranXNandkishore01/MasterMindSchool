@@ -45,6 +45,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li><Link to="/about" className="hover:text-yellow-400 transition-colors">About Us</Link></li>
               <li><Link to="/admissions" className="hover:text-yellow-400 transition-colors">Admissions</Link></li>
+              <li><Link to="/careers" className="hover:text-yellow-400 transition-colors">Careers</Link></li>
               <li><Link to="/facilities" className="hover:text-yellow-400 transition-colors">Facilities</Link></li>
               <li><Link to="/contact" className="hover:text-yellow-400 transition-colors">Contact</Link></li>
             </ul>
@@ -75,7 +76,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-yellow-400 shrink-0" />
-                <span className="text-sm">info@mmpspipariya.com</span>
+                <Link to="/contact#contact-form" className="text-sm hover:text-yellow-400 transition-colors uppercase tracking-wider font-medium">info@mmpspipariya.com</Link>
               </li>
             </ul>
           </div>
@@ -85,8 +86,8 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
           <p>&copy; {new Date().getFullYear()} MMPS Built and Designed by <a href="https://sites.google.com/view/thevisarggalaxy/home" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-white hover:underline transition-colors font-semibold">TheVisargGalaxy</a>. All rights reserved.</p>
           <div className="mt-4 md:mt-0 space-x-4">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

@@ -9,6 +9,9 @@ import About from './pages/public/About';
 import Facilities from './pages/public/Facilities';
 import Admissions from './pages/public/Admissions';
 import Contact from './pages/public/Contact';
+import Careers from './pages/public/Careers';
+import PrivacyPolicy from './pages/public/PrivacyPolicy';
+import TermsAndConditions from './pages/public/TermsAndConditions';
 import Login from './pages/auth/Login';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -42,6 +45,9 @@ function App() {
           <Route path="facilities" element={<Facilities />} />
           <Route path="admissions" element={<Admissions />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="careers" element={<Careers />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="terms" element={<TermsAndConditions />} />
         </Route>
 
         {/* Protected Admin Routes */}

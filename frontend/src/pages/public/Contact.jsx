@@ -60,8 +60,8 @@ const Contact = () => {
                   <Mail className="w-6 h-6 text-yellow-400 shrink-0 mt-1" />
                   <div>
                     <h4 className="font-semibold text-lg mb-1">Email Address</h4>
-                    <p className="text-blue-100">info@mmpspipariya.com</p>
-                    <p className="text-blue-100">admissions@mmpspipariya.com</p>
+                    <a href="#contact-form" className="text-blue-100 hover:text-yellow-400 block transition-colors">info@mmpspipariya.com</a>
+                    <a href="#contact-form" className="text-blue-100 hover:text-yellow-400 block transition-colors">admissions@mmpspipariya.com</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -95,7 +95,7 @@ const Contact = () => {
             )}
 
             <h2 className="text-3xl font-bold text-gray-800 mb-6">Send us a Message</h2>
-            <form onSubmit={handleSubmit} className="space-y-6 flex-grow mb-10">
+            <form id="contact-form" onSubmit={handleSubmit} className="space-y-6 flex-grow mb-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
