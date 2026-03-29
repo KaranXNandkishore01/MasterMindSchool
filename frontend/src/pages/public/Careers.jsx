@@ -49,44 +49,6 @@ const Careers = () => {
               <h2 className="text-3xl font-bold text-gray-800 mb-8">Current Opportunities</h2>
               <div className="space-y-6">
                 <div className="p-6 rounded-2xl border-2 border-dashed border-gray-200 hover:border-blue-300 transition-colors">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Teaching Positions (Primary & Secondary)</h3>
-                  <p className="text-gray-600 mb-4">We are always looking for passionate educators in all subjects including English, Mathematics, Science, Social Studies, and Languages.</p>
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full uppercase">Full-Time</span>
-                      <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full uppercase">Academic</span>
-                    </div>
-                    <a 
-                      href="https://forms.gle/L6r7K6nw5DwewRPF8" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-bold text-sm transition-all hover:scale-105 shadow-md uppercase"
-                    >
-                      Apply Now <ArrowRight size={16} />
-                    </a>
-                  </div>
-                </div>
-                
-                <div className="p-6 rounded-2xl border-2 border-dashed border-gray-200 hover:border-blue-300 transition-colors">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Administrative & Support Staff</h3>
-                  <p className="text-gray-600 mb-4">Opportunities for dedicated professionals in administration, accounting, and student support services.</p>
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full uppercase">Full-Time</span>
-                      <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full uppercase">Non-Academic</span>
-                    </div>
-                    <a 
-                      href="https://forms.gle/L6r7K6nw5DwewRPF8" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-bold text-sm transition-all hover:scale-105 shadow-md uppercase"
-                    >
-                      Apply Now <ArrowRight size={16} />
-                    </a>
-                  </div>
-                </div>
-
-                <div className="p-6 rounded-2xl border-2 border-dashed border-gray-200 hover:border-blue-300 transition-colors">
                   <h3 className="text-xl font-bold text-gray-800 mb-2">Technical & Social Media Coordinator</h3>
                   <p className="text-gray-600 mb-4">Seeking tech-savvy professionals to manage social media, technical tools, and digital presence. Requires fluent English communication and multi-tasking abilities.</p>
                   <div className="flex flex-wrap items-center justify-between gap-4">
