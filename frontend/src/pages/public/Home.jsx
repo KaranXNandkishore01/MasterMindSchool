@@ -2,7 +2,7 @@ import { ArrowRight, BookOpen, Users, Trophy, Target, ImageIcon, X } from 'lucid
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AdmissionPopup from '../../components/common/AdmissionPopup';
-import heroBg from '../../assets/hero.png';
+import heroBg from '../../assets/Heroimage.jpeg';
 import bannerImg from '../../assets/banner.png';
 import mlaImg from '../../assets/MLA.png';
 import precessionImg from '../../assets/precession.png';
@@ -82,7 +82,7 @@ const Home = () => {
           <img 
             src={heroBg} 
             alt="School Campus" 
-            className="w-full h-full object-cover select-none opacity-50 mix-blend-overlay"
+            className="w-full h-full object-cover select-none opacity-[0.90] mix-blend-overlay"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent to-transparent z-10"></div>
         </div>
