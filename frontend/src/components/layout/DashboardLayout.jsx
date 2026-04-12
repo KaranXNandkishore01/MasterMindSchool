@@ -15,36 +15,13 @@ const DashboardLayout = () => {
   };
 
   const getNavLinks = () => {
-    switch(user?.role) {
-      case 'Admin':
-        return [
-          { name: 'Dashboard', path: '/admin/dashboard', icon: <Home size={20} /> },
-          { name: 'Students', path: '/admin/students', icon: <Users size={20} /> },
-          { name: 'Staff', path: '/admin/staff', icon: <BookOpen size={20} /> },
-          { name: 'Fees', path: '/admin/fees', icon: <DollarSign size={20} /> },
-          { name: 'Settings', path: '/admin/settings', icon: <Settings size={20} /> },
-        ];
-      case 'Teacher':
-        return [
-          { name: 'Dashboard', path: '/teacher/dashboard', icon: <Home size={20} /> },
-          { name: 'My Classes', path: '/teacher/classes', icon: <BookOpen size={20} /> },
-          { name: 'Attendance', path: '/teacher/attendance', icon: <Calendar size={20} /> },
-        ];
-      case 'Student':
-        return [
-          { name: 'Dashboard', path: '/student/dashboard', icon: <Home size={20} /> },
-          { name: 'My Attendance', path: '/student/attendance', icon: <Calendar size={20} /> },
-          { name: 'Study Material', path: '/student/material', icon: <BookOpen size={20} /> },
-        ];
-      case 'Parent':
-        return [
-          { name: 'Dashboard', path: '/parent/dashboard', icon: <Home size={20} /> },
-          { name: 'Fees & Payments', path: '/parent/fees', icon: <DollarSign size={20} /> },
-          { name: 'Communication', path: '/parent/messages', icon: <Bell size={20} /> },
-        ];
-      default:
-        return [];
-    }
+    return [
+      { name: 'Dashboard', path: '/management/dashboard', icon: <Home size={20} /> },
+      { name: 'Gallery Images', path: '/management/images', icon: <BookOpen size={20} /> },
+      { name: 'Announcements', path: '/management/announcements', icon: <Bell size={20} /> },
+      { name: 'Job Opportunities', path: '/management/jobs', icon: <Users size={20} /> },
+      { name: 'Contact Messages', path: '/management/messages', icon: <Settings size={20} /> },
+    ];
   };
 
   return (
@@ -73,10 +50,10 @@ const DashboardLayout = () => {
         <div className="p-4 border-t border-blue-800 shrink-0">
           <div className="flex items-center gap-3 mb-4 px-2">
             <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center text-blue-900 font-bold shrink-0">
-              {user?.email?.charAt(0).toUpperCase() || 'U'}
+              {user?.managementId?.charAt(0).toUpperCase() || 'M'}
             </div>
             <div className="overflow-hidden text-sm">
-              <p className="truncate font-semibold text-gray-200">{user?.email}</p>
+              <p className="truncate font-semibold text-gray-200">{user?.managementId}</p>
             </div>
           </div>
           <button

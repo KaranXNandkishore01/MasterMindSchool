@@ -5,16 +5,13 @@ const generateToken = require('../utils/generateToken');
 // @route   POST /api/auth/login
 // @access  Public
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  const managementId = req.body.managementId?.trim();
+  const password = req.body.password?.trim();
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ managementId });
 
     if (user && (await user.matchPassword(password))) {
-      if (!user.isActive) {
-        return res.status(401).json({ message: 'User account is deactivated' });
-      }
-
       generateToken(res, user._id);
       
       user.lastLogin = new Date();
@@ -22,12 +19,12 @@ const loginUser = async (req, res) => {
 
       res.json({
         _id: user._id,
-        email: user.email,
+        managementId: user.managementId,
         role: user.role,
-        referenceId: user.referenceId,
       });
     } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+      console.warn(`Failed login attempt for managementId: ${managementId} at ${new Date().toISOString()}`);
+      res.status(401).json({ message: 'Invalid managementId or password' });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -38,26 +35,25 @@ const loginUser = async (req, res) => {
 // @route   POST /api/auth/register
 // @access  Private/Admin
 const registerUser = async (req, res) => {
-  const { email, password, role, referenceId } = req.body;
+  const { managementId, password } = req.body;
 
   try {
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ managementId });
 
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
     const user = await User.create({
-      email,
+      managementId,
       password,
-      role,
-      referenceId
+      role: 'Management'
     });
 
     if (user) {
       res.status(201).json({
         _id: user._id,
-        email: user.email,
+        managementId: user.managementId,
         role: user.role,
       });
     } else {

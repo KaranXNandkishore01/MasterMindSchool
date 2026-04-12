@@ -117,7 +117,7 @@ const Admissions = () => {
             </div>
 
             {/* Fees Notice */}
-            <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+            <div id="fees" className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
               <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                 <span>💳</span> Fee Schedule
               </h3>
@@ -129,7 +129,7 @@ const Admissions = () => {
               </Link>
             </div>
 
-            <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+            <div id="brochures" className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
               <h3 className="text-xl font-bold text-gray-800 mb-4">Brochures</h3>
               <ul className="space-y-3">
                 <li>

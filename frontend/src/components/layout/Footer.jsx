@@ -54,9 +54,9 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-semibold mb-4 uppercase tracking-wider">Resources</h3>
             <ul className="space-y-3">
-              <li><Link to="/login" className="hover:text-yellow-400 transition-colors">Student Portal</Link></li>
-              <li><Link to="/login" className="hover:text-yellow-400 transition-colors">Parent Portal</Link></li>
-              <li><a href="#" className="hover:text-yellow-400 transition-colors">Notice Board</a></li>
+              <li><Link to="/#announcements" className="hover:text-yellow-400 transition-colors">Notice Board</Link></li>
+              <li><Link to="/admissions#brochures" className="hover:text-yellow-400 transition-colors">Brochures</Link></li>
+              <li><Link to="/admissions#fees" className="hover:text-yellow-400 transition-colors">Fee Structure</Link></li>
               <li><a href="#" className="hover:text-yellow-400 transition-colors">Academic Calendar</a></li>
             </ul>
           </div>

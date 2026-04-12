@@ -1,23 +1,18 @@
 import { ArrowRight, BookOpen, Users, Trophy, Target, ImageIcon, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import AdmissionPopup from '../../components/common/AdmissionPopup';
 import heroBg from '../../assets/Heroimage.jpeg';
 import bannerImg from '../../assets/banner.png';
-import mlaImg from '../../assets/MLA.png';
-import precessionImg from '../../assets/precession.png';
-import educatorsImg from "../../assets/sir&ma'am.png";
-import mentorsImg from '../../assets/mentors.png';
-import top1Img from '../../assets/top1.png';
-import top3Img from '../../assets/top3.png';
 import directorSirImg from '../../assets/Directorsir.png';
-import familyImg from '../../assets/family.png';
 import principalImg from '../../assets/principal.png';
-import mlaSirImg from '../../assets/MLAsir.png';
 
 const Home = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showAdmissionPopup, setShowAdmissionPopup] = useState(false);
+  const [announcements, setAnnouncements] = useState([]);
+  const [galleryImages, setGalleryImages] = useState([]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -26,16 +21,20 @@ const Home = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const galleryImages = [
-    { src: mlaImg, title: "Official Visit", category: "Events" },
-    { src: precessionImg, title: "School Procession", category: "Activities" },
-    { src: educatorsImg, title: "Our Educators", category: "Legacy" },
-    { src: mentorsImg, title: "Guidance & Mentorship", category: "Team" },
-    { src: top1Img, title: "Academic Excellence", category: "Achievements" },
-    { src: top3Img, title: "Top Performers", category: "Results" },
-    { src: familyImg, title: "Our School Family", category: "Community" },
-    { src: mlaSirImg, title: "MLA Mr. Thakur Das Ji Nagwanshi and Mr. Arvind Ji Rai Formal Visit to motivate students.", category: "Events" },
-  ];
+  useEffect(() => {
+    const fetchPublicData = async () => {
+      try {
+        const annRes = await axios.get('/api/public/announcements');
+        setAnnouncements(annRes.data);
+        
+        const galRes = await axios.get('/api/public/images');
+        setGalleryImages(galRes.data);
+      } catch (err) {
+        console.error("Error fetching public data:", err);
+      }
+    };
+    fetchPublicData();
+  }, []);
 
   return (
     <div className="w-full">
@@ -198,7 +197,7 @@ const Home = () => {
             </div>
 
             {/* Latest Announcements */}
-            <div className="bg-gradient-to-br from-blue-950 to-blue-900 text-white rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+            <div id="announcements" className="bg-gradient-to-br from-blue-950 to-blue-900 text-white rounded-3xl p-8 shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-10 -mt-10"></div>
               <h2 className="text-2xl font-bold flex items-center gap-3 mb-8 border-b border-blue-800/50 pb-4 relative z-10">
                 <span className="bg-yellow-400 rounded-full w-3 h-3 animate-ping absolute"></span>
@@ -206,21 +205,19 @@ const Home = () => {
                 Announcements
               </h2>
               <div className="space-y-6 relative z-10">
-                <div className="group cursor-pointer bg-blue-800/30 p-4 rounded-xl hover:bg-blue-800/50 transition-colors border border-blue-700/30 hover:border-blue-600 duration-300">
-                  <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider mb-1 block">March 15, 2026</span>
-                  <h4 className="font-semibold text-lg text-white group-hover:text-yellow-300 transition-colors">Admissions Open 2026-27</h4>
-                  <p className="text-blue-100/70 text-sm mt-2 line-clamp-2">The admission process for the upcoming academic session has officially begun.</p>
-                </div>
-                <div className="group cursor-pointer bg-blue-800/30 p-4 rounded-xl hover:bg-blue-800/50 transition-colors border border-blue-700/30 hover:border-blue-600 duration-300">
-                  <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider mb-1 block">March 28, 2026</span>
-                  <h4 className="font-semibold text-lg text-white group-hover:text-yellow-300 transition-colors">Annual Sports Meet</h4>
-                  <p className="text-blue-100/70 text-sm mt-2 line-clamp-2">Join us for the 30th Annual Sports Meet at the main campus ground.</p>
-                </div>
-                <div className="group cursor-pointer bg-blue-800/30 p-4 rounded-xl hover:bg-blue-800/50 transition-colors border border-blue-700/30 hover:border-blue-600 duration-300">
-                  <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider mb-1 block">April 05, 2026</span>
-                  <h4 className="font-semibold text-lg text-white group-hover:text-yellow-300 transition-colors">Parent-Teacher Meeting</h4>
-                  <p className="text-blue-100/70 text-sm mt-2 line-clamp-2">Mandatory PTM for classes IX to XII.</p>
-                </div>
+                {announcements.length === 0 ? (
+                  <p className="text-blue-100/70 text-sm">No new announcements at this time.</p>
+                ) : (
+                  announcements.slice(0, 3).map((ann) => (
+                    <div key={ann._id} className="group cursor-pointer bg-blue-800/30 p-4 rounded-xl hover:bg-blue-800/50 transition-colors border border-blue-700/30 hover:border-blue-600 duration-300">
+                      <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider mb-1 block">
+                        {new Date(ann.date).toLocaleDateString()}
+                      </span>
+                      <h4 className="font-semibold text-lg text-white group-hover:text-yellow-300 transition-colors">{ann.title}</h4>
+                      <p className="text-blue-100/70 text-sm mt-2 line-clamp-2">{ann.content}</p>
+                    </div>
+                  ))
+                )}
               </div>
               <button className="w-full mt-8 bg-blue-800/50 hover:bg-blue-700 py-3.5 rounded-xl text-sm font-bold tracking-widest uppercase transition-colors shadow-lg relative z-10">
                 View All Notices
@@ -252,12 +249,12 @@ const Home = () => {
             {galleryImages.map((image, index) => (
               <div 
                 key={index} 
-                className="group relative rounded-3xl overflow-hidden aspect-[4/5] shadow-lg border-4 border-white transition-transform duration-500 hover:scale-[1.02] cursor-pointer"
-                onClick={() => setSelectedImage(image)}
+                className="group relative rounded-3xl overflow-hidden aspect-[4/5] shadow-lg border-4 border-white transition-transform duration-500 hover:scale-[1.02] cursor-pointer bg-gray-100"
+                onClick={() => setSelectedImage({ src: image.imageUrl, title: image.caption, category: image.category })}
               >
                 <img 
-                  src={image.src} 
-                  alt={image.title} 
+                  src={image.imageUrl} 
+                  alt={image.caption} 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-950/90 via-blue-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
@@ -265,7 +262,7 @@ const Home = () => {
                     {image.category}
                   </span>
                   <h3 className="text-white text-2xl font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
-                    {image.title}
+                    {image.caption}
                   </h3>
                 </div>
                 <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white font-bold opacity-0 group-hover:opacity-100 transition-all">

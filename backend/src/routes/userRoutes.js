@@ -11,15 +11,15 @@ const {
 const { protect, authorize } = require('../middleware/authMiddleware');
 
 router.route('/')
-  .get(protect, authorize('Admin'), getUsers);
+  .get(protect, authorize('Management'), getUsers);
 
 router.route('/profile')
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
 
 router.route('/:id')
-  .get(protect, authorize('Admin'), getUserById)
-  .put(protect, authorize('Admin'), updateUser)
-  .delete(protect, authorize('Admin'), deleteUser);
+  .get(protect, authorize('Management'), getUserById)
+  .put(protect, authorize('Management'), updateUser)
+  .delete(protect, authorize('Management'), deleteUser);
 
 module.exports = router;

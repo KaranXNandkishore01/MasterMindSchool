@@ -1,7 +1,23 @@
 import { Briefcase, GraduationCap, Heart, Users, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Careers = () => {
+  const [jobs, setJobs] = useState([]);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await axios.get('/api/public/jobs');
+        setJobs(res.data);
+      } catch (err) {
+        console.error("Error fetching jobs:", err);
+      }
+    };
+    fetchJobs();
+  }, []);
+
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
       {/* Header Banner */}
@@ -48,24 +64,30 @@ const Careers = () => {
             <section className="bg-white rounded-3xl p-8 md:p-12 shadow-lg border border-gray-100">
               <h2 className="text-3xl font-bold text-gray-800 mb-8">Current Opportunities</h2>
               <div className="space-y-6">
-                <div className="p-6 rounded-2xl border-2 border-dashed border-gray-200 hover:border-blue-300 transition-colors">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Technical & Social Media Coordinator</h3>
-                  <p className="text-gray-600 mb-4">Seeking tech-savvy professionals to manage social media, technical tools, and digital presence. Requires fluent English communication and multi-tasking abilities.</p>
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full uppercase">Full-Time</span>
-                      <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full uppercase">Technical Support</span>
+                {jobs.length === 0 ? (
+                  <p className="text-gray-600">There are no current openings at this time.</p>
+                ) : (
+                  jobs.map(job => (
+                    <div key={job._id} className="p-6 rounded-2xl border-2 border-dashed border-gray-200 hover:border-blue-300 transition-colors">
+                      <h3 className="text-xl font-bold text-gray-800 mb-2">{job.title}</h3>
+                      <p className="text-gray-600 mb-2">{job.description}</p>
+                      {job.requirements && <p className="text-gray-500 text-sm mb-4"><span className="font-semibold">Requirements:</span> {job.requirements}</p>}
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex flex-wrap gap-2">
+                          <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full uppercase">Full-Time</span>
+                        </div>
+                        <a 
+                          href={job.applyLink || "https://forms.gle/L6r7K6nw5DwewRPF8"} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-bold text-sm transition-all hover:scale-105 shadow-md uppercase"
+                        >
+                          Apply Now <ArrowRight size={16} />
+                        </a>
+                      </div>
                     </div>
-                    <a 
-                      href="https://forms.gle/L6r7K6nw5DwewRPF8" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-bold text-sm transition-all hover:scale-105 shadow-md uppercase"
-                    >
-                      Apply Now <ArrowRight size={16} />
-                    </a>
-                  </div>
-                </div>
+                  ))
+                )}
               </div>
             </section>
 

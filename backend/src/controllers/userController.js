@@ -9,9 +9,8 @@ const getUserProfile = async (req, res) => {
   if (user) {
     res.json({
       _id: user._id,
-      email: user.email,
+      managementId: user.managementId,
       role: user.role,
-      referenceId: user.referenceId,
     });
   } else {
     res.status(404).json({ message: 'User not found' });
@@ -25,7 +24,7 @@ const updateUserProfile = async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    user.email = req.body.email || user.email;
+    user.managementId = req.body.managementId || user.managementId;
 
     if (req.body.password) {
       user.password = req.body.password;
@@ -35,9 +34,8 @@ const updateUserProfile = async (req, res) => {
 
     res.json({
       _id: updatedUser._id,
-      email: updatedUser.email,
+      managementId: updatedUser.managementId,
       role: updatedUser.role,
-      referenceId: updatedUser.referenceId,
     });
   } else {
     res.status(404).json({ message: 'User not found' });
@@ -86,7 +84,7 @@ const updateUser = async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (user) {
-    user.email = req.body.email || user.email;
+    user.managementId = req.body.managementId || user.managementId;
     user.role = req.body.role || user.role;
     if (req.body.isActive !== undefined) {
       user.isActive = req.body.isActive;
@@ -96,7 +94,7 @@ const updateUser = async (req, res) => {
 
     res.json({
       _id: updatedUser._id,
-      email: updatedUser.email,
+      managementId: updatedUser.managementId,
       role: updatedUser.role,
       isActive: updatedUser.isActive,
     });

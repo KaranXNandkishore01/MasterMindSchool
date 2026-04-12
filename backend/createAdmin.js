@@ -3,22 +3,19 @@ require('dotenv').config();
 const User = require('./src/models/User');
 
 mongoose.connect(process.env.MONGO_URI).then(async () => {
-    const adminExists = await User.findOne({ email: 'admin@mmps.com' });
+    const adminExists = await User.findOne({ managementId: 'mastersagar_mgt' });
     if(adminExists) {
-        console.log("Admin already exists!");
+        console.log("Management user already exists!");
         process.exit(0);
     }
     
-    const adminId = new mongoose.Types.ObjectId();
-    
     await User.create({
-        email: 'admin@mmps.com',
-        password: 'password123',
-        role: 'Admin',
-        referenceId: adminId
+        managementId: 'mastersagar_mgt',
+        password: 'Madam28$$',
+        role: 'Management'
     });
     
-    console.log("Admin created! Email: admin@mmps.com, Password: password123");
+    console.log("Management created! managementId: mastersagar_mgt, Password: Madam28$$");
     process.exit(0);
 }).catch(err => {
     console.error(err);

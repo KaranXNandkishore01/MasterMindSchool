@@ -1,12 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { login, reset } from '../../features/auth/authSlice';
-import { Lock, Mail, GraduationCap } from 'lucide-react';
+import { Lock, Mail, GraduationCap, Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const { email, password } = formData;
+  const [formData, setFormData] = useState({ 
+    managementId: localStorage.getItem('rememberedMgmtId') || '', 
+    password: '' 
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(!!localStorage.getItem('rememberedMgmtId'));
+  
+  const idInputRef = useRef(null);
+  const { managementId, password } = formData;
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -16,17 +23,24 @@ const Login = () => {
   );
 
   useEffect(() => {
+    // Auto-focus the Management ID field upon mount
+    if (idInputRef.current) {
+      idInputRef.current.focus();
+    }
+  }, []);
+
+  useEffect(() => {
     if (isError) {
+      // Clear password field on error for security and better UX
+      setFormData(prev => ({ ...prev, password: '' }));
       console.error(message);
     }
 
     if (isSuccess || user) {
-      switch(user?.role) {
-        case 'Admin': navigate('/admin/dashboard'); break;
-        case 'Teacher': navigate('/teacher/dashboard'); break;
-        case 'Student': navigate('/student/dashboard'); break;
-        case 'Parent': navigate('/parent/dashboard'); break;
-        default: navigate('/');
+      if (user?.role === 'Management') {
+        navigate('/management/dashboard');
+      } else {
+        navigate('/');
       }
     }
 
@@ -42,7 +56,23 @@ const Login = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const userData = { email, password };
+    
+    // Trim inputs to handle accidental spaces
+    const trimmedId = managementId.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedId || !trimmedPassword) {
+      return;
+    }
+
+    // Handle "Remember me"
+    if (rememberMe) {
+      localStorage.setItem('rememberedMgmtId', trimmedId);
+    } else {
+      localStorage.removeItem('rememberedMgmtId');
+    }
+
+    const userData = { managementId: trimmedId, password: trimmedPassword };
     dispatch(login(userData));
   };
 
@@ -76,18 +106,19 @@ const Login = () => {
             )}
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Email address</label>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Management ID</label>
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  type="email"
-                  name="email"
-                  value={email}
+                  ref={idInputRef}
+                  type="text"
+                  name="managementId"
+                  value={managementId}
                   onChange={onChange}
                   className="focus:ring-2 flex-1 block w-full rounded-xl sm:text-sm border-gray-300 px-4 py-3 pl-10 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 text-gray-900 border outline-none transition-all focus:bg-white"
-                  placeholder="admin@mmps.edu"
+                  placeholder="mastersagar_mgt"
                   required
                 />
               </div>
@@ -100,20 +131,33 @@ const Login = () => {
                   <Lock className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   value={password}
                   onChange={onChange}
-                  className="focus:ring-2 flex-1 block w-full rounded-xl sm:text-sm border-gray-300 px-4 py-3 pl-10 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 text-gray-900 border outline-none transition-all focus:bg-white"
+                  className="focus:ring-2 flex-1 block w-full rounded-xl sm:text-sm border-gray-300 px-4 py-3 pl-10 pr-10 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 text-gray-900 border outline-none transition-all focus:bg-white"
                   placeholder="••••••••"
                   required
                 />
+                <div 
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-gray-400 hover:text-blue-500 transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </div>
               </div>
             </div>
 
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center">
-                <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer" />
+                <input 
+                  id="remember-me" 
+                  name="remember-me" 
+                  type="checkbox" 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer" 
+                />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 cursor-pointer">
                   Remember me
                 </label>

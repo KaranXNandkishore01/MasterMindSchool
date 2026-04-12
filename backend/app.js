@@ -16,6 +16,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use('/uploads', express.static('uploads'));
 
 // Base Route
 app.get('/', (req, res) => {
@@ -25,17 +26,13 @@ app.get('/', (req, res) => {
 // Routes
 const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
-const studentRoutes = require('./src/routes/studentRoutes');
-const teacherRoutes = require('./src/routes/teacherRoutes');
-const attendanceRoutes = require('./src/routes/attendanceRoutes');
-const feeRoutes = require('./src/routes/feeRoutes');
+const managementRoutes = require('./src/routes/managementRoutes');
+const publicRoutes = require('./src/routes/publicRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/students', studentRoutes);
-app.use('/api/teachers', teacherRoutes);
-app.use('/api/attendance', attendanceRoutes);
-app.use('/api/fees', feeRoutes);
+app.use('/api/management', managementRoutes);
+app.use('/api/public', publicRoutes);
 
 // Error Handling Middleware placeholder
 app.use((err, req, res, next) => {
