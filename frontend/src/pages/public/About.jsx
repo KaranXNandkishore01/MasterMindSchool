@@ -1,4 +1,4 @@
-import { Award, Target, Eye, ShieldCheck } from 'lucide-react';
+import { Award, Target, Eye, ShieldCheck, Trophy } from 'lucide-react';
 import schoolPhoto from '../../assets/schoolphoto.png';
 
 const About = () => {
@@ -101,6 +101,82 @@ const About = () => {
             </div>
           </div>
         </div>
+
+        {/* Historic Merit Record */}
+        <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border-t-8 border-yellow-400">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-extrabold text-blue-950 mb-4 flex items-center justify-center gap-3">
+              <Trophy className="text-yellow-500" size={36} />
+              Our Historic Merit & Achievement Record
+            </h2>
+            <p className="text-gray-500 max-w-2xl mx-auto text-lg leading-relaxed">
+              Celebrating the outstanding accomplishments of our brilliant students over the years who have brought immense pride to Master Mind Public School.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            {/* 2022-23 */}
+            <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.05)] border border-blue-100 hover:-translate-y-2 transition-transform duration-300">
+              <div className="bg-blue-600 shadow-md text-white font-bold py-1.5 px-4 rounded-full inline-block mb-6 text-sm tracking-wider">2022-23</div>
+              <ul className="space-y-4">
+                <li className="flex flex-col gap-1">
+                  <span className="text-blue-950 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500" /> Varsha Sahu</span>
+                  <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-blue-200 ml-1">Madhya Pradesh State Merit (6th Rank)</span>
+                </li>
+                <li className="flex flex-col gap-1">
+                  <span className="text-blue-950 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500" /> Ritu Goswami</span>
+                  <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-blue-200 ml-1">Madhya Pradesh State Merit (10th Rank)</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* 2023-24 */}
+            <div className="bg-gradient-to-br from-yellow-50 to-white p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.05)] border border-yellow-100 hover:-translate-y-2 transition-transform duration-300">
+              <div className="bg-yellow-500 shadow-md text-blue-950 font-bold py-1.5 px-4 rounded-full inline-block mb-6 text-sm tracking-wider">2023-24</div>
+              <ul className="space-y-4">
+                <li className="flex flex-col gap-1">
+                  <span className="text-yellow-900 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-yellow-500" /> Soumya Rai</span>
+                  <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-yellow-300 ml-1">Block Merit List (Topper)</span>
+                </li>
+                <li className="flex flex-col gap-1">
+                  <span className="text-yellow-900 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-yellow-500" /> ARPI Rai</span>
+                  <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-yellow-300 ml-1">Block Merit List (Topper)</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* 2024-25 */}
+            <div className="bg-gradient-to-br from-green-50 to-white p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.05)] border border-green-100 hover:-translate-y-2 transition-transform duration-300">
+              <div className="bg-green-500 shadow-md text-white font-bold py-1.5 px-4 rounded-full inline-block mb-6 text-sm tracking-wider">2024-25</div>
+              <ul className="space-y-4">
+                <li className="flex flex-col gap-1">
+                  <span className="text-green-900 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500" /> Sakshi Kushwaha</span>
+                  <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-green-300 ml-1">Madhya Pradesh State Merit (8th Rank)</span>
+                </li>
+                <li className="flex flex-col gap-1">
+                  <span className="text-green-900 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500" /> Shiwani Sahu</span>
+                  <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-green-300 ml-1">District Merit List (Topper)</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* 2025-26 */}
+            <div className="bg-gradient-to-br from-purple-50 to-white p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.05)] border border-purple-100 hover:-translate-y-2 transition-transform duration-300">
+              <div className="bg-purple-600 shadow-md text-white font-bold py-1.5 px-4 rounded-full inline-block mb-4 text-sm tracking-wider">2025-26</div>
+              <h4 className="font-bold text-purple-900 mb-3 text-sm border-b border-purple-100 pb-2 uppercase tracking-wide">District Merit List:</h4>
+              <ul className="grid grid-cols-1 gap-3">
+                {['Alankritika Malviya', 'Saloni Patel', 'Akanksha Goswami', 'Simran Rajput'].map((name, i) => (
+                  <li key={i} className="flex items-center gap-3 text-gray-700 font-bold bg-white px-3 py-2 rounded-lg border border-purple-50 shadow-sm">
+                    <span className="text-purple-400">🏅</span> {name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </div>
   );

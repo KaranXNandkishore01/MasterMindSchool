@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Users, Trophy, Target, ImageIcon, X } from 'lucide-react';
+import { ArrowRight, BookOpen, Users, Trophy, Target, ImageIcon, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -7,10 +7,32 @@ import heroBg from '../../assets/Heroimage.jpeg';
 import bannerImg from '../../assets/banner.png';
 import directorSirImg from '../../assets/Directorsir.png';
 import principalImg from '../../assets/principal.png';
+import sirAndMaamImg from "../../assets/sir&ma'am.png";
+import top1Img from "../../assets/top1.png";
+import top3Img from "../../assets/top3.png";
+import felicitation1Img from "../../assets/felicitation_1.jpg";
+import felicitation2Img from "../../assets/felicitation_2.jpg";
+import felicitation3Img from "../../assets/felicitation_3.jpg";
+import performer1Img from "../../assets/performer_1.jpg";
+import performer2Img from "../../assets/performer_2.jpg";
+import performer3Img from "../../assets/performer_3.jpg";
+import performer4Img from "../../assets/performer_4.jpg";
+import parentsMmpsImg from "../../assets/paretsmmps.png";
+import ourTeachersImg from "../../assets/Ourtechers.png";
+import parent2Img from "../../assets/parent2.png";
+import mlaImg from "../../assets/MLA.png";
+import mentorsImg from "../../assets/mentors.png";
+import twelfth1Img from "../../assets/12th1.png";
+import twelfth2Img from "../../assets/12th2.png";
 
 const Home = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
   const [showAdmissionPopup, setShowAdmissionPopup] = useState(false);
+
+  useEffect(() => {
+    if (!selectedImage) setZoomLevel(1);
+  }, [selectedImage]);
   const [announcements, setAnnouncements] = useState([]);
   const [galleryImages, setGalleryImages] = useState([]);
 
@@ -28,7 +50,28 @@ const Home = () => {
         setAnnouncements(annRes.data);
         
         const galRes = await axios.get('/api/public/images');
-        setGalleryImages(galRes.data);
+        
+        const staticGalleryImages = [
+          { imageUrl: twelfth1Img, caption: "our Mathematics Departments Performers of XII", category: 'Achievement' },
+          { imageUrl: twelfth2Img, caption: "our Mathematics Departments Performers of XII", category: 'Achievement' },
+          { imageUrl: mentorsImg, caption: "mentors Behind the Students. Who always keep helping not only academically, but morally as well and motivating Students.", category: 'Leadership' },
+          { imageUrl: parentsMmpsImg, caption: "School Congratulated the Student's Parents", category: 'Achievement' },
+          { imageUrl: parent2Img, caption: "School Congratulated the Student's Parents", category: 'Achievement' },
+          { imageUrl: ourTeachersImg, caption: "The MMPS Teachers celerating Achievements with Students", category: 'Event' },
+          { imageUrl: mlaImg, caption: "MLA Mr. Thakur Das Nagwanshi Sir have cogratulated and appreciated Students", category: 'Event' },
+          { imageUrl: felicitation1Img, caption: 'Hon. District Collector Mr. Somesh Mishra Sir Felicitated Our Students', category: 'Event' },
+          { imageUrl: felicitation2Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+          { imageUrl: felicitation3Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+          { imageUrl: performer1Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+          { imageUrl: performer2Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+          { imageUrl: performer3Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+          { imageUrl: performer4Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+          { imageUrl: top1Img, caption: 'School Topper', category: 'Achievement' },
+          { imageUrl: top3Img, caption: 'Outstanding Performers', category: 'Achievement' },
+          { imageUrl: sirAndMaamImg, caption: 'Leadership', category: 'Administration' }
+        ];
+        
+        setGalleryImages([...staticGalleryImages, ...galRes.data]);
       } catch (err) {
         console.error("Error fetching public data:", err);
       }
@@ -55,14 +98,32 @@ const Home = () => {
             <X size={32} />
           </button>
           <div 
-            className="max-w-5xl w-full flex flex-col items-center gap-6"
+            className="max-w-5xl w-full flex flex-col items-center gap-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <img 
-              src={selectedImage.src} 
-              alt={selectedImage.title} 
-              className="max-h-[80vh] w-auto h-auto object-contain rounded-2xl shadow-2xl border-4 border-white/10"
-            />
+            <div 
+              className="w-full max-h-[70vh] overflow-auto flex items-center justify-center rounded-2xl"
+              onWheel={(e) => {
+                if (e.ctrlKey || e.metaKey) {
+                  e.preventDefault();
+                  setZoomLevel(prev => Math.min(Math.max(0.5, prev - e.deltaY * 0.005), 4));
+                }
+              }}
+            >
+              <img 
+                src={selectedImage.src} 
+                alt={selectedImage.title} 
+                className="w-auto h-auto object-contain rounded-2xl shadow-2xl border-4 border-white/10 transition-transform duration-200 origin-center"
+                style={{ transform: `scale(${zoomLevel})` }}
+              />
+            </div>
+
+            <div className="flex items-center gap-4 bg-white/10 backdrop-blur-md px-6 py-2 rounded-full">
+              <button onClick={() => setZoomLevel(prev => Math.max(0.5, prev - 0.25))} className="text-white hover:text-yellow-400 p-2"><ZoomOut size={20} /></button>
+              <span className="text-white font-bold w-12 text-center text-sm">{Math.round(zoomLevel * 100)}%</span>
+              <button onClick={() => setZoomLevel(prev => Math.min(4, prev + 0.25))} className="text-white hover:text-yellow-400 p-2"><ZoomIn size={20} /></button>
+            </div>
+
             <div className="text-center">
               <span className="text-yellow-400 text-sm font-bold uppercase tracking-widest block mb-2">
                 {selectedImage.category}
@@ -108,8 +169,14 @@ const Home = () => {
       {/* Featured Banner Section */}
       <section className="px-4 -mt-10 mb-16 relative z-30">
         <div className="max-w-7xl mx-auto">
-          <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
-            <img src={bannerImg} alt="MMPS Banner" className="w-full h-auto object-cover" />
+          <div 
+            className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white relative cursor-pointer group transition-transform hover:scale-[1.01] duration-300"
+            onClick={() => setSelectedImage({ src: bannerImg, title: "MMPS Featured Banner", category: "Featured" })}
+          >
+            <img src={bannerImg} alt="MMPS Banner" className="w-full h-auto object-cover group-hover:opacity-90 transition-opacity" />
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full text-sm text-white font-bold opacity-0 group-hover:opacity-100 transition-all pointer-events-none flex items-center gap-2 shadow-lg">
+               <ZoomIn size={16} /> Click to Zoom
+            </div>
           </div>
         </div>
       </section>
