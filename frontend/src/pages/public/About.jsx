@@ -55,6 +55,30 @@ const About = () => {
           </div>
         </div>
 
+        {/* School Anthem Section */}
+        <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border-t-8 border-blue-900">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-extrabold text-blue-950 mb-4 flex items-center justify-center gap-3">
+              <ShieldCheck className="text-blue-600" size={36} />
+              Our School Anthem
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Listen to the Master Mind Public School Anthem that fills our students with pride, unity, and a sense of belonging.
+            </p>
+          </div>
+          
+          <div className="relative w-full max-w-4xl mx-auto overflow-hidden rounded-2xl shadow-2xl border-4 border-gray-100" style={{ paddingTop: '56.25%' }}>
+            {/* School Anthem YouTube Embed */}
+            <iframe 
+              className="absolute top-0 left-0 w-full h-full border-0"
+              src="https://www.youtube.com/embed/Ux3_h4tsaqU?rel=0" 
+              title="MMPS School Anthem"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+
         {/* Approach & Achievements */}
         <div className="grid md:grid-cols-2 gap-12 mb-12">
           <div className="bg-white rounded-3xl p-8 md:p-10 shadow-lg border border-gray-100">
