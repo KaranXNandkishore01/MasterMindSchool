@@ -44,42 +44,36 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const staticGalleryImages = [
-      { imageUrl: twelfth1Img, caption: "our Mathematics Departments Performers of XII", category: 'Achievement' },
-      { imageUrl: twelfth2Img, caption: "our Mathematics Departments Performers of XII", category: 'Achievement' },
-      { imageUrl: mentorsImg, caption: "mentors Behind the Students. Who always keep helping not only academically, but morally as well and motivating Students.", category: 'Leadership' },
-      { imageUrl: parentsMmpsImg, caption: "School Congratulated the Student's Parents", category: 'Achievement' },
-      { imageUrl: parent2Img, caption: "School Congratulated the Student's Parents", category: 'Achievement' },
-      { imageUrl: ourTeachersImg, caption: "The MMPS Teachers celerating Achievements with Students", category: 'Event' },
-      { imageUrl: mlaImg, caption: "MLA Mr. Thakur Das Nagwanshi Sir have cogratulated and appreciated Students", category: 'Event' },
-      { imageUrl: felicitation1Img, caption: 'Hon. District Collector Mr. Somesh Mishra Sir Felicitated Our Students', category: 'Event' },
-      { imageUrl: felicitation2Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-      { imageUrl: felicitation3Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-      { imageUrl: performer1Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-      { imageUrl: performer2Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-      { imageUrl: performer3Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-      { imageUrl: performer4Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-      { imageUrl: top1Img, caption: 'School Topper', category: 'Achievement' },
-      { imageUrl: top3Img, caption: 'Outstanding Performers', category: 'Achievement' },
-      { imageUrl: sirAndMaamImg, caption: 'Leadership', category: 'Administration' }
-    ];
-    setGalleryImages(staticGalleryImages);
-
     const fetchPublicData = async () => {
       try {
         const annRes = await axios.get('/api/public/announcements');
         setAnnouncements(annRes.data);
-      } catch (err) {
-        console.error("Error fetching announcements:", err);
-      }
-
-      try {
+        
         const galRes = await axios.get('/api/public/images');
-        if (galRes.data && Array.isArray(galRes.data)) {
-          setGalleryImages([...staticGalleryImages, ...galRes.data]);
-        }
+        
+        const staticGalleryImages = [
+          { imageUrl: twelfth1Img, caption: "our Mathematics Departments Performers of XII", category: 'Achievement' },
+          { imageUrl: twelfth2Img, caption: "our Mathematics Departments Performers of XII", category: 'Achievement' },
+          { imageUrl: mentorsImg, caption: "mentors Behind the Students. Who always keep helping not only academically, but morally as well and motivating Students.", category: 'Leadership' },
+          { imageUrl: parentsMmpsImg, caption: "School Congratulated the Student's Parents", category: 'Achievement' },
+          { imageUrl: parent2Img, caption: "School Congratulated the Student's Parents", category: 'Achievement' },
+          { imageUrl: ourTeachersImg, caption: "The MMPS Teachers celerating Achievements with Students", category: 'Event' },
+          { imageUrl: mlaImg, caption: "MLA Mr. Thakur Das Nagwanshi Sir have cogratulated and appreciated Students", category: 'Event' },
+          { imageUrl: felicitation1Img, caption: 'Hon. District Collector Mr. Somesh Mishra Sir Felicitated Our Students', category: 'Event' },
+          { imageUrl: felicitation2Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+          { imageUrl: felicitation3Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+          { imageUrl: performer1Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+          { imageUrl: performer2Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+          { imageUrl: performer3Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+          { imageUrl: performer4Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+          { imageUrl: top1Img, caption: 'School Topper', category: 'Achievement' },
+          { imageUrl: top3Img, caption: 'Outstanding Performers', category: 'Achievement' },
+          { imageUrl: sirAndMaamImg, caption: 'Leadership', category: 'Administration' }
+        ];
+        
+        setGalleryImages([...staticGalleryImages, ...galRes.data]);
       } catch (err) {
-        console.error("Error fetching public images API data:", err);
+        console.error("Error fetching public data:", err);
       }
     };
     fetchPublicData();

@@ -7,10 +7,6 @@
     {
       "source": "/uploads/:path*",
       "destination": "https://master-mind-school-d9f8.vercel.app/uploads/:path*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
     }
   ]
 }
