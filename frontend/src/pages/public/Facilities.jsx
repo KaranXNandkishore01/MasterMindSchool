@@ -99,7 +99,7 @@ const Facilities = () => {
               </h3>
               <ul className="space-y-3 text-gray-600 mb-8">
                 <li><strong className="text-gray-800">Nursery to Class XII</strong></li>
-                <li><strong className="text-gray-800">Streams Available for Senior Secondary:</strong> Science | Commerce | Arts</li>
+                <li><strong className="text-gray-800">Streams Available for Senior Secondary:</strong> Science | Commerce</li>
                 <li><strong className="text-gray-800">Session Begins:</strong> First week of July</li>
               </ul>
 
