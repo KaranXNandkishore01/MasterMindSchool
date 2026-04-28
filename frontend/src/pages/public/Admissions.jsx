@@ -32,7 +32,7 @@ const Admissions = () => {
                   </h3>
                   <ul className="space-y-2 text-gray-700 font-medium">
                     <li>• Nursery to Class XII</li>
-                    <li>• Streams: Science | Commerce | Arts</li>
+                    <li>• Streams: Science | Commerce</li>
                     <li>• Session: July 2025</li>
                   </ul>
                 </div>

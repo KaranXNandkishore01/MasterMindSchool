@@ -1,9 +1,9 @@
-import { ArrowRight, BookOpen, Users, Trophy, Target, ImageIcon, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { ArrowRight, BookOpen, Users, Trophy, Target, ImageIcon, X, ZoomIn, ZoomOut, Volume2, VolumeX } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import AdmissionPopup from '../../components/common/AdmissionPopup';
-import heroBg from '../../assets/Heroimage.jpeg';
+import heroVideo from '../../assets/HeroVideo.mp4';
 import bannerImg from '../../assets/banner.png';
 import directorSirImg from '../../assets/Directorsir.png';
 import principalImg from '../../assets/principal.png';
@@ -29,6 +29,7 @@ const Home = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [showAdmissionPopup, setShowAdmissionPopup] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     if (!selectedImage) setZoomLevel(1);
@@ -138,12 +139,28 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 bg-blue-950">
-          <img 
-            src={heroBg} 
-            alt="School Campus" 
+          <video 
+            src={heroVideo} 
+            autoPlay 
+            loop 
+            muted={isMuted}
+            playsInline
             className="w-full h-full object-cover select-none opacity-[0.90] mix-blend-overlay"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent to-transparent z-10"></div>
+          
+          {/* Audio Toggle Button */}
+          <button 
+            onClick={() => setIsMuted(!isMuted)}
+            className="absolute top-8 right-8 z-30 bg-white/10 hover:bg-white/20 backdrop-blur-md p-3 rounded-full border border-white/20 transition-all group shadow-lg"
+            title={isMuted ? "Unmute Background" : "Mute Background"}
+          >
+            {isMuted ? (
+              <VolumeX className="text-white group-hover:text-yellow-400 transition-colors" size={24} />
+            ) : (
+              <Volume2 className="text-white group-hover:text-yellow-400 transition-colors" size={24} />
+            )}
+          </button>
         </div>
         
         <div className="relative z-20 text-center px-4 max-w-5xl mx-auto mt-16 animate-fade-in-up">

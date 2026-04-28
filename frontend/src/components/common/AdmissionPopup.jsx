@@ -43,7 +43,7 @@ const AdmissionPopup = ({ isOpen, onClose }) => {
           <div className="space-y-4 mb-8">
             {[
               "Nursery to Class XII",
-              "Science | Commerce | Arts",
+              "Science | Commerce",
               "Meritorious Scholarship Available",
               "Expert Faculty & Modern Facilities"
             ].map((text, i) => (
