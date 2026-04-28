@@ -69,7 +69,7 @@ const Home = () => {
       try {
         const annRes = await axios.get('/api/public/announcements');
         setAnnouncements(annRes.data);
-        
+
         const galRes = await axios.get('/api/public/images');
         setGalleryImages([...staticGalleryImages, ...galRes.data]);
       } catch (err) {
@@ -81,27 +81,27 @@ const Home = () => {
 
   return (
     <div className="w-full">
-      <AdmissionPopup 
-        isOpen={showAdmissionPopup} 
-        onClose={() => setShowAdmissionPopup(false)} 
+      <AdmissionPopup
+        isOpen={showAdmissionPopup}
+        onClose={() => setShowAdmissionPopup(false)}
       />
       {/* Lightbox Modal */}
       {selectedImage && (
-        <div 
+        <div
           className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
           onClick={() => setSelectedImage(null)}
         >
-          <button 
+          <button
             className="absolute top-8 right-8 text-white hover:text-yellow-400 transition-colors bg-white/10 p-2 rounded-full"
             onClick={() => setSelectedImage(null)}
           >
             <X size={32} />
           </button>
-          <div 
+          <div
             className="max-w-5xl w-full flex flex-col items-center gap-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div 
+            <div
               className="w-full max-h-[70vh] overflow-auto flex items-center justify-center rounded-2xl"
               onWheel={(e) => {
                 if (e.ctrlKey || e.metaKey) {
@@ -110,9 +110,9 @@ const Home = () => {
                 }
               }}
             >
-              <img 
-                src={selectedImage.src} 
-                alt={selectedImage.title} 
+              <img
+                src={selectedImage.src}
+                alt={selectedImage.title}
                 className="w-auto h-auto object-contain rounded-2xl shadow-2xl border-4 border-white/10 transition-transform duration-200 origin-center"
                 style={{ transform: `scale(${zoomLevel})` }}
               />
@@ -139,18 +139,18 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 bg-blue-950">
-          <video 
-            src={heroVideo} 
-            autoPlay 
-            loop 
+          <video
+            src={heroVideo}
+            autoPlay
+            loop
             muted={isMuted}
             playsInline
             className="w-full h-full object-cover select-none opacity-[0.90] mix-blend-overlay"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent to-transparent z-10"></div>
-          
+
           {/* Audio Toggle Button */}
-          <button 
+          <button
             onClick={() => setIsMuted(!isMuted)}
             className="absolute top-8 right-8 z-30 bg-white/10 hover:bg-white/20 backdrop-blur-md p-3 rounded-full border border-white/20 transition-all group shadow-lg"
             title={isMuted ? "Unmute Background" : "Mute Background"}
@@ -162,7 +162,7 @@ const Home = () => {
             )}
           </button>
         </div>
-        
+
         <div className="relative z-20 text-center px-4 max-w-5xl mx-auto mt-16 animate-fade-in-up">
           <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tight drop-shadow-2xl">
             Empowering Minds,<br/>
@@ -185,7 +185,7 @@ const Home = () => {
       {/* Featured Banner Section */}
       <section className="px-4 -mt-10 mb-16 relative z-30">
         <div className="max-w-7xl mx-auto">
-          <div 
+          <div
             className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white relative cursor-pointer group transition-transform hover:scale-[1.01] duration-300"
             onClick={() => setSelectedImage({ src: bannerImg, title: "MMPS Featured Banner", category: "Featured" })}
           >
@@ -235,10 +235,10 @@ const Home = () => {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            
+
             {/* Leadership Messages */}
             <div className="lg:col-span-2 bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 transform hover:-translate-y-1 transition-transform duration-300 flex flex-col gap-12">
-              
+
               {/* Director's Message */}
               <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
                 <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full shrink-0 flex items-center justify-center overflow-hidden border-4 border-yellow-200 shadow-inner">
@@ -330,14 +330,14 @@ const Home = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {galleryImages.map((image, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="group relative rounded-3xl overflow-hidden aspect-[4/5] shadow-lg border-4 border-white transition-transform duration-500 hover:scale-[1.02] cursor-pointer bg-gray-100"
                 onClick={() => setSelectedImage({ src: image.imageUrl, title: image.caption, category: image.category })}
               >
-                <img 
-                  src={image.imageUrl} 
-                  alt={image.caption} 
+                <img
+                  src={image.imageUrl}
+                  alt={image.caption}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-950/90 via-blue-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
