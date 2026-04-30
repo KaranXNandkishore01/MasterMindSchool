@@ -173,7 +173,7 @@ const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSdcsCPrfDn5Xafwkq_xi5JiZygyOk_v3dvTOIsBjYzSEZGMrw/viewform" target="_blank" rel="noopener noreferrer" className="bg-yellow-500 hover:bg-yellow-400 text-blue-900 font-bold px-8 py-4 rounded-full transition-transform transform hover:scale-105 shadow-xl flex items-center justify-center gap-2">
-              Apply Now <ArrowRight size={20} />
+              Enroll Now <ArrowRight size={20} />
             </a>
             <Link to="/about" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 font-bold px-8 py-4 rounded-full transition-colors shadow-lg">
               Discover More

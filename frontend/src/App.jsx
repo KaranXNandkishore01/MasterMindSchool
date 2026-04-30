@@ -13,6 +13,7 @@ import Careers from './pages/public/Careers';
 import PrivacyPolicy from './pages/public/PrivacyPolicy';
 import TermsAndConditions from './pages/public/TermsAndConditions';
 import Login from './pages/auth/Login';
+import Brochure from './pages/public/Brochure';
 
 import ManagementDashboard from './pages/management/ManagementDashboard';
 import ManageImages from './pages/management/ManageImages';
@@ -26,6 +27,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/brochure" element={<Brochure />} />
         
         {/* Public Routes */}
         <Route path="/" element={<PublicLayout />}>

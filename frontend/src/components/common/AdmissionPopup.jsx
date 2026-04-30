@@ -63,7 +63,7 @@ const AdmissionPopup = ({ isOpen, onClose }) => {
               rel="noopener noreferrer"
               className="bg-yellow-500 hover:bg-yellow-400 text-blue-950 font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] shadow-xl group border-b-4 border-yellow-600"
             >
-              APPLY ONLINE NOW <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              ENROLL NOW <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </a>
             
             <button 

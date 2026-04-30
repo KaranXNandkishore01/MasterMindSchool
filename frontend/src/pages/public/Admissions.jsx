@@ -1,4 +1,4 @@
-import { CheckCircle2, Calendar, FileText, Download, ArrowRight } from 'lucide-react';
+import { CheckCircle2, Calendar, FileText, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Admissions = () => {
@@ -86,7 +86,7 @@ const Admissions = () => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-blue-950 px-10 py-5 rounded-full font-black text-xl transition-all hover:scale-105 shadow-xl relative z-10"
               >
-                APPLY ONLINE NOW <ArrowRight size={24} />
+                ENROLL NOW <ArrowRight size={24} />
               </a>
               <p className="mt-8 text-sm italic opacity-70">
                 “A school that invests in your child's future — Choose Master Mind today!”
@@ -129,16 +129,7 @@ const Admissions = () => {
               </Link>
             </div>
 
-            <div id="brochures" className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">Brochures</h3>
-              <ul className="space-y-3">
-                <li>
-                  <a href="#" className="flex items-center gap-3 text-blue-600 hover:text-blue-800 font-medium p-3 rounded-xl hover:bg-blue-50 transition-colors">
-                    <Download className="w-5 h-5" /> Full Prospectus
-                  </a>
-                </li>
-              </ul>
-            </div>
+
           </div>
 
         </div>
