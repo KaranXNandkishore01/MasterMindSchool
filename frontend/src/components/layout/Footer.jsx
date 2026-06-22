@@ -55,7 +55,7 @@ const Footer = () => {
             <h3 className="text-white font-semibold mb-4 uppercase tracking-wider">Resources</h3>
             <ul className="space-y-3">
               <li><Link to="/#announcements" className="hover:text-yellow-400 transition-colors">Notice Board</Link></li>
-              <li><a href="/brochure" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-400 transition-colors">Brochures</a></li>
+
               <li><Link to="/admissions#fees" className="hover:text-yellow-400 transition-colors">Fee Structure</Link></li>
               <li><a href="#" className="hover:text-yellow-400 transition-colors">Academic Calendar</a></li>
             </ul>

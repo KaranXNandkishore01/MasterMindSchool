@@ -58,15 +58,7 @@ const Navbar = () => {
               </Link>
             ))}
             
-            <a
-              href="/brochure"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-blue-900 px-5 py-2.5 rounded-xl font-black text-xs uppercase transition-all transform hover:-translate-y-0.5 shadow-lg tracking-widest"
-            >
-              <BookOpen size={16} />
-              Brochure
-            </a>
+
 
             {user && (
               <div className="flex items-center gap-4 pl-4 border-l border-blue-800">
@@ -128,15 +120,7 @@ const Navbar = () => {
             ))}
             
             <div className="pt-4 mt-4 border-t border-blue-800">
-              <a
-                href="/brochure"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full text-center bg-yellow-500 text-blue-900 py-4 mb-4 rounded-2xl font-black uppercase tracking-widest shadow-xl"
-                onClick={() => setIsOpen(false)}
-              >
-                <BookOpen size={20} /> View Brochure
-              </a>
+
 
               {user && (
                 <div className="grid grid-cols-2 gap-4">
