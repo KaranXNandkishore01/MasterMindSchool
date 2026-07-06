@@ -164,7 +164,7 @@ const About = () => {
                   <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-yellow-300 ml-1">Block Merit List (Topper)</span>
                 </li>
                 <li className="flex flex-col gap-1">
-                  <span className="text-yellow-900 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-yellow-500" /> ARPI Rai</span>
+                  <span className="text-yellow-900 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-yellow-500" /> Arpit Rai</span>
                   <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-yellow-300 ml-1">Block Merit List (Topper)</span>
                 </li>
               </ul>
@@ -179,7 +179,7 @@ const About = () => {
                   <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-green-300 ml-1">Madhya Pradesh State Merit (8th Rank)</span>
                 </li>
                 <li className="flex flex-col gap-1">
-                  <span className="text-green-900 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500" /> Shiwani Sahu</span>
+                  <span className="text-green-900 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500" /> Shivani Sahu</span>
                   <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-green-300 ml-1">District Merit List (Topper)</span>
                 </li>
               </ul>
