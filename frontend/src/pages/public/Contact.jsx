@@ -70,8 +70,8 @@ const Contact = () => {
                   <Mail className="w-6 h-6 text-yellow-400 shrink-0 mt-1" />
                   <div>
                     <h4 className="font-semibold text-lg mb-1">Email Address</h4>
-                    <a href="#contact-form" className="text-blue-100 hover:text-yellow-400 block transition-colors">info@mmpspipariya.com</a>
-                    <a href="#contact-form" className="text-blue-100 hover:text-yellow-400 block transition-colors">admissions@mmpspipariya.com</a>
+                    <a href="#contact-form" className="text-blue-100 hover:text-yellow-400 block transition-colors">mastermindschool2005@gmail.com</a>
+                    {/* <a href="#contact-form" className="text-blue-100 hover:text-yellow-400 block transition-colors">admissions@mmpspipariya.com</a> */}
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
