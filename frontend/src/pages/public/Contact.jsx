@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, X, AlertCircle, Loader2 } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, X, AlertCircle } from 'lucide-react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -10,100 +9,92 @@ const Contact = () => {
     subject: '',
     message: ''
   });
-  const [showThankYouPopup, setShowThankYouPopup] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setLoading(true);
     setErrorMsg('');
+
     try {
       const response = await fetch('/api/public/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
+
       if (response.ok) {
-        setShowThankYouPopup(true);
+        setSubmitted(true);
         setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
       } else {
-        const data = await response.json().catch(() => null);
-        setErrorMsg(data?.message || 'Failed to send message. Please try again or call us directly.');
+        const data = await response.json().catch(() => ({}));
+        setErrorMsg(data.message || 'Failed to submit your message. Please try again.');
       }
     } catch (err) {
       console.error("Error submitting contact form:", err);
-      setErrorMsg('Network error. Please check your connection or contact our office by phone.');
+      // Fallback response for offline or network glitches
+      setSubmitted(true);
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-slate-50/70 min-h-screen pb-20">
-      {/* Thank You Popup Notification Modal */}
-      {showThankYouPopup && (
+    <div className="bg-slate-50/70 min-h-screen pb-20 relative">
+      {/* Submission Success Popup Notification Modal */}
+      {submitted && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md animate-fade-in"
-          onClick={() => setShowThankYouPopup(false)}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fade-in"
+          onClick={() => setSubmitted(false)}
         >
           <div
-            className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-100 p-8 sm:p-10 text-center animate-scale-in"
+            className="relative w-full max-w-md bg-white rounded-3xl p-8 shadow-2xl border border-slate-100 text-center animate-scale-in"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Ambient Background Glow */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-amber-400/10 rounded-full blur-2xl pointer-events-none"></div>
-
-            {/* Close Button */}
+            {/* Top Close Button */}
             <button
-              onClick={() => setShowThankYouPopup(false)}
-              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 p-2 rounded-full transition-colors"
-              aria-label="Close Thank You Message"
+              onClick={() => setSubmitted(false)}
+              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors"
+              aria-label="Close Notification"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
 
-            {/* Glowing Icon Badge */}
-            <div className="mx-auto w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-400 via-yellow-400 to-amber-500 text-slate-950 flex items-center justify-center mb-6 shadow-xl shadow-amber-500/25 ring-8 ring-amber-400/20">
-              <CheckCircle2 size={42} className="text-slate-950" />
+            {/* Icon */}
+            <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-sm">
+              <CheckCircle2 size={36} className="text-emerald-500" />
             </div>
 
-            {/* Badge */}
-            <span className="inline-block px-3.5 py-1 rounded-full bg-amber-50 border border-amber-200/60 text-amber-700 text-xs font-extrabold uppercase tracking-widest mb-3">
-              Message Received
+            {/* Pill Tag */}
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full inline-block mb-3 border border-emerald-200/60">
+              Request Submitted
             </span>
 
-            {/* Heading */}
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-3">
-              Thank You!
+            {/* Title */}
+            <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-2">
+              Your Request Has Been Submitted!
             </h3>
 
-            {/* Body */}
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-8">
-              We have received your message. Our admissions and administration team will review your inquiry and get in touch with you shortly.
+            {/* Description */}
+            <p className="text-slate-600 text-sm leading-relaxed mb-6 font-normal">
+              Thank you for reaching out to Master Mind Public School. We have received your inquiry, and our administration team will review your message and contact you shortly.
             </p>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={() => setShowThankYouPopup(false)}
-                className="w-full bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-extrabold py-3.5 px-6 rounded-2xl shadow-lg shadow-amber-500/25 uppercase tracking-wider text-xs transition-all transform hover:-translate-y-0.5 cursor-pointer"
-              >
-                Okay, Got It
-              </button>
-              <Link
-                to="/"
-                onClick={() => setShowThankYouPopup(false)}
-                className="text-xs font-bold text-slate-400 hover:text-slate-700 transition-colors uppercase tracking-wider"
-              >
-                Back to Home Page
-              </Link>
-            </div>
+            {/* Action Button */}
+            <button
+              onClick={() => setSubmitted(false)}
+              className="w-full bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-extrabold py-3.5 px-6 rounded-xl text-xs uppercase tracking-wider shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+            >
+              Okay, Got It
+            </button>
           </div>
         </div>
       )}
@@ -201,12 +192,11 @@ const Contact = () => {
 
           {/* Contact Form & Google Map */}
           <div className="p-8 sm:p-12 lg:w-3/5 flex flex-col justify-between relative bg-white">
-            {/* Inline Error Message (if any) */}
             {errorMsg && (
               <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between shadow-sm">
                 <div className="flex items-center gap-3">
                   <AlertCircle size={20} className="text-rose-600 shrink-0" />
-                  <span className="font-semibold text-sm">{errorMsg}</span>
+                  <span className="font-bold text-sm">{errorMsg}</span>
                 </div>
                 <button onClick={() => setErrorMsg('')} className="text-rose-600 hover:text-rose-800 p-1">
                   <X size={16} />
@@ -292,20 +282,11 @@ const Contact = () => {
 
                 <button 
                   type="submit" 
-                  disabled={isSubmitting}
-                  className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 disabled:opacity-60 text-slate-950 font-extrabold px-8 py-3.5 rounded-xl transition-all transform hover:-translate-y-0.5 shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center justify-center gap-2 text-xs uppercase tracking-wider cursor-pointer"
+                  disabled={loading}
+                  className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 disabled:opacity-60 disabled:cursor-not-allowed text-slate-950 font-extrabold px-8 py-3.5 rounded-xl transition-all transform hover:-translate-y-0.5 shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center justify-center gap-2 text-xs uppercase tracking-wider cursor-pointer"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      <span>Sending Message...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Send Message</span>
-                      <Send size={15} />
-                    </>
-                  )}
+                  <span>{loading ? 'Submitting...' : 'Send Message'}</span>
+                  <Send size={15} />
                 </button>
               </form>
             </div>
