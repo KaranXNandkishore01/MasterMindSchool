@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, X, AlertCircle, Loader2 } from 'lucide-react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -9,15 +10,19 @@ const Contact = () => {
     subject: '',
     message: ''
   });
-  const [submitted, setSubmitted] = useState(false);
+  const [showThankYouPopup, setShowThankYouPopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMsg('');
     try {
       const response = await fetch('/api/public/contact', {
         method: 'POST',
@@ -25,16 +30,84 @@ const Contact = () => {
         body: JSON.stringify(formData)
       });
       if (response.ok) {
-        setSubmitted(true);
+        setShowThankYouPopup(true);
         setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+      } else {
+        const data = await response.json().catch(() => null);
+        setErrorMsg(data?.message || 'Failed to send message. Please try again or call us directly.');
       }
     } catch (err) {
       console.error("Error submitting contact form:", err);
+      setErrorMsg('Network error. Please check your connection or contact our office by phone.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="bg-slate-50/70 min-h-screen pb-20">
+      {/* Thank You Popup Notification Modal */}
+      {showThankYouPopup && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md animate-fade-in"
+          onClick={() => setShowThankYouPopup(false)}
+        >
+          <div
+            className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-100 p-8 sm:p-10 text-center animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Ambient Background Glow */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-amber-400/10 rounded-full blur-2xl pointer-events-none"></div>
+
+            {/* Close Button */}
+            <button
+              onClick={() => setShowThankYouPopup(false)}
+              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 p-2 rounded-full transition-colors"
+              aria-label="Close Thank You Message"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Glowing Icon Badge */}
+            <div className="mx-auto w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-400 via-yellow-400 to-amber-500 text-slate-950 flex items-center justify-center mb-6 shadow-xl shadow-amber-500/25 ring-8 ring-amber-400/20">
+              <CheckCircle2 size={42} className="text-slate-950" />
+            </div>
+
+            {/* Badge */}
+            <span className="inline-block px-3.5 py-1 rounded-full bg-amber-50 border border-amber-200/60 text-amber-700 text-xs font-extrabold uppercase tracking-widest mb-3">
+              Message Received
+            </span>
+
+            {/* Heading */}
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-3">
+              Thank You!
+            </h3>
+
+            {/* Body */}
+            <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-8">
+              We have received your message. Our admissions and administration team will review your inquiry and get in touch with you shortly.
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => setShowThankYouPopup(false)}
+                className="w-full bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-extrabold py-3.5 px-6 rounded-2xl shadow-lg shadow-amber-500/25 uppercase tracking-wider text-xs transition-all transform hover:-translate-y-0.5 cursor-pointer"
+              >
+                Okay, Got It
+              </button>
+              <Link
+                to="/"
+                onClick={() => setShowThankYouPopup(false)}
+                className="text-xs font-bold text-slate-400 hover:text-slate-700 transition-colors uppercase tracking-wider"
+              >
+                Back to Home Page
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header Banner */}
       <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 py-20 sm:py-24 px-4 text-center overflow-hidden">
         <div className="absolute top-0 right-1/4 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -128,14 +201,14 @@ const Contact = () => {
 
           {/* Contact Form & Google Map */}
           <div className="p-8 sm:p-12 lg:w-3/5 flex flex-col justify-between relative bg-white">
-            {/* Feedback alert */}
-            {submitted && (
-              <div className="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between shadow-sm">
+            {/* Inline Error Message (if any) */}
+            {errorMsg && (
+              <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between shadow-sm">
                 <div className="flex items-center gap-3">
-                  <CheckCircle2 size={20} className="text-emerald-600 shrink-0" />
-                  <span className="font-bold text-sm">Thank you! Your message has been received.</span>
+                  <AlertCircle size={20} className="text-rose-600 shrink-0" />
+                  <span className="font-semibold text-sm">{errorMsg}</span>
                 </div>
-                <button onClick={() => setSubmitted(false)} className="text-emerald-600 hover:text-emerald-800 p-1">
+                <button onClick={() => setErrorMsg('')} className="text-rose-600 hover:text-rose-800 p-1">
                   <X size={16} />
                 </button>
               </div>
@@ -219,10 +292,20 @@ const Contact = () => {
 
                 <button 
                   type="submit" 
-                  className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-extrabold px-8 py-3.5 rounded-xl transition-all transform hover:-translate-y-0.5 shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center justify-center gap-2 text-xs uppercase tracking-wider cursor-pointer"
+                  disabled={isSubmitting}
+                  className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 disabled:opacity-60 text-slate-950 font-extrabold px-8 py-3.5 rounded-xl transition-all transform hover:-translate-y-0.5 shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center justify-center gap-2 text-xs uppercase tracking-wider cursor-pointer"
                 >
-                  <span>Send Message</span>
-                  <Send size={15} />
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      <span>Sending Message...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Send Message</span>
+                      <Send size={15} />
+                    </>
+                  )}
                 </button>
               </form>
             </div>
