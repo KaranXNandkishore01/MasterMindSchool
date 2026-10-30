@@ -39,9 +39,7 @@ const Contact = () => {
       }
     } catch (err) {
       console.error("Error submitting contact form:", err);
-      // Fallback response for offline or network glitches
-      setSubmitted(true);
-      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+      setErrorMsg('Unable to connect to the server. Please check your network connection or try again later.');
     } finally {
       setLoading(false);
     }
