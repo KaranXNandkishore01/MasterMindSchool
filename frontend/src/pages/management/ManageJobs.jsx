@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const ManageJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [formData, setFormData] = useState({ title: '', description: '', requirements: '', applyLink: '' });
 
-  useEffect(() => {
-    fetchJobs();
-  }, []);
-
-  const fetchJobs = async () => {
+  const fetchJobs = useCallback(async () => {
     const res = await axios.get('/api/management/jobs', { withCredentials: true });
     setJobs(res.data);
-  };
+  }, []);
+
+  useEffect(() => {
+    const load = async () => {
+      await fetchJobs();
+    };
+    load();
+  }, [fetchJobs]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +33,7 @@ const ManageJobs = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-8 text-indigo-900 font-serif">Manage Job Opportunities</h1>
+      <h1 className="text-3xl font-extrabold mb-8 text-indigo-900 tracking-tight">Manage Job Opportunities</h1>
       
       <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 mb-12">
         <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">

@@ -1,74 +1,80 @@
-import { X, ArrowRight, GraduationCap, CheckCircle } from 'lucide-react';
+import { X, ArrowRight, GraduationCap, CheckCircle2 } from 'lucide-react';
 
 const AdmissionPopup = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-blue-950/40 backdrop-blur-md animate-fade-in"
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fade-in"
       onClick={onClose}
     >
-      <div 
-        className="relative w-full max-w-lg bg-white rounded-3xl overflow-hidden shadow-2xl border border-blue-100 transform transition-all animate-scale-in"
+      <div
+        className="relative w-full max-w-lg bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-100 transform transition-all animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header with Background */}
-        <div className="bg-gradient-to-br from-blue-900 to-blue-950 p-8 text-white relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-16 -mt-16"></div>
-          
-          <button 
+        {/* Header with Dark Modern Navy Gradient */}
+        <div className="bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 p-8 text-white relative">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-amber-400/10 rounded-full blur-2xl pointer-events-none"></div>
+
+          <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all"
+            className="absolute top-5 right-5 text-slate-300 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-all border border-white/10"
+            aria-label="Close"
           >
-            <X size={24} />
+            <X size={20} />
           </button>
 
-          <div className="flex items-center gap-4 mb-4">
-            <div className="bg-yellow-400 p-3 rounded-2xl shadow-lg">
-              <GraduationCap className="text-blue-900 w-8 h-8" />
+          <div className="flex items-center gap-4">
+            <div className="bg-gradient-to-br from-amber-400 to-yellow-500 p-3.5 rounded-2xl shadow-lg shadow-amber-500/20 text-slate-950">
+              <GraduationCap className="w-8 h-8" />
             </div>
             <div>
-              <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest block mb-1">Session 2026-27</span>
-              <h2 className="text-2xl font-black tracking-tight leading-none">ADMISSIONS OPEN</h2>
+              <span className="text-amber-400 text-xs font-extrabold uppercase tracking-widest block mb-1">
+                Session 2026-27
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-none text-white">
+                Admissions Open
+              </h2>
             </div>
           </div>
         </div>
 
         {/* Content Section */}
         <div className="p-8">
-          <p className="text-gray-600 mb-6 font-medium leading-relaxed">
-            Take the first step towards a brighter future at Master Mind Public School. We are now accepting registrations for the upcoming academic session.
+          <p className="text-slate-600 mb-6 font-normal leading-relaxed text-sm sm:text-base">
+            Take the first step towards a brighter future at Master Mind Public School. We are now welcoming registrations for the upcoming academic session.
           </p>
 
-          <div className="space-y-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-8">
             {[
-              "Nursery to Class XII",
-              "Science | Commerce",
-              "Meritorious Scholarship Available",
-              "Expert Faculty & Modern Facilities"
+              'Nursery to Class XII',
+              'Science & Commerce',
+              'Merit Scholarships',
+              'Smart Digital Classes',
+              'Safe Campus Transport',
+              'Sports & Cultural Arts',
             ].map((text, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="text-blue-600">
-                  <CheckCircle size={20} />
-                </div>
-                <span className="text-gray-700 font-bold">{text}</span>
+              <div key={i} className="flex items-center gap-2.5">
+                <CheckCircle2 size={18} className="text-amber-500 shrink-0" />
+                <span className="text-slate-700 font-semibold text-xs sm:text-sm">{text}</span>
               </div>
             ))}
           </div>
 
-          <div className="flex flex-col gap-4">
-            <a 
-              href="https://docs.google.com/forms/d/e/1FAIpQLSdcsCPrfDn5Xafwkq_xi5JiZygyOk_v3dvTOIsBjYzSEZGMrw/viewform" 
-              target="_blank" 
+          <div className="flex flex-col gap-3">
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSdcsCPrfDn5Xafwkq_xi5JiZygyOk_v3dvTOIsBjYzSEZGMrw/viewform"
+              target="_blank"
               rel="noopener noreferrer"
-              className="bg-yellow-500 hover:bg-yellow-400 text-blue-950 font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] shadow-xl group border-b-4 border-yellow-600"
+              className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-extrabold py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 shadow-lg shadow-amber-500/25 text-sm uppercase tracking-wider"
             >
-              ENROLL NOW <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              <span>Enroll Online Now</span>
+              <ArrowRight size={18} />
             </a>
-            
-            <button 
+
+            <button
               onClick={onClose}
-              className="text-gray-500 hover:text-blue-900 font-bold py-2 transition-colors text-sm uppercase tracking-widest"
+              className="text-slate-400 hover:text-slate-700 font-semibold py-2 transition-colors text-xs uppercase tracking-wider"
             >
               Maybe Later
             </button>

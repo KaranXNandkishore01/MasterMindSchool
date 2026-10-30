@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const ParentMessages = () => {
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    fetchMessages();
-  }, []);
-
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     const res = await axios.get('/api/management/messages', { withCredentials: true });
     setMessages(res.data);
-  };
+  }, []);
+
+  useEffect(() => {
+    const load = async () => {
+      await fetchMessages();
+    };
+    load();
+  }, [fetchMessages]);
 
   const handleDelete = async (id) => {
     if (window.confirm('Delete this message permanently?')) {
@@ -22,7 +25,7 @@ const ParentMessages = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-8 text-indigo-900 font-serif">Parent & Contact Messages</h1>
+      <h1 className="text-3xl font-extrabold mb-8 text-indigo-900 tracking-tight">Parent & Contact Messages</h1>
       
       <div className="bg-white rounded-[2rem] shadow-xl p-8 border border-gray-100 space-y-6">
         {messages.length === 0 ? (

@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const ManageAnnouncements = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [formData, setFormData] = useState({ title: '', content: '' });
 
-  useEffect(() => {
-    fetchAnnouncements();
-  }, []);
-
-  const fetchAnnouncements = async () => {
+  const fetchAnnouncements = useCallback(async () => {
     const res = await axios.get('/api/management/announcements', { withCredentials: true });
     setAnnouncements(res.data);
-  };
+  }, []);
+
+  useEffect(() => {
+    const load = async () => {
+      await fetchAnnouncements();
+    };
+    load();
+  }, [fetchAnnouncements]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +33,7 @@ const ManageAnnouncements = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-indigo-900 font-serif text-center md:text-left">Manage Announcements</h1>
+      <h1 className="text-3xl font-extrabold mb-6 text-indigo-900 tracking-tight text-center md:text-left">Manage Announcements</h1>
       
       <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 mb-10">
         <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">

@@ -3,11 +3,20 @@ import { Scale, FileCheck, AlertCircle, Info } from 'lucide-react';
 const TermsAndConditions = () => {
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
-      <div className="bg-blue-900 py-20 px-4 text-center">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight uppercase">Terms & Conditions</h1>
-        <p className="text-blue-200 max-w-3xl mx-auto text-lg md:text-xl font-light">
-          Agreement and guidelines for using the services of Master Mind Public School.
-        </p>
+      <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 py-20 sm:py-24 px-4 text-center overflow-hidden">
+        <div className="absolute top-0 right-1/4 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 text-amber-300 text-xs font-bold uppercase tracking-wider mb-4 border border-white/15">
+            Agreement & Policies
+          </div>
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+            Terms & Conditions
+          </h1>
+          <p className="text-slate-300 max-w-3xl mx-auto text-base sm:text-lg font-normal leading-relaxed">
+            Agreement and institutional guidelines for using the digital and physical services of Master Mind Public School.
+          </p>
+        </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">

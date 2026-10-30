@@ -1,208 +1,306 @@
-import { Award, Target, Eye, ShieldCheck, Trophy } from 'lucide-react';
+import { Target, Eye, ShieldCheck, Trophy, Sparkles, CheckCircle2 } from 'lucide-react';
 import schoolPhoto from '../../assets/schoolphoto.png';
 
 const About = () => {
   return (
-    <div className="bg-gray-50 min-h-screen pb-20">
+    <div className="bg-slate-50/70 min-h-screen pb-20">
       {/* Header Banner */}
-      <div className="bg-blue-900 py-20 px-4 text-center">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight uppercase">Building the Future, One Child at a Time</h1>
-        <p className="text-blue-200 max-w-3xl mx-auto text-lg md:text-xl font-light">
-          Master Mind Public School, Pipariya, was founded with a vision to create a learning environment that blends academic excellence with moral and social values.
-        </p>
+      <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 py-20 sm:py-24 px-4 text-center overflow-hidden">
+        <div className="absolute top-0 right-1/4 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 text-amber-300 text-xs font-bold uppercase tracking-wider mb-4 border border-white/15">
+            About Master Mind Public School
+          </div>
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+            Building the Future, One Child at a Time
+          </h1>
+          <p className="text-slate-300 max-w-3xl mx-auto text-base sm:text-lg font-normal leading-relaxed">
+            Founded with a vision to create an environment that seamlessly blends academic brilliance with lifelong moral and ethical values.
+          </p>
+        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10">
-        <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20">
+        {/* Welcome Bento Card */}
+        <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_rgba(15,23,42,0.06)] p-8 sm:p-12 mb-12 border border-slate-100">
+          <div className="grid md:grid-cols-2 gap-10 lg:gap-14 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-4 border-yellow-500 inline-block">Welcome to MMPS</h2>
-              <p className="text-gray-600 leading-relaxed mb-6 text-lg">
-                We are committed to shaping responsible, confident, and future-ready individuals who can thrive in a competitive world. Our journey is dedicated to the holistic development of every student who enters our gates.
+              <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-amber-600 block mb-2">
+                Our Institutional Legacy
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-6 tracking-tight">
+                Welcome to MMPS
+              </h2>
+              <p className="text-slate-600 leading-relaxed mb-6 text-base sm:text-lg font-normal">
+                We are committed to shaping responsible, confident, and future-ready individuals who can thrive in an evolving global landscape. Our journey is dedicated to the holistic intellectual, emotional, and social development of every student who enters our gates.
               </p>
-              <div className="bg-blue-50 p-6 rounded-2xl border-l-8 border-blue-900">
-                <p className="text-blue-900 font-medium italic">
-                  "Education is not just about learning facts, but training the mind to think — and that’s what we do best at Master Mind."
+              <div className="bg-slate-50 p-6 rounded-2xl border-l-4 border-amber-400 shadow-sm">
+                <p className="text-slate-800 font-medium italic text-sm sm:text-base leading-relaxed">
+                  "Education is not merely the learning of facts, but training the mind to think critically and lead with empathy — that is what we do best at Master Mind."
                 </p>
               </div>
             </div>
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl min-h-[350px] border-4 border-white">
-              <img src={schoolPhoto} alt="School Campus" className="absolute inset-0 w-full h-full object-cover" />
-              <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg text-center">
-                <h3 className="text-3xl font-black text-blue-900 mb-1">20+</h3>
-                <p className="text-sm font-bold text-gray-700 uppercase tracking-widest">Years of Excellence</p>
+
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl min-h-[340px] sm:min-h-[380px] border border-slate-200/80 group">
+              <img
+                src={schoolPhoto}
+                alt="School Campus"
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
+              <div className="absolute bottom-6 right-6 bg-slate-950/80 backdrop-blur-xl p-4 sm:p-5 rounded-2xl shadow-xl border border-white/10 text-center">
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-amber-400 mb-0.5">20+</h3>
+                <p className="text-[11px] font-bold text-slate-200 uppercase tracking-widest">Years of Excellence</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Mission & Vision Cards */}
+        {/* Mission & Vision Bento Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <div className="bg-gradient-to-br from-blue-700 to-blue-900 rounded-3xl p-10 text-white shadow-xl transform hover:-translate-y-2 transition-all duration-300">
-            <Target className="w-16 h-16 mb-6 text-yellow-400" />
-            <h3 className="text-3xl font-bold mb-4">Our Mission</h3>
-            <p className="text-blue-50 text-lg leading-relaxed">
-              To provide quality education that empowers students intellectually, emotionally, and socially while instilling strong moral values and a lifelong love for learning.
+          {/* Mission */}
+          <div className="bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 rounded-3xl p-8 sm:p-10 text-white shadow-xl border border-white/10 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-blue-600/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-amber-400 mb-6 shadow-inner">
+              <Target size={28} />
+            </div>
+            <span className="text-xs font-bold uppercase tracking-widest text-amber-400 block mb-2">Our Purpose</span>
+            <h3 className="text-2xl sm:text-3xl font-extrabold mb-4 tracking-tight">Our Mission</h3>
+            <p className="text-slate-300 text-base sm:text-lg leading-relaxed font-normal">
+              To provide empowering education that nurtures students intellectually, emotionally, and socially, while instilling strong moral values, scientific temper, and a lifelong thirst for learning.
             </p>
           </div>
-          
-          <div className="bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-3xl p-10 text-blue-950 shadow-xl transform hover:-translate-y-2 transition-all duration-300">
-            <Eye className="w-16 h-16 mb-6 text-blue-900" />
-            <h3 className="text-3xl font-bold mb-4">Our Vision</h3>
-            <p className="text-blue-950/80 text-lg leading-relaxed">
-              To be a leading educational institution that transforms young minds into global citizens through innovation, discipline, and holistic development.
+
+          {/* Vision */}
+          <div className="bg-gradient-to-br from-amber-50/70 via-white to-amber-50/30 rounded-3xl p-8 sm:p-10 text-slate-900 shadow-sm border border-amber-200/60 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+            <div className="w-14 h-14 rounded-2xl bg-amber-400/15 border border-amber-400/30 flex items-center justify-center text-amber-600 mb-6 shadow-sm">
+              <Eye size={28} />
+            </div>
+            <span className="text-xs font-bold uppercase tracking-widest text-amber-600 block mb-2">Our Aspiration</span>
+            <h3 className="text-2xl sm:text-3xl font-extrabold mb-4 tracking-tight">Our Vision</h3>
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed font-normal">
+              To be a premier institution recognized for holistic development, transforming passionate young minds into global citizens characterized by discipline, creativity, and purposeful leadership.
             </p>
           </div>
         </div>
 
         {/* School Anthem Section */}
-        <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border-t-8 border-blue-900">
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 sm:p-12 mb-12">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-extrabold text-blue-950 mb-4 flex items-center justify-center gap-3">
-              <ShieldCheck className="text-blue-600" size={36} />
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-amber-600 block mb-2">
+              School Heritage
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-3 flex items-center justify-center gap-3 tracking-tight">
+              <ShieldCheck className="text-amber-500" size={32} />
               Our School Anthem
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              Listen to the Master Mind Public School Anthem that fills our students with pride, unity, and a sense of belonging.
+            <p className="text-slate-500 max-w-2xl mx-auto text-base">
+              Listen to the Master Mind Public School Anthem that instills pride, unity, and a shared commitment to lifelong excellence.
             </p>
           </div>
-          
-          <div className="relative w-full max-w-4xl mx-auto overflow-hidden rounded-2xl shadow-2xl border-4 border-gray-100" style={{ paddingTop: '56.25%' }}>
-            {/* School Anthem YouTube Embed */}
-            <iframe 
+
+          <div
+            className="relative w-full max-w-4xl mx-auto overflow-hidden rounded-2xl shadow-2xl border border-slate-200/80 bg-slate-950"
+            style={{ paddingTop: '56.25%' }}
+          >
+            <iframe
               className="absolute top-0 left-0 w-full h-full border-0"
-              src="https://www.youtube.com/embed/Ux3_h4tsaqU?rel=0" 
+              src="https://www.youtube.com/embed/Ux3_h4tsaqU?rel=0"
               title="MMPS School Anthem"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
             ></iframe>
           </div>
         </div>
 
-        {/* Approach & Achievements */}
-        <div className="grid md:grid-cols-2 gap-12 mb-12">
-          <div className="bg-white rounded-3xl p-8 md:p-10 shadow-lg border border-gray-100">
-            <h3 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-3">
-              <span className="bg-blue-100 p-2 rounded-lg text-blue-600">🏫</span> Our Approach
+        {/* Approach & Achievements Grid */}
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
+          {/* Our Approach */}
+          <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-100">
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-amber-600 block mb-2">
+              Teaching Methodology
+            </span>
+            <h3 className="text-2xl font-extrabold text-slate-900 mb-6 tracking-tight flex items-center gap-2.5">
+              <span>Our Student-Centric Approach</span>
             </h3>
-            <p className="text-gray-600 mb-6">We follow a student-centric approach where learning goes beyond textbooks. Our curriculum is designed to promote:</p>
-            <ul className="grid grid-cols-1 gap-4">
-              {['Conceptual understanding', 'Problem-solving skills', 'Creativity and collaboration', 'Leadership and character building'].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl text-gray-700 font-medium">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  {item}
-                </li>
+            <p className="text-slate-600 mb-6 text-sm sm:text-base leading-relaxed">
+              We cultivate a dynamic atmosphere where learning reaches beyond textbooks to prepare students for real-world problem-solving:
+            </p>
+            <div className="space-y-3">
+              {[
+                { title: 'Conceptual Clarity', desc: 'Deep foundational mastery over rote memorization.' },
+                { title: 'Critical Thinking', desc: 'Analytical problem-solving and scientific curiosity.' },
+                { title: 'Collaboration & Arts', desc: 'Team projects, public speaking, and fine arts.' },
+                { title: 'Ethical Leadership', desc: 'Integrity, social responsibility, and resilience.' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-start gap-3 bg-slate-50/70 p-4 rounded-2xl border border-slate-100">
+                  <CheckCircle2 size={18} className="text-amber-500 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-bold text-slate-900 text-sm">{item.title}</h4>
+                    <p className="text-xs text-slate-500 mt-0.5">{item.desc}</p>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
 
-          <div className="bg-white rounded-3xl p-8 md:p-10 shadow-lg border border-gray-100">
-            <h3 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-3">
-              <span className="bg-yellow-100 p-2 rounded-lg text-yellow-600">🏅</span> Achievements
+          {/* Core Milestones */}
+          <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-100">
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-amber-600 block mb-2">
+              Institutional Highlights
+            </span>
+            <h3 className="text-2xl font-extrabold text-slate-900 mb-6 tracking-tight flex items-center gap-2.5">
+              <span>Why Families Choose MMPS</span>
             </h3>
-            <div className="space-y-6">
-              <div className="flex gap-4">
-                <div className="shrink-0 bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center text-blue-600 font-bold">01</div>
-                <div>
-                  <h4 className="font-bold text-gray-800">State / District Topper</h4>
-                  <p className="text-gray-600 text-sm">A moment of immense pride for our institution and community.</p>
+            <div className="space-y-5">
+              {[
+                {
+                  no: '01',
+                  title: 'Consistent State & District Toppers',
+                  desc: 'Every year, our students secure top ranks in state board merit examinations.',
+                },
+                {
+                  no: '02',
+                  title: 'Academic & Co-curricular Harmony',
+                  desc: 'Equal emphasis on competitive academics, athletics, and digital literacy.',
+                },
+                {
+                  no: '03',
+                  title: 'Two Decades of Parental Trust',
+                  desc: 'Over 20 years of delivering educational excellence to thousands of proud alumni.',
+                },
+              ].map((item) => (
+                <div key={item.no} className="flex gap-4 items-start">
+                  <div className="shrink-0 w-11 h-11 rounded-2xl bg-slate-950 text-amber-400 font-extrabold text-sm flex items-center justify-center shadow-sm">
+                    {item.no}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-900 text-base">{item.title}</h4>
+                    <p className="text-slate-600 text-sm mt-0.5 leading-relaxed">{item.desc}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="shrink-0 bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center text-blue-600 font-bold">02</div>
-                <div>
-                  <h4 className="font-bold text-gray-800">Academic & Co-curricular Excellence</h4>
-                  <p className="text-gray-600 text-sm">Consistently recognized for top-tier results and all-round student growth.</p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="shrink-0 bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center text-blue-600 font-bold">03</div>
-                <div>
-                  <h4 className="font-bold text-gray-800">Trusted for Over a Decade</h4>
-                  <p className="text-gray-600 text-sm">A legacy built on trust and commitment with thousands of satisfied parents.</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Historic Merit Record */}
-        <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12 border-t-8 border-yellow-400">
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 sm:p-12 mb-12">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-blue-950 mb-4 flex items-center justify-center gap-3">
-              <Trophy className="text-yellow-500" size={36} />
-              Our Historic Merit & Achievement Record
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-amber-600 block mb-2">
+              Hall of Fame
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-3 flex items-center justify-center gap-2.5 tracking-tight">
+              <Trophy className="text-amber-500" size={32} />
+              Historic Merit & Achievement Record
             </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg leading-relaxed">
-              Celebrating the outstanding accomplishments of our brilliant students over the years who have brought immense pride to Master Mind Public School.
+            <p className="text-slate-500 max-w-2xl mx-auto text-base">
+              Honoring the exceptional achievements of our brilliant students who set benchmarks in regional and state merit lists.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
             {/* 2022-23 */}
-            <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.05)] border border-blue-100 hover:-translate-y-2 transition-transform duration-300">
-              <div className="bg-blue-600 shadow-md text-white font-bold py-1.5 px-4 rounded-full inline-block mb-6 text-sm tracking-wider">2022-23</div>
+            <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200/80 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+              <div className="bg-blue-600 text-white font-extrabold py-1 px-3.5 rounded-full inline-block mb-5 text-xs tracking-wider uppercase shadow-sm">
+                Session 2022-23
+              </div>
               <ul className="space-y-4">
                 <li className="flex flex-col gap-1">
-                  <span className="text-blue-950 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500" /> Varsha Sahu</span>
-                  <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-blue-200 ml-1">Madhya Pradesh State Merit (6th Rank)</span>
+                  <span className="text-slate-900 font-bold flex items-center gap-2">
+                    <Sparkles size={14} className="text-amber-500 shrink-0" /> Varsha Sahu
+                  </span>
+                  <span className="text-xs font-semibold text-slate-500 pl-5 border-l-2 border-blue-400 ml-1.5">
+                    M.P. State Merit (6th Rank)
+                  </span>
                 </li>
                 <li className="flex flex-col gap-1">
-                  <span className="text-blue-950 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500" /> Ritu Goswami</span>
-                  <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-blue-200 ml-1">Madhya Pradesh State Merit (10th Rank)</span>
+                  <span className="text-slate-900 font-bold flex items-center gap-2">
+                    <Sparkles size={14} className="text-amber-500 shrink-0" /> Ritu Goswami
+                  </span>
+                  <span className="text-xs font-semibold text-slate-500 pl-5 border-l-2 border-blue-400 ml-1.5">
+                    M.P. State Merit (10th Rank)
+                  </span>
                 </li>
               </ul>
             </div>
 
             {/* 2023-24 */}
-            <div className="bg-gradient-to-br from-yellow-50 to-white p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.05)] border border-yellow-100 hover:-translate-y-2 transition-transform duration-300">
-              <div className="bg-yellow-500 shadow-md text-blue-950 font-bold py-1.5 px-4 rounded-full inline-block mb-6 text-sm tracking-wider">2023-24</div>
+            <div className="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/70 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+              <div className="bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-extrabold py-1 px-3.5 rounded-full inline-block mb-5 text-xs tracking-wider uppercase shadow-sm">
+                Session 2023-24
+              </div>
               <ul className="space-y-4">
                 <li className="flex flex-col gap-1">
-                  <span className="text-yellow-900 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-yellow-500" /> Soumya Rai</span>
-                  <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-yellow-300 ml-1">Block Merit List (Topper)</span>
+                  <span className="text-slate-900 font-bold flex items-center gap-2">
+                    <Sparkles size={14} className="text-amber-600 shrink-0" /> Soumya Rai
+                  </span>
+                  <span className="text-xs font-semibold text-slate-500 pl-5 border-l-2 border-amber-400 ml-1.5">
+                    Block Merit List (Topper)
+                  </span>
                 </li>
                 <li className="flex flex-col gap-1">
-                  <span className="text-yellow-900 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-yellow-500" /> Arpit Rai</span>
-                  <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-yellow-300 ml-1">Block Merit List (Topper)</span>
+                  <span className="text-slate-900 font-bold flex items-center gap-2">
+                    <Sparkles size={14} className="text-amber-600 shrink-0" /> Arpit Rai
+                  </span>
+                  <span className="text-xs font-semibold text-slate-500 pl-5 border-l-2 border-amber-400 ml-1.5">
+                    Block Merit List (Topper)
+                  </span>
                 </li>
               </ul>
             </div>
 
             {/* 2024-25 */}
-            <div className="bg-gradient-to-br from-green-50 to-white p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.05)] border border-green-100 hover:-translate-y-2 transition-transform duration-300">
-              <div className="bg-green-500 shadow-md text-white font-bold py-1.5 px-4 rounded-full inline-block mb-6 text-sm tracking-wider">2024-25</div>
+            <div className="bg-emerald-50/50 p-6 rounded-2xl border border-emerald-200/70 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+              <div className="bg-emerald-600 text-white font-extrabold py-1 px-3.5 rounded-full inline-block mb-5 text-xs tracking-wider uppercase shadow-sm">
+                Session 2024-25
+              </div>
               <ul className="space-y-4">
                 <li className="flex flex-col gap-1">
-                  <span className="text-green-900 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500" /> Sakshi Kushwaha</span>
-                  <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-green-300 ml-1">Madhya Pradesh State Merit (8th Rank)</span>
+                  <span className="text-slate-900 font-bold flex items-center gap-2">
+                    <Sparkles size={14} className="text-emerald-600 shrink-0" /> Sakshi Kushwaha
+                  </span>
+                  <span className="text-xs font-semibold text-slate-500 pl-5 border-l-2 border-emerald-400 ml-1.5">
+                    M.P. State Merit (8th Rank)
+                  </span>
                 </li>
                 <li className="flex flex-col gap-1">
-                  <span className="text-green-900 font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500" /> Shivani Sahu</span>
-                  <span className="text-sm font-medium text-gray-500 pl-4 border-l-2 border-green-300 ml-1">District Merit List (Topper)</span>
+                  <span className="text-slate-900 font-bold flex items-center gap-2">
+                    <Sparkles size={14} className="text-emerald-600 shrink-0" /> Shivani Sahu
+                  </span>
+                  <span className="text-xs font-semibold text-slate-500 pl-5 border-l-2 border-emerald-400 ml-1.5">
+                    District Merit List (Topper)
+                  </span>
                 </li>
               </ul>
             </div>
 
             {/* 2025-26 */}
-            <div className="bg-gradient-to-br from-purple-50 to-white p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.05)] border border-purple-100 hover:-translate-y-2 transition-transform duration-300">
-              <div className="bg-purple-600 shadow-md text-white font-bold py-1.5 px-4 rounded-full inline-block mb-4 text-sm tracking-wider">2025-26</div>
-              <h4 className="font-bold text-purple-900 mb-3 text-sm border-b border-purple-100 pb-2 uppercase tracking-wide">District Merit List:</h4>
-              <ul className="grid grid-cols-1 gap-3">
+            <div className="bg-indigo-50/50 p-6 rounded-2xl border border-indigo-200/70 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+              <div className="bg-indigo-600 text-white font-extrabold py-1 px-3.5 rounded-full inline-block mb-5 text-xs tracking-wider uppercase shadow-sm">
+                Session 2025-26
+              </div>
+              <h4 className="font-bold text-slate-900 mb-3 text-xs uppercase tracking-wider">
+                District Merit Toppers:
+              </h4>
+              <ul className="space-y-2">
                 {['Alankritika Malviya', 'Saloni Patel', 'Akanksha Goswami', 'Simran Rajput'].map((name, i) => (
-                  <li key={i} className="flex items-center gap-3 text-gray-700 font-bold bg-white px-3 py-2 rounded-lg border border-purple-50 shadow-sm">
-                    <span className="text-purple-400">🏅</span> {name}
+                  <li
+                    key={i}
+                    className="flex items-center gap-2 text-slate-800 font-semibold text-xs bg-white px-3 py-2 rounded-xl border border-indigo-100 shadow-sm"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                    <span>{name}</span>
                   </li>
                 ))}
               </ul>
             </div>
-
           </div>
         </div>
-
       </div>
     </div>
   );
 };
+
 export default About;

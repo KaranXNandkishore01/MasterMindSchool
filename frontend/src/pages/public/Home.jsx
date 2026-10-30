@@ -25,34 +25,42 @@ import mentorsImg from "../../assets/mentors.png";
 import twelfth1Img from "../../assets/12th1.png";
 import twelfth2Img from "../../assets/12th2.png";
 
+const staticGalleryImages = [
+  { imageUrl: twelfth1Img, caption: "our Mathematics Departments Performers of XII", category: 'Achievement' },
+  { imageUrl: twelfth2Img, caption: "our Mathematics Departments Performers of XII", category: 'Achievement' },
+  { imageUrl: mentorsImg, caption: "mentors Behind the Students. Who always keep helping not only academically, but morally as well and motivating Students.", category: 'Leadership' },
+  { imageUrl: parentsMmpsImg, caption: "School Congratulated the Student's Parents", category: 'Achievement' },
+  { imageUrl: parent2Img, caption: "School Congratulated the Student's Parents", category: 'Achievement' },
+  { imageUrl: ourTeachersImg, caption: "The MMPS Teachers celerating Achievements with Students", category: 'Event' },
+  { imageUrl: mlaImg, caption: "MLA Mr. Thakur Das Nagwanshi Sir have cogratulated and appreciated Students", category: 'Event' },
+  { imageUrl: felicitation1Img, caption: 'Hon. District Collector Mr. Somesh Mishra Sir Felicitated Our Students', category: 'Event' },
+  { imageUrl: felicitation2Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+  { imageUrl: felicitation3Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+  { imageUrl: performer1Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+  { imageUrl: performer2Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+  { imageUrl: performer3Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+  { imageUrl: performer4Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
+  { imageUrl: top1Img, caption: 'School Topper', category: 'Achievement' },
+  { imageUrl: top3Img, caption: 'Outstanding Performers', category: 'Achievement' },
+  { imageUrl: sirAndMaamImg, caption: 'Leadership', category: 'Administration' }
+];
+
 const Home = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [showAdmissionPopup, setShowAdmissionPopup] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [activeCategory, setActiveCategory] = useState('All');
 
-  useEffect(() => {
-    if (!selectedImage) setZoomLevel(1);
-  }, [selectedImage]);
-  const staticGalleryImages = [
-    { imageUrl: twelfth1Img, caption: "our Mathematics Departments Performers of XII", category: 'Achievement' },
-    { imageUrl: twelfth2Img, caption: "our Mathematics Departments Performers of XII", category: 'Achievement' },
-    { imageUrl: mentorsImg, caption: "mentors Behind the Students. Who always keep helping not only academically, but morally as well and motivating Students.", category: 'Leadership' },
-    { imageUrl: parentsMmpsImg, caption: "School Congratulated the Student's Parents", category: 'Achievement' },
-    { imageUrl: parent2Img, caption: "School Congratulated the Student's Parents", category: 'Achievement' },
-    { imageUrl: ourTeachersImg, caption: "The MMPS Teachers celerating Achievements with Students", category: 'Event' },
-    { imageUrl: mlaImg, caption: "MLA Mr. Thakur Das Nagwanshi Sir have cogratulated and appreciated Students", category: 'Event' },
-    { imageUrl: felicitation1Img, caption: 'Hon. District Collector Mr. Somesh Mishra Sir Felicitated Our Students', category: 'Event' },
-    { imageUrl: felicitation2Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-    { imageUrl: felicitation3Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-    { imageUrl: performer1Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-    { imageUrl: performer2Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-    { imageUrl: performer3Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-    { imageUrl: performer4Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-    { imageUrl: top1Img, caption: 'School Topper', category: 'Achievement' },
-    { imageUrl: top3Img, caption: 'Outstanding Performers', category: 'Achievement' },
-    { imageUrl: sirAndMaamImg, caption: 'Leadership', category: 'Administration' }
-  ];
+  const handleOpenModal = (image) => {
+    setZoomLevel(1);
+    setSelectedImage(image);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedImage(null);
+    setZoomLevel(1);
+  };
 
   const [announcements, setAnnouncements] = useState([]);
   const [galleryImages, setGalleryImages] = useState(staticGalleryImages);
@@ -79,26 +87,36 @@ const Home = () => {
     fetchPublicData();
   }, []);
 
+  const displayedImages =
+    activeCategory === 'All'
+      ? galleryImages
+      : galleryImages.filter(
+          (img) => img.category?.toLowerCase() === activeCategory.toLowerCase()
+        );
+
   return (
-    <div className="w-full">
+    <div className="w-full bg-white">
       <AdmissionPopup
         isOpen={showAdmissionPopup}
         onClose={() => setShowAdmissionPopup(false)}
       />
+
       {/* Lightbox Modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
-          onClick={() => setSelectedImage(null)}
+          className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+          onClick={handleCloseModal}
         >
           <button
-            className="absolute top-8 right-8 text-white hover:text-yellow-400 transition-colors bg-white/10 p-2 rounded-full"
-            onClick={() => setSelectedImage(null)}
+            className="absolute top-6 right-6 text-slate-300 hover:text-white bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition-colors border border-white/10"
+            onClick={handleCloseModal}
+            aria-label="Close Preview"
           >
-            <X size={32} />
+            <X size={24} />
           </button>
+
           <div
-            className="max-w-5xl w-full flex flex-col items-center gap-4"
+            className="max-w-5xl w-full flex flex-col items-center gap-5"
             onClick={(e) => e.stopPropagation()}
           >
             <div
@@ -106,29 +124,43 @@ const Home = () => {
               onWheel={(e) => {
                 if (e.ctrlKey || e.metaKey) {
                   e.preventDefault();
-                  setZoomLevel(prev => Math.min(Math.max(0.5, prev - e.deltaY * 0.005), 4));
+                  setZoomLevel((prev) => Math.min(Math.max(0.5, prev - e.deltaY * 0.005), 4));
                 }
               }}
             >
               <img
                 src={selectedImage.src}
                 alt={selectedImage.title}
-                className="w-auto h-auto object-contain rounded-2xl shadow-2xl border-4 border-white/10 transition-transform duration-200 origin-center"
+                className="w-auto h-auto max-h-[68vh] object-contain rounded-2xl shadow-2xl border border-white/20 transition-transform duration-200 origin-center"
                 style={{ transform: `scale(${zoomLevel})` }}
               />
             </div>
 
-            <div className="flex items-center gap-4 bg-white/10 backdrop-blur-md px-6 py-2 rounded-full">
-              <button onClick={() => setZoomLevel(prev => Math.max(0.5, prev - 0.25))} className="text-white hover:text-yellow-400 p-2"><ZoomOut size={20} /></button>
-              <span className="text-white font-bold w-12 text-center text-sm">{Math.round(zoomLevel * 100)}%</span>
-              <button onClick={() => setZoomLevel(prev => Math.min(4, prev + 0.25))} className="text-white hover:text-yellow-400 p-2"><ZoomIn size={20} /></button>
+            <div className="flex items-center gap-4 bg-white/10 backdrop-blur-xl px-6 py-2 rounded-full border border-white/10">
+              <button
+                onClick={() => setZoomLevel((prev) => Math.max(0.5, prev - 0.25))}
+                className="text-slate-300 hover:text-amber-400 p-1.5 transition-colors"
+                title="Zoom Out"
+              >
+                <ZoomOut size={18} />
+              </button>
+              <span className="text-white font-bold w-12 text-center text-xs tracking-wider">
+                {Math.round(zoomLevel * 100)}%
+              </span>
+              <button
+                onClick={() => setZoomLevel((prev) => Math.min(4, prev + 0.25))}
+                className="text-slate-300 hover:text-amber-400 p-1.5 transition-colors"
+                title="Zoom In"
+              >
+                <ZoomIn size={18} />
+              </button>
             </div>
 
-            <div className="text-center">
-              <span className="text-yellow-400 text-sm font-bold uppercase tracking-widest block mb-2">
+            <div className="text-center px-4">
+              <span className="text-amber-400 text-xs font-bold uppercase tracking-widest block mb-1">
                 {selectedImage.category}
               </span>
-              <h3 className="text-white text-3xl font-bold">
+              <h3 className="text-white text-xl sm:text-2xl font-bold tracking-tight">
                 {selectedImage.title}
               </h3>
             </div>
@@ -137,219 +169,326 @@ const Home = () => {
       )}
 
       {/* Hero Section */}
-      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0 bg-blue-950">
+      <section className="relative min-h-[85vh] lg:min-h-[88vh] flex items-center justify-center overflow-hidden bg-slate-950">
+        {/* Background Ambient Glows */}
+        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="absolute top-1/3 -right-20 w-96 h-96 bg-amber-500/15 rounded-full blur-[120px] pointer-events-none"></div>
+
+        {/* Video Container with Dark Gradient Mask */}
+        <div className="absolute inset-0 z-0">
           <video
             src={heroVideo}
             autoPlay
             loop
             muted={isMuted}
             playsInline
-            className="w-full h-full object-cover select-none opacity-[0.90] mix-blend-overlay"
+            className="w-full h-full object-cover select-none opacity-45 mix-blend-luminosity scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent to-transparent z-10"></div>
-
-          {/* Audio Toggle Button */}
-          <button
-            onClick={() => setIsMuted(!isMuted)}
-            className="absolute top-8 right-8 z-30 bg-white/10 hover:bg-white/20 backdrop-blur-md p-3 rounded-full border border-white/20 transition-all group shadow-lg"
-            title={isMuted ? "Unmute Background" : "Mute Background"}
-          >
-            {isMuted ? (
-              <VolumeX className="text-white group-hover:text-yellow-400 transition-colors" size={24} />
-            ) : (
-              <Volume2 className="text-white group-hover:text-yellow-400 transition-colors" size={24} />
-            )}
-          </button>
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-blue-950/65 to-slate-950"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-slate-950/30 to-slate-950/90"></div>
         </div>
 
-        <div className="relative z-20 text-center px-4 max-w-5xl mx-auto mt-16 animate-fade-in-up">
-          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tight drop-shadow-2xl">
-            Empowering Minds,<br/>
-            <span className="text-yellow-400">Shaping the Future</span>
+        {/* Audio Toggle Button */}
+        <button
+          onClick={() => setIsMuted(!isMuted)}
+          className="absolute top-8 right-8 z-30 bg-slate-900/60 hover:bg-slate-900/90 backdrop-blur-xl p-3 rounded-full border border-white/15 transition-all duration-300 group shadow-xl hover:scale-105"
+          title={isMuted ? "Unmute Background Sound" : "Mute Background Sound"}
+          aria-label="Toggle Hero Sound"
+        >
+          {isMuted ? (
+            <VolumeX className="text-slate-300 group-hover:text-amber-400 transition-colors" size={20} />
+          ) : (
+            <Volume2 className="text-amber-400 transition-colors animate-pulse" size={20} />
+          )}
+        </button>
+
+        {/* Hero Content */}
+        <div className="relative z-20 text-center px-4 max-w-5xl mx-auto py-24 sm:py-28 animate-fade-in">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/15 text-amber-300 text-xs font-bold tracking-wider uppercase mb-8 shadow-inner">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span>Admissions Open 2026-27 &bull; MPBSE Affiliated</span>
+          </div>
+
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white mb-6 tracking-tight leading-[1.1] drop-shadow-xl">
+            Empowering Young Minds,<br />
+            <span className="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 bg-clip-text text-transparent">
+              Shaping the Future
+            </span>
           </h1>
-          <p className="text-xl md:text-2xl text-blue-50 mb-10 max-w-3xl mx-auto font-light drop-shadow-lg">
-            Welcome to Master Mind Public School, Pipariya. Link learning to life. A place where tradition meets innovation in education.
+
+          <p className="text-base sm:text-lg md:text-xl text-slate-300 mb-10 max-w-3xl mx-auto font-normal leading-relaxed">
+            Welcome to <span className="text-white font-semibold">Master Mind Public School, Pipariya</span>. Link learning to life through academic distinction, personal character, and modern holistic education.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdcsCPrfDn5Xafwkq_xi5JiZygyOk_v3dvTOIsBjYzSEZGMrw/viewform" target="_blank" rel="noopener noreferrer" className="bg-yellow-500 hover:bg-yellow-400 text-blue-900 font-bold px-8 py-4 rounded-full transition-transform transform hover:scale-105 shadow-xl flex items-center justify-center gap-2">
-              Enroll Now <ArrowRight size={20} />
+
+          {/* Action CTAs */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSdcsCPrfDn5Xafwkq_xi5JiZygyOk_v3dvTOIsBjYzSEZGMrw/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-extrabold px-8 py-4 rounded-full transition-all duration-300 transform hover:-translate-y-0.5 shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 flex items-center justify-center gap-2 text-xs uppercase tracking-wider"
+            >
+              <span>Enroll Now</span>
+              <ArrowRight size={16} />
             </a>
-            <Link to="/about" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 font-bold px-8 py-4 rounded-full transition-colors shadow-lg">
-              Discover More
+            <Link
+              to="/about"
+              className="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/20 text-white font-bold px-8 py-4 rounded-full transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg flex items-center justify-center gap-2 text-xs uppercase tracking-wider"
+            >
+              <span>Explore Campus</span>
             </Link>
           </div>
         </div>
       </section>
 
+      {/* Quick Overview Floating Bento Bar */}
+      <section className="-mt-12 sm:-mt-16 relative z-30 px-4 max-w-6xl mx-auto mb-20">
+        <div className="bg-white/95 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(15,23,42,0.08)] border border-slate-100">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
+            <div className="flex items-center gap-4 pt-4 lg:pt-0 lg:px-4">
+              <div className="w-13 h-13 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-700 shrink-0 shadow-sm">
+                <Users size={26} />
+              </div>
+              <div>
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">5000+</h3>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium">Students Enrolled</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 pt-4 lg:pt-0 lg:px-4">
+              <div className="w-13 h-13 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shrink-0 shadow-sm">
+                <BookOpen size={26} />
+              </div>
+              <div>
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">50+</h3>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium">Expert Educators</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 pt-4 lg:pt-0 lg:px-4">
+              <div className="w-13 h-13 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 shadow-sm">
+                <Trophy size={26} />
+              </div>
+              <div>
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">100%</h3>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium">Board Pass Rate</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 pt-4 lg:pt-0 lg:px-4">
+              <div className="w-13 h-13 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0 shadow-sm">
+                <Target size={26} />
+              </div>
+              <div>
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">20+</h3>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium">Years of Legacy</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Featured Banner Section */}
-      <section className="px-4 -mt-10 mb-16 relative z-30">
+      <section className="px-4 mb-20 relative z-20">
         <div className="max-w-7xl mx-auto">
           <div
-            className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white relative cursor-pointer group transition-transform hover:scale-[1.01] duration-300"
-            onClick={() => setSelectedImage({ src: bannerImg, title: "MMPS Featured Banner", category: "Featured" })}
+            className="rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 bg-slate-900 relative cursor-pointer group transition-all duration-300 hover:shadow-3xl"
+            onClick={() => handleOpenModal({ src: bannerImg, title: "MMPS Featured Banner", category: "Featured" })}
           >
-            <img src={bannerImg} alt="MMPS Banner" className="w-full h-auto object-cover group-hover:opacity-90 transition-opacity" />
-            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full text-sm text-white font-bold opacity-0 group-hover:opacity-100 transition-all pointer-events-none flex items-center gap-2 shadow-lg">
-               <ZoomIn size={16} /> Click to Zoom
+            <img
+              src={bannerImg}
+              alt="MMPS Banner"
+              className="w-full h-auto object-cover group-hover:scale-[1.01] transition-transform duration-500"
+            />
+            <div className="absolute top-4 right-4 bg-slate-950/70 backdrop-blur-md px-4 py-2 rounded-full text-xs text-white font-bold opacity-0 group-hover:opacity-100 transition-all pointer-events-none flex items-center gap-2 border border-white/10 shadow-lg">
+              <ZoomIn size={14} className="text-amber-400" /> Click to Expand
+            </div>
+            <div className="absolute bottom-4 left-4 bg-slate-950/70 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-bold text-amber-300 border border-white/10 uppercase tracking-wider">
+              Campus Spotlight
             </div>
           </div>
         </div>
       </section>
 
-      {/* Quick Overview Stats */}
-      <section className="py-16 bg-white relative mx-4 md:mx-auto max-w-7xl rounded-2xl shadow-xl z-20 mb-20">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 px-8">
-          <div className="flex flex-col items-center text-center">
-            <div className="bg-blue-100 p-4 rounded-full mb-4 text-blue-700">
-              <Users size={32} />
-            </div>
-            <h3 className="text-3xl font-black text-blue-900">5000+</h3>
-            <p className="text-gray-600 font-medium mt-1">Students</p>
-          </div>
-          <div className="flex flex-col items-center text-center">
-            <div className="bg-yellow-100 p-4 rounded-full mb-4 text-yellow-600">
-              <BookOpen size={32} />
-            </div>
-            <h3 className="text-3xl font-black text-blue-900">50+</h3>
-            <p className="text-gray-600 font-medium mt-1">Expert Faculty</p>
-          </div>
-          <div className="flex flex-col items-center text-center">
-            <div className="bg-green-100 p-4 rounded-full mb-4 text-green-600">
-              <Trophy size={32} />
-            </div>
-            <h3 className="text-3xl font-black text-blue-900">100%</h3>
-            <p className="text-gray-600 font-medium mt-1">Pass Rate</p>
-          </div>
-          <div className="flex flex-col items-center text-center">
-            <div className="bg-purple-100 p-4 rounded-full mb-4 text-purple-600">
-              <Target size={32} />
-            </div>
-            <h3 className="text-3xl font-black text-blue-900">20+</h3>
-            <p className="text-gray-600 font-medium mt-1">Years Legacy</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Principal's Message & News */}
-      <section className="py-20 bg-gray-50">
+      {/* Leadership & Notice Board Section */}
+      <section className="py-16 bg-slate-50/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 
             {/* Leadership Messages */}
-            <div className="lg:col-span-2 bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 transform hover:-translate-y-1 transition-transform duration-300 flex flex-col gap-12">
+            <div className="lg:col-span-2 space-y-8">
+              <div className="mb-2">
+                <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-amber-600 block mb-1">
+                  Guiding Philosophy
+                </span>
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                  Words from Our Leadership
+                </h2>
+              </div>
 
-              {/* Director's Message */}
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-                <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full shrink-0 flex items-center justify-center overflow-hidden border-4 border-yellow-200 shadow-inner">
-                  <img src={directorSirImg} alt="Director Mr. Lochan Sagar Prajapati" className="w-full h-full object-cover" />
-                </div>
-                <div className="text-center md:text-left">
-                  <h2 className="text-2xl md:text-3xl font-extrabold text-blue-950 mb-1">Director's Vision</h2>
-                  <h4 className="text-md md:text-lg text-yellow-600 font-bold mb-4 tracking-wide">Mr. Lochan Sagar Prajapati</h4>
-                  <p className="text-gray-600 leading-relaxed italic text-base md:text-lg relative">
-                    <span className="text-5xl text-blue-200 absolute -top-4 -left-6 font-serif hidden md:block">"</span>
-                    Welcome to MMPS. Our primary goal is to empower students with knowledge, strong character, and the skills necessary to thrive in an ever-changing world. We are fiercely committed to fostering an innovative educational environment that encourages critical thinking, community service, and a lifelong passion for excellence.
-                    <span className="text-5xl text-blue-200 absolute -bottom-8 -right-4 font-serif hidden md:block">"</span>
-                  </p>
+              {/* Director's Vision Card */}
+              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/70 hover:shadow-md transition-shadow">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                  <div className="relative shrink-0">
+                    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden ring-4 ring-amber-400/20 shadow-md bg-slate-100">
+                      <img src={directorSirImg} alt="Director Mr. Lochan Sagar Prajapati" className="w-full h-full object-cover" />
+                    </div>
+                    <span className="absolute -bottom-2 -right-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full shadow-sm">
+                      Director
+                    </span>
+                  </div>
+                  <div className="text-center sm:text-left flex-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
+                      <h3 className="text-xl font-extrabold text-slate-900">Mr. Lochan Sagar Prajapati</h3>
+                      <span className="text-xs text-amber-600 font-bold uppercase tracking-wider">Director's Vision</span>
+                    </div>
+                    <p className="text-slate-600 leading-relaxed text-sm sm:text-base italic">
+                      "Our primary goal is to empower students with knowledge, strong character, and the skills necessary to thrive in an ever-changing world. We are fiercely committed to fostering an innovative educational environment that encourages critical thinking, community service, and a lifelong passion for excellence."
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* Divider */}
-              <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
-
-              {/* Principal's Message */}
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-                <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full shrink-0 flex items-center justify-center overflow-hidden border-4 border-yellow-200 shadow-inner">
-                  <img src={principalImg} alt="Principal Mrs. Anita Prajapati" className="w-full h-full object-cover" />
-                </div>
-                <div className="text-center md:text-left">
-                  <h2 className="text-2xl md:text-3xl font-extrabold text-blue-950 mb-1">Principal's Desk</h2>
-                  <h4 className="text-md md:text-lg text-yellow-600 font-bold mb-4 tracking-wide">Mrs. Anita Prajapati</h4>
-                  <p className="text-gray-600 leading-relaxed italic text-base md:text-lg mb-6 relative">
-                    <span className="text-5xl text-blue-200 absolute -top-4 -left-6 font-serif hidden md:block">"</span>
-                    Education is not merely about accumulating facts, but preparing for life itself. At MMPS, we strive to ignite curiosity and a desire to excel in every child. Our holistic approach ensures that each student grows academically, morally, socially, and emotionally to become responsible global citizens.
-                    <span className="text-5xl text-blue-200 absolute -bottom-8 -right-4 font-serif hidden md:block">"</span>
-                  </p>
-                  <Link to="/about" className="inline-flex text-blue-600 font-bold hover:text-blue-800 items-center gap-2 group">
-                    Discover More <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform" />
-                  </Link>
+              {/* Principal's Desk Card */}
+              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/70 hover:shadow-md transition-shadow">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                  <div className="relative shrink-0">
+                    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden ring-4 ring-amber-400/20 shadow-md bg-slate-100">
+                      <img src={principalImg} alt="Principal Mrs. Anita Prajapati" className="w-full h-full object-cover" />
+                    </div>
+                    <span className="absolute -bottom-2 -right-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full shadow-sm">
+                      Principal
+                    </span>
+                  </div>
+                  <div className="text-center sm:text-left flex-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
+                      <h3 className="text-xl font-extrabold text-slate-900">Mrs. Anita Prajapati</h3>
+                      <span className="text-xs text-amber-600 font-bold uppercase tracking-wider">Principal's Desk</span>
+                    </div>
+                    <p className="text-slate-600 leading-relaxed text-sm sm:text-base italic mb-4">
+                      "Education is not merely about accumulating facts, but preparing for life itself. At MMPS, we strive to ignite curiosity and a desire to excel in every child. Our holistic approach ensures that each student grows academically, morally, socially, and emotionally."
+                    </p>
+                    <Link to="/about" className="inline-flex text-blue-700 hover:text-blue-900 font-bold text-sm items-center gap-1.5 group">
+                      <span>Read More About Our Mission</span>
+                      <ArrowRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
                 </div>
               </div>
-
             </div>
 
-            {/* Latest Announcements */}
-            <div id="announcements" className="bg-gradient-to-br from-blue-950 to-blue-900 text-white rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-10 -mt-10"></div>
-              <h2 className="text-2xl font-bold flex items-center gap-3 mb-8 border-b border-blue-800/50 pb-4 relative z-10">
-                <span className="bg-yellow-400 rounded-full w-3 h-3 animate-ping absolute"></span>
-                <span className="bg-yellow-500 rounded-full w-3 h-3 relative z-10"></span>
-                Announcements
-              </h2>
-              <div className="space-y-6 relative z-10">
-                {announcements.length === 0 ? (
-                  <p className="text-blue-100/70 text-sm">No new announcements at this time.</p>
-                ) : (
-                  announcements.slice(0, 3).map((ann) => (
-                    <div key={ann._id} className="group cursor-pointer bg-blue-800/30 p-4 rounded-xl hover:bg-blue-800/50 transition-colors border border-blue-700/30 hover:border-blue-600 duration-300">
-                      <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider mb-1 block">
-                        {new Date(ann.date).toLocaleDateString()}
-                      </span>
-                      <h4 className="font-semibold text-lg text-white group-hover:text-yellow-300 transition-colors">{ann.title}</h4>
-                      <p className="text-blue-100/70 text-sm mt-2 line-clamp-2">{ann.content}</p>
+            {/* Live Announcements / Notice Board */}
+            <div id="announcements" className="bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-white/10 flex flex-col justify-between relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-blue-600/10 rounded-full blur-2xl pointer-events-none"></div>
+
+              <div>
+                <div className="flex items-center justify-between pb-5 border-b border-white/10 mb-6">
+                  <div className="flex items-center gap-2.5">
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                    </span>
+                    <h3 className="text-xl font-extrabold text-white tracking-tight">Notice Board</h3>
+                  </div>
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-amber-400 bg-white/10 px-2.5 py-1 rounded-full border border-white/10">
+                    Live
+                  </span>
+                </div>
+
+                <div className="space-y-3.5">
+                  {announcements.length === 0 ? (
+                    <div className="text-center py-10 text-slate-400 text-sm">
+                      <p>No active public notices currently posted.</p>
                     </div>
-                  ))
-                )}
+                  ) : (
+                    announcements.slice(0, 4).map((ann) => (
+                      <div
+                        key={ann._id}
+                        className="p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all duration-200 group cursor-pointer"
+                      >
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
+                            {new Date(ann.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
+                        </div>
+                        <h4 className="font-bold text-sm text-white group-hover:text-amber-300 transition-colors line-clamp-1">
+                          {ann.title}
+                        </h4>
+                        <p className="text-xs text-slate-300/80 mt-1 line-clamp-2 leading-relaxed">
+                          {ann.content}
+                        </p>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
-              <button className="w-full mt-8 bg-blue-800/50 hover:bg-blue-700 py-3.5 rounded-xl text-sm font-bold tracking-widest uppercase transition-colors shadow-lg relative z-10">
-                View All Notices
-              </button>
+
+              <div className="pt-6 mt-6 border-t border-white/10">
+                <Link
+                  to="/contact"
+                  className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-4 rounded-2xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 border border-white/10 shadow-sm"
+                >
+                  <span>Need Assistance? Contact Office</span>
+                  <ArrowRight size={14} />
+                </Link>
+              </div>
             </div>
 
           </div>
         </div>
       </section>
 
-      {/* Gallery Section */}
-      <section className="py-24 bg-white overflow-hidden">
+      {/* Campus Gallery Section */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-16 gap-6 text-center md:text-left">
-            <div className="max-w-xl">
-              <h2 className="text-yellow-500 font-bold uppercase tracking-[0.2em] text-sm mb-3 flex items-center justify-center md:justify-start gap-2">
-                <ImageIcon size={18} /> Glimpses of MMPS
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+            <div>
+              <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-amber-600 flex items-center gap-2 mb-2">
+                <ImageIcon size={16} /> Campus Glimpses
+              </span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+                Life & Achievements at MMPS
               </h2>
-              <h1 className="text-4xl md:text-5xl font-black text-blue-950 tracking-tight leading-tight">
-                Our Campus Gallery
-              </h1>
             </div>
-            <p className="text-gray-500 text-lg font-medium max-w-md">
-              A visual journey through the events, achievements, and everyday excellence at Master Mind Public School.
-            </p>
+
+            {/* Category Filter Pills */}
+            <div className="flex flex-wrap gap-2">
+              {['All', 'Achievement', 'Event', 'Leadership'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
+                    activeCategory.toLowerCase() === cat.toLowerCase()
+                      ? 'bg-slate-950 text-amber-400 shadow-md'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {galleryImages.map((image, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {displayedImages.map((image, index) => (
               <div
                 key={index}
-                className="group relative rounded-3xl overflow-hidden aspect-[4/5] shadow-lg border-4 border-white transition-transform duration-500 hover:scale-[1.02] cursor-pointer bg-gray-100"
-                onClick={() => setSelectedImage({ src: image.imageUrl, title: image.caption, category: image.category })}
+                className="group relative rounded-3xl overflow-hidden aspect-[4/5] shadow-md border border-slate-100 bg-slate-900 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+                onClick={() => handleOpenModal({ src: image.imageUrl, title: image.caption, category: image.category })}
               >
                 <img
                   src={image.imageUrl}
                   alt={image.caption}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-950/90 via-blue-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
-                  <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-1 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                  <span className="text-amber-400 text-xs font-extrabold uppercase tracking-widest mb-1.5">
                     {image.category}
                   </span>
-                  <h3 className="text-white text-2xl font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
+                  <h3 className="text-white text-lg font-bold line-clamp-2 leading-snug">
                     {image.caption}
                   </h3>
                 </div>
-                <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white font-bold opacity-0 group-hover:opacity-100 transition-all">
-                  VIEW FULL
+                <div className="absolute top-4 right-4 bg-slate-950/60 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white font-bold opacity-0 group-hover:opacity-100 transition-all border border-white/10 flex items-center gap-1">
+                  <ZoomIn size={12} className="text-amber-400" /> ZOOM
                 </div>
               </div>
             ))}

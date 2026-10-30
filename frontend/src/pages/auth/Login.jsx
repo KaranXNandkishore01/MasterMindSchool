@@ -31,8 +31,6 @@ const Login = () => {
 
   useEffect(() => {
     if (isError) {
-      // Clear password field on error for security and better UX
-      setFormData(prev => ({ ...prev, password: '' }));
       console.error(message);
     }
 
@@ -54,7 +52,7 @@ const Login = () => {
     }));
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     
     // Trim inputs to handle accidental spaces
@@ -73,7 +71,10 @@ const Login = () => {
     }
 
     const userData = { managementId: trimmedId, password: trimmedPassword };
-    dispatch(login(userData));
+    const result = await dispatch(login(userData));
+    if (login.rejected.match(result)) {
+      setFormData((prev) => ({ ...prev, password: '' }));
+    }
   };
 
   return (

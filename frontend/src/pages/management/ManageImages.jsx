@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const ManageImages = () => {
@@ -6,14 +6,17 @@ const ManageImages = () => {
   const [caption, setCaption] = useState('');
   const [file, setFile] = useState(null);
 
-  useEffect(() => {
-    fetchImages();
-  }, []);
-
-  const fetchImages = async () => {
+  const fetchImages = useCallback(async () => {
     const res = await axios.get('/api/management/images', { withCredentials: true });
     setImages(res.data);
-  };
+  }, []);
+
+  useEffect(() => {
+    const load = async () => {
+      await fetchImages();
+    };
+    load();
+  }, [fetchImages]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,7 +49,7 @@ const ManageImages = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-indigo-900 font-serif">Campus Gallery Management</h1>
+      <h1 className="text-3xl font-extrabold mb-6 text-indigo-900 tracking-tight">Campus Gallery Management</h1>
       
       <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 mb-10">
         <h2 className="text-xl font-bold mb-4 text-gray-800">Add New Image</h2>
