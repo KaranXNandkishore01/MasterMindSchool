@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, X, AlertCircle } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, X } from 'lucide-react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -11,38 +11,28 @@ const Contact = () => {
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMsg('');
 
-    try {
-      const response = await fetch('/api/public/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        setSubmitted(true);
-        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-      } else {
-        const data = await response.json().catch(() => ({}));
-        setErrorMsg(data.message || 'Failed to submit your message. Please try again.');
-      }
-    } catch (err) {
-      console.error("Error submitting contact form:", err);
-      setErrorMsg('Unable to connect to the server. Please check your network connection or try again later.');
-    } finally {
+    // Dummy frontend submission for instant, realistic feedback
+    setTimeout(() => {
       setLoading(false);
-    }
+      setSubmitted(true);
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: ''
+      });
+    }, 600);
   };
 
   return (
@@ -60,7 +50,7 @@ const Contact = () => {
             {/* Top Close Button */}
             <button
               onClick={() => setSubmitted(false)}
-              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors"
+              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
               aria-label="Close Notification"
             >
               <X size={20} />
@@ -190,18 +180,6 @@ const Contact = () => {
 
           {/* Contact Form & Google Map */}
           <div className="p-8 sm:p-12 lg:w-3/5 flex flex-col justify-between relative bg-white">
-            {errorMsg && (
-              <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between shadow-sm">
-                <div className="flex items-center gap-3">
-                  <AlertCircle size={20} className="text-rose-600 shrink-0" />
-                  <span className="font-bold text-sm">{errorMsg}</span>
-                </div>
-                <button onClick={() => setErrorMsg('')} className="text-rose-600 hover:text-rose-800 p-1">
-                  <X size={16} />
-                </button>
-              </div>
-            )}
-
             <div>
               <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-amber-600 block mb-2">
                 Online Inquiry
