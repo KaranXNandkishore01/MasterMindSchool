@@ -4,11 +4,14 @@ const bcrypt = require('bcrypt');
 const userSchema = new mongoose.Schema({
   managementId: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  name: { type: String, default: '' },
   role: { 
     type: String, 
-    enum: ['Management'], 
+    enum: ['Management', 'Admin', 'Teacher', 'Accountant', 'Parent'], 
     default: 'Management'
   },
+  assignedClass: { type: String, default: 'Class 10' },
+  assignedSection: { type: String, default: 'A' },
   lastLogin: { type: Date }
 }, { timestamps: true });
 

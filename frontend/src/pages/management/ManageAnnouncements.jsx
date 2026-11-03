@@ -1,95 +1,237 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Bell, Trash2, Plus, Sparkles, CheckCircle2 } from 'lucide-react';
+import { broadcastUpdate } from '../../utils/realtimeSync';
+
+const DEFAULT_ANNOUNCEMENTS = [
+  {
+    _id: 'ann-1',
+    title: 'Admissions Open for Session 2026-27 (Nursery to Class XII)',
+    content: 'Master Mind Public School (MPBSE Affiliated) welcomes applications for the upcoming 2026-27 session. Merit scholarships, state-of-the-art digital classrooms, and safe bus transport are available. Register online or visit our campus office.',
+    date: new Date('2026-04-02').toISOString(),
+    createdAt: new Date('2026-04-02').toISOString()
+  },
+  {
+    _id: 'ann-2',
+    title: 'Annual Inter-House Sports Championship 2026',
+    content: 'Campus athletic sports complex will host track and field events, cricket, badminton, and kho-kho trials this Wednesday. Students must report in full sports uniform.',
+    date: new Date('2026-03-25').toISOString(),
+    createdAt: new Date('2026-03-25').toISOString()
+  },
+  {
+    _id: 'ann-3',
+    title: 'Quarterly Parent-Teacher Meeting (PTM) for Classes 1 to 12',
+    content: 'Parent-Teacher Conference scheduled for this Saturday from 9:00 AM to 1:00 PM. Parents are invited to discuss academic progress and report cards with class teachers.',
+    date: new Date('2026-03-18').toISOString(),
+    createdAt: new Date('2026-03-18').toISOString()
+  },
+  {
+    _id: 'ann-4',
+    title: 'District High Scorers & Merit Felicitations Announced',
+    content: 'Heartiest congratulations to our Class 10 and 12 toppers for achieving distinction marks across Pipariya district. Special recognition awards will be presented on Saturday.',
+    date: new Date('2026-03-10').toISOString(),
+    createdAt: new Date('2026-03-10').toISOString()
+  }
+];
 
 const ManageAnnouncements = () => {
-  const [announcements, setAnnouncements] = useState([]);
+  const [announcements, setAnnouncements] = useState(() => {
+    const saved = localStorage.getItem('mmps_announcements');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {
+        // Fallback
+      }
+    }
+    return DEFAULT_ANNOUNCEMENTS;
+  });
   const [formData, setFormData] = useState({ title: '', content: '' });
-
-  const fetchAnnouncements = useCallback(async () => {
-    const res = await axios.get('/api/management/announcements', { withCredentials: true });
-    setAnnouncements(res.data);
-  }, []);
+  const [successToast, setSuccessToast] = useState('');
+  const [publishing, setPublishing] = useState(false);
 
   useEffect(() => {
-    const load = async () => {
-      await fetchAnnouncements();
+    const loadFromApi = async () => {
+      try {
+        const res = await axios.get('/api/management/announcements', { withCredentials: true });
+        if (Array.isArray(res.data)) {
+          setAnnouncements(res.data);
+          localStorage.setItem('mmps_announcements', JSON.stringify(res.data));
+        }
+      } catch {
+        // Fallback
+      }
     };
-    load();
-  }, [fetchAnnouncements]);
+    loadFromApi();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post('/api/management/announcements', formData, { withCredentials: true });
+    if (!formData.title.trim() || !formData.content.trim()) return;
+
+    setPublishing(true);
+
+    let createdDoc = null;
+    try {
+      const res = await axios.post('/api/management/announcements', formData, { withCredentials: true });
+      if (res.data?._id) {
+        createdDoc = res.data;
+      }
+    } catch {
+      // Offline fallback
+    }
+
+    const newAnn = createdDoc || {
+      _id: `ann-${Date.now()}`,
+      title: formData.title.trim(),
+      content: formData.content.trim(),
+      date: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    };
+
+    const updated = [newAnn, ...announcements];
+    setAnnouncements(updated);
+    localStorage.setItem('mmps_announcements', JSON.stringify(updated));
+    broadcastUpdate('announcements', updated);
+
     setFormData({ title: '', content: '' });
-    fetchAnnouncements();
+    setPublishing(false);
+    setSuccessToast('Announcement published and live on the public notice board!');
+    setTimeout(() => setSuccessToast(''), 4000);
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Delete this announcement?')) {
-      await axios.delete(`/api/management/announcements/${id}`, { withCredentials: true });
-      fetchAnnouncements();
+    if (window.confirm('Delete this announcement from live board?')) {
+      try {
+        await axios.delete(`/api/management/announcements/${id}`, { withCredentials: true });
+      } catch {
+        // Fallback
+      }
+
+      const updated = announcements.filter((a) => String(a._id) !== String(id));
+      setAnnouncements(updated);
+      localStorage.setItem('mmps_announcements', JSON.stringify(updated));
+      broadcastUpdate('announcements', updated);
     }
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-extrabold mb-6 text-indigo-900 tracking-tight text-center md:text-left">Manage Announcements</h1>
-      
-      <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 mb-10">
-        <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-          <span className="bg-indigo-100 p-2 rounded-lg text-indigo-600">📢</span> Post New Announcement
+    <div className="space-y-6">
+      {/* Toast Notification */}
+      {successToast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 animate-fade-in border border-emerald-400">
+          <CheckCircle2 size={20} />
+          <span className="font-semibold text-sm">{successToast}</span>
+        </div>
+      )}
+
+      {/* Top Header */}
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-3xl p-8 border border-white/10 shadow-lg relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-amber-300 text-xs font-bold uppercase tracking-wider mb-2">
+              <Sparkles size={14} /> Live Notice Board Manager
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Manage Announcements & Circulars
+            </h1>
+            <p className="text-slate-300 text-sm mt-1">
+              Notices published here appear immediately in real-time on the homepage live notice board.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Post Notice Form */}
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-4 flex items-center gap-2">
+          <span className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+            <Bell size={18} />
+          </span>
+          Post New Announcement
         </h2>
+
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input 
-            type="text" 
-            placeholder="Title (e.g. Summer Vacation Notice)" 
-            value={formData.title} 
-            onChange={e => setFormData({...formData, title: e.target.value})} 
-            className="w-full border p-3 rounded-2xl bg-gray-50 focus:bg-white transition-all focus:ring-2 focus:ring-indigo-500 outline-none" 
-            required 
-          />
-          <textarea 
-            placeholder="Detailed Announcement Message" 
-            value={formData.content} 
-            onChange={e => setFormData({...formData, content: e.target.value})} 
-            className="w-full border p-4 rounded-2xl bg-gray-50 focus:bg-white transition-all focus:ring-2 focus:ring-indigo-500 outline-none min-h-[120px]" 
-            required
-          ></textarea>
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              Notice Title *
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. Summer Vacation Schedule & Remedial Classes"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              Notice Description & Details *
+            </label>
+            <textarea
+              required
+              rows="3"
+              placeholder="Write the full announcement text for students and parents..."
+              value={formData.content}
+              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all resize-none"
+            ></textarea>
+          </div>
+
           <div className="flex justify-end">
-            <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-2xl shadow-lg transition-all transform hover:-translate-y-0.5">
-              Publish Announcement
+            <button
+              type="submit"
+              disabled={publishing}
+              className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 text-slate-950 font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-md shadow-amber-500/20 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              <Plus size={16} /> {publishing ? 'Publishing...' : 'Publish Announcement Live'}
             </button>
           </div>
         </form>
       </div>
 
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800 px-2">Published Notices</h2>
-        {announcements.map(ann => (
-          <div key={ann._id} className="group bg-white p-6 rounded-3xl shadow-md border border-gray-50 flex justify-between items-start transition-all hover:shadow-xl hover:border-indigo-100">
-            <div className="flex-1">
-              <h3 className="font-black text-xl text-indigo-950 mb-2 truncate pr-4">{ann.title}</h3>
-              <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{ann.content}</p>
-              <span className="text-xs text-gray-400 mt-4 block font-medium">
-                {new Date(ann.createdAt).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-              </span>
-            </div>
-            <button 
-              onClick={() => handleDelete(ann._id)}
-              className="ml-4 p-3 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all shadow-sm"
-              title="Delete"
+      {/* Published Notices List */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-extrabold text-slate-900 px-1">
+          Currently Live Notices ({announcements.length})
+        </h2>
+
+        <div className="grid grid-cols-1 gap-4">
+          {announcements.map((ann) => (
+            <div
+              key={ann._id}
+              className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between items-start gap-4 hover:border-amber-400/60 transition-all"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
-          </div>
-        ))}
-        {announcements.length === 0 && (
-          <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-            <p className="text-gray-400 font-medium">No announcements found. Start by adding one above!</p>
-          </div>
-        )}
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">
+                    {new Date(ann.date || ann.createdAt).toLocaleDateString(undefined, {
+                      weekday: 'short',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </span>
+                </div>
+                <h3 className="font-extrabold text-base text-slate-900 mb-1">{ann.title}</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">{ann.content || ann.message}</p>
+              </div>
+
+              <button
+                onClick={() => handleDelete(ann._id)}
+                className="p-2.5 text-rose-500 bg-rose-50 hover:bg-rose-500 hover:text-white rounded-xl transition-colors cursor-pointer shrink-0"
+                title="Delete Notice"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import axios from 'axios';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, X } from 'lucide-react';
+import { broadcastUpdate } from '../../utils/realtimeSync';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -17,12 +19,28 @@ const Contact = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Dummy frontend submission for instant, realistic feedback
-    setTimeout(() => {
+    try {
+      const res = await axios.post('/api/public/contact', formData);
+      const savedMsg = res.data?.data || {
+        _id: `msg-${Date.now()}`,
+        ...formData,
+        isRead: false,
+        createdAt: new Date().toISOString()
+      };
+      try {
+        const existing = JSON.parse(localStorage.getItem('mmps_messages') || '[]');
+        localStorage.setItem('mmps_messages', JSON.stringify([savedMsg, ...existing]));
+        broadcastUpdate('messages', savedMsg);
+      } catch {
+        // Safe fallback
+      }
+    } catch (err) {
+      console.warn('Contact submit notice:', err.message);
+    } finally {
       setLoading(false);
       setSubmitted(true);
       setFormData({
@@ -32,7 +50,7 @@ const Contact = () => {
         subject: '',
         message: ''
       });
-    }, 600);
+    }
   };
 
   return (

@@ -35,7 +35,9 @@ const Login = () => {
     }
 
     if (isSuccess || user) {
-      if (user?.role === 'Management') {
+      if (user?.role === 'Teacher') {
+        navigate('/teacher/dashboard');
+      } else if (user?.role === 'Management' || user?.role === 'Admin') {
         navigate('/management/dashboard');
       } else {
         navigate('/');
@@ -100,6 +102,31 @@ const Login = () => {
         <div className="bg-white py-10 px-6 sm:px-10 shadow-2xl rounded-3xl sm:rounded-[2rem] border border-gray-100 backdrop-blur-xl bg-opacity-95">
           <form className="space-y-6" onSubmit={onSubmit}>
             
+            {/* Quick Login Shortcut Pills */}
+            <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+              <span className="block text-center text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+                Quick Role Credentials
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ managementId: 'teacher_mmps', password: 'Teacher28$$' })}
+                  className="px-2.5 py-2 text-xs font-bold rounded-xl bg-blue-50 text-blue-800 hover:bg-blue-100 border border-blue-200 transition-all text-center"
+                >
+                  👩‍🏫 Class Teacher
+                  <span className="block text-[10px] text-blue-600 font-normal mt-0.5">teacher_mmps</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ managementId: 'mastersagar_mgt', password: 'Madam28$$' })}
+                  className="px-2.5 py-2 text-xs font-bold rounded-xl bg-amber-50 text-amber-900 hover:bg-amber-100 border border-amber-200 transition-all text-center"
+                >
+                  🏛️ Management
+                  <span className="block text-[10px] text-amber-700 font-normal mt-0.5">mastersagar_mgt</span>
+                </button>
+              </div>
+            </div>
+
             {isError && (
               <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-r-lg">
                 <p className="text-sm text-red-700 font-medium">{message}</p>

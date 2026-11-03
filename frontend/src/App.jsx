@@ -16,10 +16,14 @@ import Login from './pages/auth/Login';
 
 
 import ManagementDashboard from './pages/management/ManagementDashboard';
+import ManageStudents from './pages/management/ManageStudents';
+import ManageAttendance from './pages/management/ManageAttendance';
+import ManageFees from './pages/management/ManageFees';
 import ManageImages from './pages/management/ManageImages';
 import ManageAnnouncements from './pages/management/ManageAnnouncements';
 import ManageJobs from './pages/management/ManageJobs';
 import ParentMessages from './pages/management/ParentMessages';
+import TeacherDashboard from './pages/teacher/TeacherDashboard';
 
 function App() {
   return (
@@ -28,7 +32,6 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
 
-        
         {/* Public Routes */}
         <Route path="/" element={<PublicLayout />}>
           <Route index element={<Home />} />
@@ -41,10 +44,18 @@ function App() {
           <Route path="terms" element={<TermsAndConditions />} />
         </Route>
 
-        {/* Protected Management Routes */}
-        <Route element={<ProtectedRoute allowedRoles={['Management']} />}>
+        {/* Protected Teacher Workspace Route */}
+        <Route element={<ProtectedRoute allowedRoles={['Teacher', 'Management', 'Admin']} />}>
+          <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+        </Route>
+
+        {/* Protected ERP & Management Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['Management', 'Admin', 'Teacher', 'Accountant']} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/management/dashboard" element={<ManagementDashboard />} />
+            <Route path="/management/students" element={<ManageStudents />} />
+            <Route path="/management/attendance" element={<ManageAttendance />} />
+            <Route path="/management/fees" element={<ManageFees />} />
             <Route path="/management/images" element={<ManageImages />} />
             <Route path="/management/announcements" element={<ManageAnnouncements />} />
             <Route path="/management/jobs" element={<ManageJobs />} />

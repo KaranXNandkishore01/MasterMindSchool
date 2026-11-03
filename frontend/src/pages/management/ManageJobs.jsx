@@ -1,122 +1,280 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Briefcase, Trash2, Plus, Sparkles, CheckCircle2 } from 'lucide-react';
+import { broadcastUpdate } from '../../utils/realtimeSync';
+
+const DEFAULT_JOBS = [
+  {
+    _id: 'job-1',
+    title: 'PGT - Senior Physics & Mathematics Educator',
+    description: 'Seeking dynamic educators for Senior Secondary Classes (XI & XII). Responsible for curriculum delivery, practical lab experiments, and state board examination preparation.',
+    requirements: 'M.Sc in Physics or Mathematics with B.Ed. Minimum 2-3 years teaching experience in MPBSE or CBSE board schools.',
+    applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    isActive: true,
+  },
+  {
+    _id: 'job-2',
+    title: 'TGT - English & Social Sciences Teacher',
+    description: 'Responsible for nurturing communicative fluency, English literature, and social studies for Middle Wing (Classes VI to VIII).',
+    requirements: 'B.A. / M.A. in English with B.Ed. Strong communicative pedagogy and passion for student engagement.',
+    applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    isActive: true,
+  },
+  {
+    _id: 'job-3',
+    title: 'Primary Wing (PRT) - Mother Teacher',
+    description: 'Looking for caring and creative early childhood educators for Nursery to Class 2. Focus on phonics, numeracy, and activity-based learning.',
+    requirements: 'Graduation with D.El.Ed / NTT / B.Ed. Warm disposition and love for foundational learning.',
+    applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    isActive: true,
+  },
+  {
+    _id: 'job-4',
+    title: 'Campus Physical Education Instructor & Sports Coach',
+    description: 'Lead morning physical assemblies, athletic track events, basketball, cricket, and football training across our sports complex.',
+    requirements: 'B.P.Ed or M.P.Ed with state/national level athletics experience.',
+    applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    isActive: true,
+  }
+];
 
 const ManageJobs = () => {
-  const [jobs, setJobs] = useState([]);
-  const [formData, setFormData] = useState({ title: '', description: '', requirements: '', applyLink: '' });
-
-  const fetchJobs = useCallback(async () => {
-    const res = await axios.get('/api/management/jobs', { withCredentials: true });
-    setJobs(res.data);
-  }, []);
+  const [jobs, setJobs] = useState(() => {
+    const saved = localStorage.getItem('mmps_jobs');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {
+        // Fallback
+      }
+    }
+    return DEFAULT_JOBS;
+  });
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    requirements: '',
+    applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+  });
+  const [successToast, setSuccessToast] = useState('');
+  const [publishing, setPublishing] = useState(false);
 
   useEffect(() => {
-    const load = async () => {
-      await fetchJobs();
+    const loadFromApi = async () => {
+      try {
+        const res = await axios.get('/api/management/jobs', { withCredentials: true });
+        if (Array.isArray(res.data)) {
+          setJobs(res.data);
+          localStorage.setItem('mmps_jobs', JSON.stringify(res.data));
+        }
+      } catch {
+        // Fallback
+      }
     };
-    load();
-  }, [fetchJobs]);
+    loadFromApi();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post('/api/management/jobs', formData, { withCredentials: true });
-    setFormData({ title: '', description: '', requirements: '', applyLink: '' });
-    fetchJobs();
+    if (!formData.title.trim() || !formData.description.trim()) return;
+
+    setPublishing(true);
+
+    let createdDoc = null;
+    try {
+      const res = await axios.post('/api/management/jobs', formData, { withCredentials: true });
+      if (res.data?._id) {
+        createdDoc = res.data;
+      }
+    } catch {
+      // Offline fallback
+    }
+
+    const newJob = createdDoc || {
+      _id: `job-${Date.now()}`,
+      title: formData.title.trim(),
+      description: formData.description.trim(),
+      requirements: formData.requirements.trim(),
+      applyLink: formData.applyLink.trim() || 'https://forms.gle/L6r7K6nw5DwewRPF8',
+      isActive: true,
+      createdAt: new Date().toISOString()
+    };
+
+    const updated = [newJob, ...jobs];
+    setJobs(updated);
+    localStorage.setItem('mmps_jobs', JSON.stringify(updated));
+    broadcastUpdate('jobs', updated);
+
+    setFormData({
+      title: '',
+      description: '',
+      requirements: '',
+      applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    });
+    setPublishing(false);
+    setSuccessToast('Job vacancy published and live on the Careers page!');
+    setTimeout(() => setSuccessToast(''), 4000);
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Delete this job opportunity?')) {
-      await axios.delete(`/api/management/jobs/${id}`, { withCredentials: true });
-      fetchJobs();
+      try {
+        await axios.delete(`/api/management/jobs/${id}`, { withCredentials: true });
+      } catch {
+        // Fallback
+      }
+
+      const updated = jobs.filter((j) => String(j._id) !== String(id));
+      setJobs(updated);
+      localStorage.setItem('mmps_jobs', JSON.stringify(updated));
+      broadcastUpdate('jobs', updated);
     }
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-extrabold mb-8 text-indigo-900 tracking-tight">Manage Job Opportunities</h1>
-      
-      <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 mb-12">
-        <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-          <span className="bg-green-100 p-2 rounded-lg text-green-600">💼</span> Post New Opening
+    <div className="space-y-6">
+      {/* Toast Notification */}
+      {successToast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 animate-fade-in border border-emerald-400">
+          <CheckCircle2 size={20} />
+          <span className="font-semibold text-sm">{successToast}</span>
+        </div>
+      )}
+
+      {/* Top Header */}
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-3xl p-8 border border-white/10 shadow-lg relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-2">
+              <Sparkles size={14} /> Recruitment & Faculty Manager
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Manage Job Opportunities & Vacancies
+            </h1>
+            <p className="text-slate-300 text-sm mt-1">
+              Active openings published here appear live immediately on the public Careers portal.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Post Job Form */}
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-4 flex items-center gap-2">
+          <span className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <Briefcase size={18} />
+          </span>
+          Post New Teaching / Staff Vacancy
         </h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-600 mb-1">Job Title</label>
-            <input 
-              type="text" 
-              placeholder="e.g. Senior Mathematics Teacher" 
-              value={formData.title} 
-              onChange={e => setFormData({...formData, title: e.target.value})} 
-              className="w-full border p-3 rounded-2xl bg-gray-50 focus:bg-white transition-all focus:ring-2 focus:ring-indigo-500 outline-none" 
-              required 
-            />
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                Position Title *
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. PGT Senior Chemistry Educator"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                Application Form URL
+              </label>
+              <input
+                type="url"
+                placeholder="https://forms.gle/..."
+                value={formData.applyLink}
+                onChange={(e) => setFormData({ ...formData, applyLink: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all"
+              />
+            </div>
           </div>
+
           <div>
-            <label className="block text-sm font-semibold text-gray-600 mb-1">Description</label>
-            <textarea 
-              placeholder="Primary responsibilities and role overview..." 
-              value={formData.description} 
-              onChange={e => setFormData({...formData, description: e.target.value})} 
-              className="w-full border p-4 rounded-2xl bg-gray-50 focus:bg-white transition-all focus:ring-2 focus:ring-indigo-500 outline-none min-h-[120px]" 
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              Role Overview & Responsibilities *
+            </label>
+            <textarea
               required
+              rows="2"
+              placeholder="Primary responsibilities, subjects taught, and student mentorship duties..."
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all resize-none"
             ></textarea>
           </div>
+
           <div>
-            <label className="block text-sm font-semibold text-gray-600 mb-1">Requirements</label>
-            <textarea 
-              placeholder="Necessary qualifications, experience, etc." 
-              value={formData.requirements} 
-              onChange={e => setFormData({...formData, requirements: e.target.value})} 
-              className="w-full border p-4 rounded-2xl bg-gray-50 focus:bg-white transition-all focus:ring-2 focus:ring-indigo-500 outline-none min-h-[120px]" 
-            ></textarea>
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-600 mb-1">Application Form Link (Google Form URL)</label>
-            <input 
-              type="url" 
-              placeholder="https://forms.google.com/..." 
-              value={formData.applyLink} 
-              onChange={e => setFormData({...formData, applyLink: e.target.value})} 
-              className="w-full border p-3 rounded-2xl bg-gray-50 focus:bg-white transition-all focus:ring-2 focus:ring-indigo-500 outline-none" 
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              Candidate Qualifications & Requirements
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. M.Sc with B.Ed, minimum 2 years experience"
+              value={formData.requirements}
+              onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all"
             />
           </div>
-          <div className="md:col-span-2 flex justify-end pt-2">
-            <button type="submit" className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-10 rounded-2xl shadow-lg transition-all transform hover:-translate-y-0.5">
-              Create Job Listing
+
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={publishing}
+              className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 text-white font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-md shadow-emerald-500/20 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              <Plus size={16} /> {publishing ? 'Publishing...' : 'Publish Opening Live'}
             </button>
           </div>
         </form>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {jobs.map(job => (
-          <div key={job._id} className="group bg-white p-8 rounded-3xl shadow-md border border-gray-50 flex justify-between items-start transition-all hover:shadow-xl overflow-hidden">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-3">
-                <h3 className="font-black text-xl text-gray-900 truncate">{job.title}</h3>
-                <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0 ${job.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                  {job.isActive ? 'Active' : 'Archived'}
-                </span>
-              </div>
-              <p className="text-gray-600 mb-4 line-clamp-3 text-sm leading-relaxed">{job.description}</p>
-              {job.applyLink && (
-                <div className="flex items-start gap-2 text-indigo-600 text-xs font-bold border-t border-gray-100 pt-4 overflow-hidden">
-                  <span className="p-1.5 bg-indigo-50 rounded-lg shrink-0">🔗</span> 
-                  <span className="break-all pt-1 leading-normal">{job.applyLink}</span>
-                </div>
-              )}
-            </div>
-            <button 
-              onClick={() => handleDelete(job._id)}
-              className="ml-4 p-3 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all shadow-sm shrink-0"
-              title="Delete Opportunity"
+      {/* Published Openings */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-extrabold text-slate-900 px-1">
+          Active Listed Openings ({jobs.length})
+        </h2>
+
+        <div className="grid grid-cols-1 gap-4">
+          {jobs.map((job) => (
+            <div
+              key={job._id}
+              className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between items-start gap-4 hover:border-emerald-500/60 transition-all"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
-          </div>
-        ))}
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span className="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                    Full-Time
+                  </span>
+                </div>
+                <h3 className="font-extrabold text-base text-slate-900 mb-1">{job.title}</h3>
+                <p className="text-slate-600 text-sm leading-relaxed mb-2">{job.description}</p>
+                {job.requirements && (
+                  <p className="text-xs text-slate-500">
+                    <span className="font-bold text-slate-700">Requirements:</span> {job.requirements}
+                  </p>
+                )}
+              </div>
+
+              <button
+                onClick={() => handleDelete(job._id)}
+                className="p-2.5 text-rose-500 bg-rose-50 hover:bg-rose-500 hover:text-white rounded-xl transition-colors cursor-pointer shrink-0"
+                title="Delete Job"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

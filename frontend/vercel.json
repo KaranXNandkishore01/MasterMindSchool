@@ -2,11 +2,15 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://master-mind-school-d9f8.vercel.app/api/:path*"
+      "destination": "https://mastermind-school-api.onrender.com/api/:path*"
     },
     {
       "source": "/uploads/:path*",
-      "destination": "https://master-mind-school-d9f8.vercel.app/uploads/:path*"
+      "destination": "https://mastermind-school-api.onrender.com/uploads/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

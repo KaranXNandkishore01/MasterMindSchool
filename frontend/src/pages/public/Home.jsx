@@ -7,42 +7,44 @@ import heroVideo from '../../assets/HeroVideo.mp4';
 import bannerImg from '../../assets/banner.png';
 import directorSirImg from '../../assets/Directorsir.png';
 import principalImg from '../../assets/principal.png';
-import sirAndMaamImg from "../../assets/sir&ma'am.png";
-import top1Img from "../../assets/top1.png";
-import top3Img from "../../assets/top3.png";
-import felicitation1Img from "../../assets/felicitation_1.jpg";
-import felicitation2Img from "../../assets/felicitation_2.jpg";
-import felicitation3Img from "../../assets/felicitation_3.jpg";
-import performer1Img from "../../assets/performer_1.jpg";
-import performer2Img from "../../assets/performer_2.jpg";
-import performer3Img from "../../assets/performer_3.jpg";
-import performer4Img from "../../assets/performer_4.jpg";
-import parentsMmpsImg from "../../assets/paretsmmps.png";
-import ourTeachersImg from "../../assets/Ourtechers.png";
-import parent2Img from "../../assets/parent2.png";
-import mlaImg from "../../assets/MLA.png";
-import mentorsImg from "../../assets/mentors.png";
-import twelfth1Img from "../../assets/12th1.png";
-import twelfth2Img from "../../assets/12th2.png";
+import { subscribeToUpdates } from '../../utils/realtimeSync';
 
-const staticGalleryImages = [
-  { imageUrl: twelfth1Img, caption: "our Mathematics Departments Performers of XII", category: 'Achievement' },
-  { imageUrl: twelfth2Img, caption: "our Mathematics Departments Performers of XII", category: 'Achievement' },
-  { imageUrl: mentorsImg, caption: "mentors Behind the Students. Who always keep helping not only academically, but morally as well and motivating Students.", category: 'Leadership' },
-  { imageUrl: parentsMmpsImg, caption: "School Congratulated the Student's Parents", category: 'Achievement' },
-  { imageUrl: parent2Img, caption: "School Congratulated the Student's Parents", category: 'Achievement' },
-  { imageUrl: ourTeachersImg, caption: "The MMPS Teachers celerating Achievements with Students", category: 'Event' },
-  { imageUrl: mlaImg, caption: "MLA Mr. Thakur Das Nagwanshi Sir have cogratulated and appreciated Students", category: 'Event' },
-  { imageUrl: felicitation1Img, caption: 'Hon. District Collector Mr. Somesh Mishra Sir Felicitated Our Students', category: 'Event' },
-  { imageUrl: felicitation2Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-  { imageUrl: felicitation3Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-  { imageUrl: performer1Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-  { imageUrl: performer2Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-  { imageUrl: performer3Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-  { imageUrl: performer4Img, caption: 'Masterminds Best Performer of 2026 of Class X.', category: 'Achievement' },
-  { imageUrl: top1Img, caption: 'School Topper', category: 'Achievement' },
-  { imageUrl: top3Img, caption: 'Outstanding Performers', category: 'Achievement' },
-  { imageUrl: sirAndMaamImg, caption: 'Leadership', category: 'Administration' }
+const DEFAULT_GALLERY_IMAGES = [
+  { _id: 'img-1', imageUrl: '/gallery/schoolphoto.png', caption: 'Main Academic Campus & Courtyard, Pipariya', category: 'Campus' },
+  { _id: 'img-2', imageUrl: '/gallery/sportcmplex.png', caption: 'Inter-House Sports Complex & Playground', category: 'Event' },
+  { _id: 'img-3', imageUrl: '/gallery/classrooms.png', caption: 'Modern Digital Smart Classrooms', category: 'Campus' },
+  { _id: 'img-4', imageUrl: '/gallery/computerlab.png', caption: 'Advanced Computer Science & IT Lab', category: 'Campus' },
+  { _id: 'img-5', imageUrl: '/gallery/library.png', caption: 'Central Knowledge & Reading Library', category: 'Campus' },
+  { _id: 'img-6', imageUrl: '/gallery/Directorsir.png', caption: 'Director Mr. Lochan Sagar Prajapati Guiding Educators', category: 'Leadership' },
+  { _id: 'img-7', imageUrl: '/gallery/felicitation_1.jpg', caption: 'Hon. District Collector Felicitating MMPS Students', category: 'Achievement' },
+  { _id: 'img-8', imageUrl: '/gallery/Ourtechers.png', caption: 'Dedicated Faculty & Educators of Master Mind Public School', category: 'Leadership' }
+];
+
+const DEFAULT_ANNOUNCEMENTS = [
+  {
+    _id: 'ann-1',
+    title: 'Admissions Open for Session 2026-27 (Nursery to Class XII)',
+    content: 'Master Mind Public School (MPBSE Affiliated) welcomes applications for the upcoming 2026-27 session. Merit scholarships, state-of-the-art digital classrooms, and safe bus transport are available. Register online or visit our campus office.',
+    date: '2026-04-02',
+  },
+  {
+    _id: 'ann-2',
+    title: 'Annual Inter-House Sports Championship 2026',
+    content: 'Campus athletic sports complex will host track and field events, cricket, badminton, and kho-kho trials this Wednesday. Students must report in full sports uniform.',
+    date: '2026-03-25',
+  },
+  {
+    _id: 'ann-3',
+    title: 'Quarterly Parent-Teacher Meeting (PTM) for Classes 1 to 12',
+    content: 'Parent-Teacher Conference scheduled for this Saturday from 9:00 AM to 1:00 PM. Parents are invited to discuss academic progress and report cards with class teachers.',
+    date: '2026-03-18',
+  },
+  {
+    _id: 'ann-4',
+    title: 'District High Scorers & Merit Felicitations Announced',
+    content: 'Heartiest congratulations to our Class 10 and 12 toppers for achieving distinction marks across Pipariya district. Special recognition awards will be presented on Saturday.',
+    date: '2026-03-10',
+  }
 ];
 
 const Home = () => {
@@ -62,8 +64,31 @@ const Home = () => {
     setZoomLevel(1);
   };
 
-  const [announcements, setAnnouncements] = useState([]);
-  const [galleryImages, setGalleryImages] = useState(staticGalleryImages);
+  const [announcements, setAnnouncements] = useState(() => {
+    const saved = localStorage.getItem('mmps_announcements');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {
+        // Fallback
+      }
+    }
+    return DEFAULT_ANNOUNCEMENTS;
+  });
+
+  const [galleryImages, setGalleryImages] = useState(() => {
+    const saved = localStorage.getItem('mmps_gallery');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {
+        // Fallback
+      }
+    }
+    return DEFAULT_GALLERY_IMAGES;
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -73,18 +98,53 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const fetchPublicData = async () => {
-      try {
-        const annRes = await axios.get('/api/public/announcements');
-        setAnnouncements(annRes.data);
+    let isMounted = true;
 
-        const galRes = await axios.get('/api/public/images');
-        setGalleryImages([...staticGalleryImages, ...galRes.data]);
-      } catch (err) {
-        console.error("Error fetching public data:", err);
-      }
+    axios.get('/api/public/announcements')
+      .then((res) => {
+        if (isMounted && Array.isArray(res.data)) {
+          setAnnouncements(res.data);
+          localStorage.setItem('mmps_announcements', JSON.stringify(res.data));
+        }
+      })
+      .catch(() => {});
+
+    axios.get('/api/public/images')
+      .then((res) => {
+        if (isMounted && Array.isArray(res.data)) {
+          setGalleryImages(res.data);
+          localStorage.setItem('mmps_gallery', JSON.stringify(res.data));
+        }
+      })
+      .catch(() => {});
+
+    const unsubAnn = subscribeToUpdates('announcements', () => {
+      axios.get('/api/public/announcements')
+        .then((res) => {
+          if (isMounted && Array.isArray(res.data)) {
+            setAnnouncements(res.data);
+            localStorage.setItem('mmps_announcements', JSON.stringify(res.data));
+          }
+        })
+        .catch(() => {});
+    });
+
+    const unsubGal = subscribeToUpdates('gallery', () => {
+      axios.get('/api/public/images')
+        .then((res) => {
+          if (isMounted && Array.isArray(res.data)) {
+            setGalleryImages(res.data);
+            localStorage.setItem('mmps_gallery', JSON.stringify(res.data));
+          }
+        })
+        .catch(() => {});
+    });
+
+    return () => {
+      isMounted = false;
+      unsubAnn();
+      unsubGal();
     };
-    fetchPublicData();
   }, []);
 
   const displayedImages =
@@ -182,6 +242,7 @@ const Home = () => {
             loop
             muted={isMuted}
             playsInline
+            preload="metadata"
             className="w-full h-full object-cover select-none opacity-45 mix-blend-luminosity scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-blue-950/65 to-slate-950"></div>
@@ -413,7 +474,7 @@ const Home = () => {
                           {ann.title}
                         </h4>
                         <p className="text-xs text-slate-300/80 mt-1 line-clamp-2 leading-relaxed">
-                          {ann.content}
+                          {ann.content || ann.message}
                         </p>
                       </div>
                     ))
@@ -451,7 +512,7 @@ const Home = () => {
 
             {/* Category Filter Pills */}
             <div className="flex flex-wrap gap-2">
-              {['All', 'Achievement', 'Event', 'Leadership'].map((cat) => (
+              {['All', 'Campus', 'Achievement', 'Event', 'Leadership'].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
@@ -468,30 +529,40 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {displayedImages.map((image, index) => (
-              <div
-                key={index}
-                className="group relative rounded-3xl overflow-hidden aspect-[4/5] shadow-md border border-slate-100 bg-slate-900 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
-                onClick={() => handleOpenModal({ src: image.imageUrl, title: image.caption, category: image.category })}
-              >
-                <img
-                  src={image.imageUrl}
-                  alt={image.caption}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                  <span className="text-amber-400 text-xs font-extrabold uppercase tracking-widest mb-1.5">
-                    {image.category}
-                  </span>
-                  <h3 className="text-white text-lg font-bold line-clamp-2 leading-snug">
-                    {image.caption}
-                  </h3>
-                </div>
-                <div className="absolute top-4 right-4 bg-slate-950/60 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white font-bold opacity-0 group-hover:opacity-100 transition-all border border-white/10 flex items-center gap-1">
-                  <ZoomIn size={12} className="text-amber-400" /> ZOOM
-                </div>
+            {displayedImages.length === 0 ? (
+              <div className="col-span-full text-center py-16 bg-slate-50/80 rounded-3xl border border-dashed border-slate-200">
+                <ImageIcon size={40} className="mx-auto text-slate-400 mb-3" />
+                <h3 className="text-base font-bold text-slate-700">No Photos In This Category</h3>
+                <p className="text-xs text-slate-500 mt-1">Images added by management will appear here live.</p>
               </div>
-            ))}
+            ) : (
+              displayedImages.map((image, index) => (
+                <div
+                  key={image._id || image.imageUrl || index}
+                  className="group relative rounded-3xl overflow-hidden aspect-[4/5] shadow-md border border-slate-100 bg-slate-900 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+                  onClick={() => handleOpenModal({ src: image.imageUrl, title: image.caption, category: image.category })}
+                >
+                  <img
+                    src={image.imageUrl}
+                    alt={image.caption}
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    onError={(e) => { e.currentTarget.src = '/gallery/schoolphoto.png'; }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                    <span className="text-amber-400 text-xs font-extrabold uppercase tracking-widest mb-1.5">
+                      {image.category || 'Campus'}
+                    </span>
+                    <h3 className="text-white text-lg font-bold line-clamp-2 leading-snug">
+                      {image.caption}
+                    </h3>
+                  </div>
+                  <div className="absolute top-4 right-4 bg-slate-950/60 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white font-bold opacity-0 group-hover:opacity-100 transition-all border border-white/10 flex items-center gap-1">
+                    <ZoomIn size={12} className="text-amber-400" /> ZOOM
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>

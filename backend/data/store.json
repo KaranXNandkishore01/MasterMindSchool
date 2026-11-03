@@ -1,0 +1,117 @@
+{
+  "announcements": [
+    {
+      "title": "Admissions Open for Academic Session 2026-27 (Nursery to Class XII)",
+      "content": "Master Mind Public School (MPBSE Affiliated, Main Road, Pipariya) invites applications for the upcoming 2026-27 session. Merit scholarships, digital smart classrooms, and safe bus transport are available. Register online or visit our administrative office.",
+      "date": "2026-04-02T00:00:00.000Z",
+      "isActive": true,
+      "_id": "ann-1"
+    },
+    {
+      "title": "Annual Inter-House Sports Meet & Athletics Trials",
+      "content": "Our athletic sports complex will host track and field competitions, cricket, badminton, and kho-kho trials this Wednesday. Students must report in standard sports house uniform.",
+      "date": "2026-03-25T00:00:00.000Z",
+      "isActive": true,
+      "_id": "ann-2"
+    },
+    {
+      "title": "Quarterly Parent-Teacher Meeting (PTM) for Classes 1 to 12",
+      "content": "Parent-Teacher Conference scheduled for this Saturday from 9:00 AM to 1:00 PM. Parents are warmly invited to discuss academic progress and report cards with class teachers.",
+      "date": "2026-03-18T00:00:00.000Z",
+      "isActive": true,
+      "_id": "ann-3"
+    },
+    {
+      "title": "District High Scorers & Merit Felicitations Announced",
+      "content": "Heartiest congratulations to our Class 10 and 12 toppers for achieving distinction marks across Pipariya district. Special recognition awards will be presented on Saturday.",
+      "date": "2026-03-10T00:00:00.000Z",
+      "isActive": true,
+      "_id": "ann-4"
+    }
+  ],
+  "jobs": [
+    {
+      "title": "PGT - Senior Physics & Mathematics Educator",
+      "description": "Seeking dynamic educators for Senior Secondary Classes (XI & XII). Responsible for curriculum delivery, practical lab experiments, and state board examination preparation.",
+      "requirements": "M.Sc in Physics or Mathematics with B.Ed. Minimum 2-3 years teaching experience in MPBSE or CBSE board schools.",
+      "applyLink": "https://forms.gle/L6r7K6nw5DwewRPF8",
+      "isActive": true,
+      "_id": "job-1"
+    },
+    {
+      "title": "TGT - English & Social Sciences Teacher",
+      "description": "Responsible for nurturing communicative fluency, English literature, and social studies for Middle Wing (Classes VI to VIII).",
+      "requirements": "B.A. / M.A. in English with B.Ed. Strong communicative pedagogy and passion for student engagement.",
+      "applyLink": "https://forms.gle/L6r7K6nw5DwewRPF8",
+      "isActive": true,
+      "_id": "job-2"
+    },
+    {
+      "title": "Primary Wing (PRT) - Mother Teacher",
+      "description": "Looking for caring and creative early childhood educators for Nursery to Class 2. Focus on phonics, numeracy, and activity-based learning.",
+      "requirements": "Graduation with D.El.Ed / NTT / B.Ed. Warm disposition and love for foundational learning.",
+      "applyLink": "https://forms.gle/L6r7K6nw5DwewRPF8",
+      "isActive": true,
+      "_id": "job-3"
+    },
+    {
+      "title": "Campus Physical Education Instructor & Sports Coach",
+      "description": "Lead morning physical assemblies, athletic track events, basketball, cricket, and football training across our sports complex.",
+      "requirements": "B.P.Ed or M.P.Ed with state/national level athletics experience.",
+      "applyLink": "https://forms.gle/L6r7K6nw5DwewRPF8",
+      "isActive": true,
+      "_id": "job-4"
+    }
+  ],
+  "images": [
+    {
+      "imageUrl": "/gallery/schoolphoto.png",
+      "caption": "Main Academic Campus & Courtyard, Pipariya",
+      "category": "Campus",
+      "_id": "img-1"
+    },
+    {
+      "imageUrl": "/gallery/sportcmplex.png",
+      "caption": "Inter-House Sports Complex & Playground",
+      "category": "Event",
+      "_id": "img-2"
+    },
+    {
+      "imageUrl": "/gallery/classrooms.png",
+      "caption": "Modern Digital Smart Classrooms",
+      "category": "Campus",
+      "_id": "img-3"
+    },
+    {
+      "imageUrl": "/gallery/computerlab.png",
+      "caption": "Advanced Computer Science & IT Lab",
+      "category": "Campus",
+      "_id": "img-4"
+    },
+    {
+      "imageUrl": "/gallery/library.png",
+      "caption": "Central Knowledge & Reading Library",
+      "category": "Campus",
+      "_id": "img-5"
+    },
+    {
+      "imageUrl": "/gallery/Directorsir.png",
+      "caption": "Director Mr. Lochan Sagar Prajapati Guiding Educators",
+      "category": "Leadership",
+      "_id": "img-6"
+    },
+    {
+      "imageUrl": "/gallery/felicitation_1.jpg",
+      "caption": "Hon. District Collector Mr. Somesh Mishra Felicitating MMPS Students",
+      "category": "Achievement",
+      "_id": "img-7"
+    },
+    {
+      "imageUrl": "/gallery/Ourtechers.png",
+      "caption": "Dedicated Faculty & Educators of Master Mind Public School",
+      "category": "Leadership",
+      "_id": "img-8"
+    }
+  ],
+  "contacts": []
+}

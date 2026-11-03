@@ -2,20 +2,84 @@ import { Briefcase, GraduationCap, Heart, Users, ArrowRight, CheckCircle2 } from
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { subscribeToUpdates } from '../../utils/realtimeSync';
+
+const DEFAULT_JOBS = [
+  {
+    _id: 'job-1',
+    title: 'PGT - Senior Physics & Mathematics Educator',
+    description: 'Seeking dynamic educators for Senior Secondary Classes (XI & XII). Responsible for curriculum delivery, practical lab experiments, and state board examination preparation.',
+    requirements: 'M.Sc in Physics or Mathematics with B.Ed. Minimum 2-3 years teaching experience in MPBSE or CBSE board schools.',
+    applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    isActive: true,
+  },
+  {
+    _id: 'job-2',
+    title: 'TGT - English & Social Sciences Teacher',
+    description: 'Responsible for nurturing communicative fluency, English literature, and social studies for Middle Wing (Classes VI to VIII).',
+    requirements: 'B.A. / M.A. in English with B.Ed. Strong communicative pedagogy and passion for student engagement.',
+    applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    isActive: true,
+  },
+  {
+    _id: 'job-3',
+    title: 'Primary Wing (PRT) - Mother Teacher',
+    description: 'Looking for caring and creative early childhood educators for Nursery to Class 2. Focus on phonics, numeracy, and activity-based learning.',
+    requirements: 'Graduation with D.El.Ed / NTT / B.Ed. Warm disposition and love for foundational learning.',
+    applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    isActive: true,
+  },
+  {
+    _id: 'job-4',
+    title: 'Campus Physical Education Instructor & Sports Coach',
+    description: 'Lead morning physical assemblies, athletic track events, basketball, cricket, and football training across our sports complex.',
+    requirements: 'B.P.Ed or M.P.Ed with state/national level athletics experience.',
+    applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    isActive: true,
+  }
+];
 
 const Careers = () => {
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState(() => {
+    const saved = localStorage.getItem('mmps_jobs');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {
+        // Fallback
+      }
+    }
+    return DEFAULT_JOBS;
+  });
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const res = await axios.get('/api/public/jobs');
-        setJobs(res.data);
-      } catch (err) {
-        console.error("Error fetching jobs:", err);
-      }
+    let isMounted = true;
+
+    axios.get('/api/public/jobs')
+      .then((res) => {
+        if (isMounted && Array.isArray(res.data)) {
+          setJobs(res.data);
+          localStorage.setItem('mmps_jobs', JSON.stringify(res.data));
+        }
+      })
+      .catch(() => {});
+
+    const unsubscribe = subscribeToUpdates('jobs', () => {
+      axios.get('/api/public/jobs')
+        .then((res) => {
+          if (isMounted && Array.isArray(res.data)) {
+            setJobs(res.data);
+            localStorage.setItem('mmps_jobs', JSON.stringify(res.data));
+          }
+        })
+        .catch(() => {});
+    });
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
     };
-    fetchJobs();
   }, []);
 
   return (
