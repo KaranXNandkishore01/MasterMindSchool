@@ -10,6 +10,7 @@ const DEFAULT_JOBS = [
     description: 'Seeking dynamic educators for Senior Secondary Classes (XI & XII). Responsible for curriculum delivery, practical lab experiments, and state board examination preparation.',
     requirements: 'M.Sc in Physics or Mathematics with B.Ed. Minimum 2-3 years teaching experience in MPBSE or CBSE board schools.',
     applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    jobType: 'Full-Time',
     isActive: true,
   },
   {
@@ -18,6 +19,7 @@ const DEFAULT_JOBS = [
     description: 'Responsible for nurturing communicative fluency, English literature, and social studies for Middle Wing (Classes VI to VIII).',
     requirements: 'B.A. / M.A. in English with B.Ed. Strong communicative pedagogy and passion for student engagement.',
     applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    jobType: 'Full-Time',
     isActive: true,
   },
   {
@@ -26,6 +28,7 @@ const DEFAULT_JOBS = [
     description: 'Looking for caring and creative early childhood educators for Nursery to Class 2. Focus on phonics, numeracy, and activity-based learning.',
     requirements: 'Graduation with D.El.Ed / NTT / B.Ed. Warm disposition and love for foundational learning.',
     applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    jobType: 'Full-Time',
     isActive: true,
   },
   {
@@ -34,6 +37,7 @@ const DEFAULT_JOBS = [
     description: 'Lead morning physical assemblies, athletic track events, basketball, cricket, and football training across our sports complex.',
     requirements: 'B.P.Ed or M.P.Ed with state/national level athletics experience.',
     applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    jobType: 'Part-Time',
     isActive: true,
   }
 ];
@@ -53,6 +57,7 @@ const ManageJobs = () => {
   });
   const [formData, setFormData] = useState({
     title: '',
+    jobType: 'Full-Time',
     description: '',
     requirements: '',
     applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
@@ -94,6 +99,7 @@ const ManageJobs = () => {
     const newJob = createdDoc || {
       _id: `job-${Date.now()}`,
       title: formData.title.trim(),
+      jobType: formData.jobType || 'Full-Time',
       description: formData.description.trim(),
       requirements: formData.requirements.trim(),
       applyLink: formData.applyLink.trim() || 'https://forms.gle/L6r7K6nw5DwewRPF8',
@@ -108,12 +114,13 @@ const ManageJobs = () => {
 
     setFormData({
       title: '',
+      jobType: 'Full-Time',
       description: '',
       requirements: '',
       applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
     });
     setPublishing(false);
-    setSuccessToast('Job vacancy published and live on the Careers page!');
+    setSuccessToast(`Job vacancy (${newJob.jobType}) published and live on the Careers page!`);
     setTimeout(() => setSuccessToast(''), 4000);
   };
 
@@ -143,17 +150,17 @@ const ManageJobs = () => {
       )}
 
       {/* Top Header */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-3xl p-8 border border-white/10 shadow-lg relative overflow-hidden">
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-white/10 shadow-lg relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-2">
-              <Sparkles size={14} /> Recruitment & Faculty Manager
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-emerald-300 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-2">
+              <Sparkles size={13} /> Recruitment & Faculty Manager
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight">
               Manage Job Opportunities & Vacancies
             </h1>
-            <p className="text-slate-300 text-sm mt-1">
+            <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
               Active openings published here appear live immediately on the public Careers portal.
             </p>
           </div>
@@ -161,8 +168,8 @@ const ManageJobs = () => {
       </div>
 
       {/* Post Job Form */}
-      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm">
-        <h2 className="text-lg font-extrabold text-slate-900 mb-4 flex items-center gap-2">
+      <div className="bg-white p-4.5 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-sm">
+        <h2 className="text-base sm:text-lg font-extrabold text-slate-900 mb-4 flex items-center gap-2">
           <span className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
             <Briefcase size={18} />
           </span>
@@ -170,8 +177,8 @@ const ManageJobs = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
                 Position Title *
               </label>
@@ -181,9 +188,41 @@ const ManageJobs = () => {
                 placeholder="e.g. PGT Senior Chemistry Educator"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all"
+                className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-xs sm:text-sm transition-all"
               />
             </div>
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                Employment Type *
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, jobType: 'Full-Time' })}
+                  className={`py-2.5 px-3 rounded-xl text-xs font-extrabold border transition-all cursor-pointer text-center ${
+                    formData.jobType === 'Full-Time'
+                      ? 'bg-amber-400 text-slate-950 border-amber-400 shadow-sm'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  Full-Time
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, jobType: 'Part-Time' })}
+                  className={`py-2.5 px-3 rounded-xl text-xs font-extrabold border transition-all cursor-pointer text-center ${
+                    formData.jobType === 'Part-Time'
+                      ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  Part-Time
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
                 Application Form URL
@@ -193,7 +232,19 @@ const ManageJobs = () => {
                 placeholder="https://forms.gle/..."
                 value={formData.applyLink}
                 onChange={(e) => setFormData({ ...formData, applyLink: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all"
+                className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-xs sm:text-sm transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                Candidate Qualifications & Requirements
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. M.Sc with B.Ed, minimum 2 years experience"
+                value={formData.requirements}
+                onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
+                className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-xs sm:text-sm transition-all"
               />
             </div>
           </div>
@@ -208,28 +259,15 @@ const ManageJobs = () => {
               placeholder="Primary responsibilities, subjects taught, and student mentorship duties..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all resize-none"
+              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-xs sm:text-sm transition-all resize-none"
             ></textarea>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-              Candidate Qualifications & Requirements
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. M.Sc with B.Ed, minimum 2 years experience"
-              value={formData.requirements}
-              onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all"
-            />
-          </div>
-
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-1">
             <button
               type="submit"
               disabled={publishing}
-              className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 text-white font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-md shadow-emerald-500/20 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto justify-center bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 text-white font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-md shadow-emerald-500/20 flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <Plus size={16} /> {publishing ? 'Publishing...' : 'Publish Opening Live'}
             </button>
@@ -251,9 +289,13 @@ const ManageJobs = () => {
             >
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  <span className="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                    Full-Time
+                  <span className={`w-2 h-2 rounded-full ${job.jobType === 'Part-Time' ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+                  <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider border ${
+                    job.jobType === 'Part-Time'
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                      : 'bg-amber-50 text-amber-800 border-amber-200'
+                  }`}>
+                    {job.jobType || 'Full-Time'}
                   </span>
                 </div>
                 <h3 className="font-extrabold text-base text-slate-900 mb-1">{job.title}</h3>

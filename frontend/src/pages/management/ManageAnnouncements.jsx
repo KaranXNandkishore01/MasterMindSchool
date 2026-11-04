@@ -127,17 +127,17 @@ const ManageAnnouncements = () => {
       )}
 
       {/* Top Header */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-3xl p-8 border border-white/10 shadow-lg relative overflow-hidden">
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-white/10 shadow-lg relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-amber-300 text-xs font-bold uppercase tracking-wider mb-2">
-              <Sparkles size={14} /> Live Notice Board Manager
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-amber-300 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-2">
+              <Sparkles size={13} /> Live Notice Board Manager
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight">
               Manage Announcements & Circulars
             </h1>
-            <p className="text-slate-300 text-sm mt-1">
+            <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
               Notices published here appear immediately in real-time on the homepage live notice board.
             </p>
           </div>
@@ -145,8 +145,8 @@ const ManageAnnouncements = () => {
       </div>
 
       {/* Post Notice Form */}
-      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm">
-        <h2 className="text-lg font-extrabold text-slate-900 mb-4 flex items-center gap-2">
+      <div className="bg-white p-4.5 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-sm">
+        <h2 className="text-base sm:text-lg font-extrabold text-slate-900 mb-4 flex items-center gap-2">
           <span className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
             <Bell size={18} />
           </span>
@@ -164,7 +164,7 @@ const ManageAnnouncements = () => {
               placeholder="e.g. Summer Vacation Schedule & Remedial Classes"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all"
+              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-xs sm:text-sm transition-all"
             />
           </div>
 
@@ -178,7 +178,7 @@ const ManageAnnouncements = () => {
               placeholder="Write the full announcement text for students and parents..."
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all resize-none"
+              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-xs sm:text-sm transition-all resize-none"
             ></textarea>
           </div>
 
@@ -186,7 +186,7 @@ const ManageAnnouncements = () => {
             <button
               type="submit"
               disabled={publishing}
-              className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 text-slate-950 font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-md shadow-amber-500/20 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto justify-center bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 text-slate-950 font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-md shadow-amber-500/20 flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <Plus size={16} /> {publishing ? 'Publishing...' : 'Publish Announcement Live'}
             </button>

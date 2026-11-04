@@ -1,6 +1,14 @@
 {
   "announcements": [
     {
+      "_id": "6aeae23d71d4ef726e4677d5",
+      "title": "Diwali Holidays",
+      "content": "Diwali holidays begin tomorrow. Wishing everyone a Happy Diwali!",
+      "date": "2026-11-04T07:43:57.055Z",
+      "isActive": true,
+      "createdAt": "2026-11-04T07:43:57.055Z"
+    },
+    {
       "title": "Admissions Open for Academic Session 2026-27 (Nursery to Class XII)",
       "content": "Master Mind Public School (MPBSE Affiliated, Main Road, Pipariya) invites applications for the upcoming 2026-27 session. Merit scholarships, digital smart classrooms, and safe bus transport are available. Register online or visit our administrative office.",
       "date": "2026-04-02T00:00:00.000Z",
@@ -35,6 +43,7 @@
       "description": "Seeking dynamic educators for Senior Secondary Classes (XI & XII). Responsible for curriculum delivery, practical lab experiments, and state board examination preparation.",
       "requirements": "M.Sc in Physics or Mathematics with B.Ed. Minimum 2-3 years teaching experience in MPBSE or CBSE board schools.",
       "applyLink": "https://forms.gle/L6r7K6nw5DwewRPF8",
+      "jobType": "Full-Time",
       "isActive": true,
       "_id": "job-1"
     },
@@ -43,6 +52,7 @@
       "description": "Responsible for nurturing communicative fluency, English literature, and social studies for Middle Wing (Classes VI to VIII).",
       "requirements": "B.A. / M.A. in English with B.Ed. Strong communicative pedagogy and passion for student engagement.",
       "applyLink": "https://forms.gle/L6r7K6nw5DwewRPF8",
+      "jobType": "Full-Time",
       "isActive": true,
       "_id": "job-2"
     },
@@ -51,6 +61,7 @@
       "description": "Looking for caring and creative early childhood educators for Nursery to Class 2. Focus on phonics, numeracy, and activity-based learning.",
       "requirements": "Graduation with D.El.Ed / NTT / B.Ed. Warm disposition and love for foundational learning.",
       "applyLink": "https://forms.gle/L6r7K6nw5DwewRPF8",
+      "jobType": "Full-Time",
       "isActive": true,
       "_id": "job-3"
     },
@@ -59,6 +70,7 @@
       "description": "Lead morning physical assemblies, athletic track events, basketball, cricket, and football training across our sports complex.",
       "requirements": "B.P.Ed or M.P.Ed with state/national level athletics experience.",
       "applyLink": "https://forms.gle/L6r7K6nw5DwewRPF8",
+      "jobType": "Part-Time",
       "isActive": true,
       "_id": "job-4"
     }

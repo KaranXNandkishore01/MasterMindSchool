@@ -195,10 +195,12 @@ const getJobs = async (req, res) => {
 
 const addJob = async (req, res) => {
   try {
-    const { title, description, requirements, applyLink } = req.body;
+    const { title, description, requirements, applyLink, jobType } = req.body;
     if (!title || !description) {
       return res.status(400).json({ message: 'Title and description are required' });
     }
+
+    const type = ['Full-Time', 'Part-Time', 'Contractual'].includes(jobType) ? jobType : 'Full-Time';
 
     let createdDoc = null;
     if (isDbConnected()) {
@@ -208,6 +210,7 @@ const addJob = async (req, res) => {
           description,
           requirements: requirements || '',
           applyLink: applyLink || 'https://forms.gle/L6r7K6nw5DwewRPF8',
+          jobType: type,
           isActive: true
         });
       } catch (err) {
@@ -221,6 +224,7 @@ const addJob = async (req, res) => {
       description,
       requirements: requirements || '',
       applyLink: applyLink || 'https://forms.gle/L6r7K6nw5DwewRPF8',
+      jobType: type,
       isActive: true,
       createdAt: new Date().toISOString()
     };

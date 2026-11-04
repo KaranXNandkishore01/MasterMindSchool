@@ -5,6 +5,7 @@ const jobSchema = new mongoose.Schema({
   description: { type: String, required: true },
   requirements: { type: String },
   applyLink: { type: String },
+  jobType: { type: String, enum: ['Full-Time', 'Part-Time', 'Contractual'], default: 'Full-Time' },
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 

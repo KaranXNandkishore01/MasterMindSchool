@@ -656,8 +656,13 @@ const TeacherDashboard = () => {
 
             {/* Attendance Roster Table */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+              {/* Mobile Horizontal Scroll Cue */}
+              <div className="md:hidden px-4 py-2 bg-slate-50 border-b border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
+                <span>Swipe table left/right to mark attendance</span>
+                <span className="font-bold text-slate-600">⇄</span>
+              </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-700">
+                <table className="w-full min-w-[650px] text-left text-sm text-slate-700">
                   <thead className="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500 font-extrabold border-b border-slate-200">
                     <tr>
                       <th className="py-3.5 px-4 w-16 text-center">Roll</th>
@@ -959,8 +964,13 @@ const TeacherDashboard = () => {
 
             {/* Summary Spreadsheet View */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+              {/* Mobile Horizontal Scroll Cue */}
+              <div className="md:hidden px-4 py-2 bg-slate-50 border-b border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
+                <span>Swipe table left/right for analytics & fines</span>
+                <span className="font-bold text-slate-600">⇄</span>
+              </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-700">
+                <table className="w-full min-w-[700px] text-left text-sm text-slate-700">
                   <thead className="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500 font-extrabold border-b border-slate-200">
                     <tr>
                       <th className="py-3.5 px-4 w-14 text-center">Roll</th>
@@ -1044,11 +1054,11 @@ const TeacherDashboard = () => {
       {/* MODAL: EDIT STUDENT PROFILE */}
       {editingStudent && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3.5 sm:p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in"
           onClick={() => setEditingStudent(null)}
         >
           <div
-            className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100 relative animate-scale-in"
+            className="bg-white rounded-2xl sm:rounded-3xl max-w-lg w-full p-5 sm:p-8 shadow-2xl border border-slate-100 relative animate-scale-in max-h-[92vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button

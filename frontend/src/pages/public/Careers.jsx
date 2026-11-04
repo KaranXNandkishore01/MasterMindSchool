@@ -11,6 +11,7 @@ const DEFAULT_JOBS = [
     description: 'Seeking dynamic educators for Senior Secondary Classes (XI & XII). Responsible for curriculum delivery, practical lab experiments, and state board examination preparation.',
     requirements: 'M.Sc in Physics or Mathematics with B.Ed. Minimum 2-3 years teaching experience in MPBSE or CBSE board schools.',
     applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    jobType: 'Full-Time',
     isActive: true,
   },
   {
@@ -19,6 +20,7 @@ const DEFAULT_JOBS = [
     description: 'Responsible for nurturing communicative fluency, English literature, and social studies for Middle Wing (Classes VI to VIII).',
     requirements: 'B.A. / M.A. in English with B.Ed. Strong communicative pedagogy and passion for student engagement.',
     applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    jobType: 'Full-Time',
     isActive: true,
   },
   {
@@ -27,6 +29,7 @@ const DEFAULT_JOBS = [
     description: 'Looking for caring and creative early childhood educators for Nursery to Class 2. Focus on phonics, numeracy, and activity-based learning.',
     requirements: 'Graduation with D.El.Ed / NTT / B.Ed. Warm disposition and love for foundational learning.',
     applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    jobType: 'Full-Time',
     isActive: true,
   },
   {
@@ -35,6 +38,7 @@ const DEFAULT_JOBS = [
     description: 'Lead morning physical assemblies, athletic track events, basketball, cricket, and football training across our sports complex.',
     requirements: 'B.P.Ed or M.P.Ed with state/national level athletics experience.',
     applyLink: 'https://forms.gle/L6r7K6nw5DwewRPF8',
+    jobType: 'Part-Time',
     isActive: true,
   }
 ];
@@ -170,8 +174,12 @@ const Careers = () => {
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                         <h3 className="text-lg font-bold text-slate-900">{job.title}</h3>
-                        <span className="self-start sm:self-auto px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200/60 text-[11px] font-extrabold rounded-full uppercase tracking-wider">
-                          Full-Time
+                        <span className={`self-start sm:self-auto px-3 py-1 text-[11px] font-extrabold rounded-full uppercase tracking-wider border ${
+                          job.jobType === 'Part-Time'
+                            ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                            : 'bg-amber-50 text-amber-800 border-amber-200/60'
+                        }`}>
+                          {job.jobType || 'Full-Time'}
                         </span>
                       </div>
                       <p className="text-slate-600 text-sm mb-3 leading-relaxed">{job.description}</p>
@@ -234,10 +242,10 @@ const Careers = () => {
                 Have questions regarding open faculty or staff roles? Reach out to our school recruitment desk:
               </p>
               <a
-                href="mailto:mastermindschool2005@gmail.com"
+                href="mailto:mastermindschoolpipariya@gmail.com"
                 className="text-amber-600 hover:text-amber-700 font-bold text-sm block break-all"
               >
-                mastermindschool2005@gmail.com
+                mastermindschoolpipariya@gmail.com
               </a>
               <div className="mt-4 pt-4 border-t border-slate-100">
                 <Link to="/contact" className="text-xs font-bold text-blue-700 hover:underline inline-flex items-center gap-1">

@@ -153,7 +153,7 @@ const Footer = () => {
                   <Mail className="h-4 w-4 text-amber-400" />
                 </div>
                 <Link to="/contact#contact-form" className="text-slate-300 hover:text-amber-400 font-medium transition-colors truncate">
-                  mastermindschool2005@gmail.com
+                  mastermindschoolpipariya@gmail.com
                 </Link>
               </li>
             </ul>

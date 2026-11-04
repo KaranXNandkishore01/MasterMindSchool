@@ -87,17 +87,17 @@ const ParentMessages = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-3xl p-8 border border-white/10 shadow-lg relative overflow-hidden">
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-white/10 shadow-lg relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-teal-300 text-xs font-bold uppercase tracking-wider mb-2">
-              <Sparkles size={14} /> Parent Helpdesk & Inquiries
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-teal-300 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-2">
+              <Sparkles size={13} /> Parent Helpdesk & Inquiries
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight">
               Parent & Admission Inquiries
             </h1>
-            <p className="text-slate-300 text-sm mt-1">
+            <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
               Direct inquiries and contact forms submitted through the public portal.
             </p>
           </div>
@@ -107,14 +107,14 @@ const ParentMessages = () => {
       {/* Messages List */}
       <div className="space-y-4">
         {messages.length === 0 ? (
-          <div className="bg-white rounded-3xl p-12 text-center text-slate-400 font-semibold border border-slate-200">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center text-slate-400 font-semibold border border-slate-200">
             No parent messages recorded yet.
           </div>
         ) : (
           messages.map((msg) => (
             <div
               key={msg._id}
-              className="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200/80 shadow-sm hover:border-teal-500/50 transition-all flex flex-col sm:flex-row justify-between gap-5 items-start"
+              className="bg-white p-4.5 sm:p-6 lg:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-sm hover:border-teal-500/50 transition-all flex flex-col sm:flex-row justify-between gap-4 sm:gap-5 items-start"
             >
               <div className="flex-1 space-y-3">
                 <div className="flex flex-wrap items-center gap-2.5">
