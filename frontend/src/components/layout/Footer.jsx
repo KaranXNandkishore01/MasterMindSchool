@@ -149,12 +149,20 @@ const Footer = () => {
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-amber-400/10 border border-amber-400/20 flex items-center justify-center shrink-0">
+                <a
+                  href="mailto:mastermindschoolpipariya@gmail.com"
+                  className="w-8 h-8 rounded-lg bg-amber-400/10 border border-amber-400/20 flex items-center justify-center shrink-0 hover:bg-amber-400/20 transition-colors"
+                  title="Compose email to MMPS"
+                >
                   <Mail className="h-4 w-4 text-amber-400" />
-                </div>
-                <Link to="/contact#contact-form" className="text-slate-300 hover:text-amber-400 font-medium transition-colors truncate">
+                </a>
+                <a
+                  href="mailto:mastermindschoolpipariya@gmail.com"
+                  className="text-slate-300 hover:text-amber-400 font-medium transition-colors truncate"
+                  title="Compose email to MMPS"
+                >
                   mastermindschoolpipariya@gmail.com
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
