@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { login, reset } from '../../features/auth/authSlice';
 import { Lock, Mail, GraduationCap, Eye, EyeOff } from 'lucide-react';
@@ -213,7 +213,14 @@ const Login = () => {
               </button>
             </div>
             
-            <div className="mt-6 text-center text-sm text-gray-500">
+            <div className="mt-4 pt-4 border-t border-gray-100 text-center text-xs">
+              <span className="text-gray-500">School Staff Member? </span>
+              <Link to="/staff/portal" className="font-bold text-blue-600 hover:text-blue-800 underline">
+                Staff Attendance & Employee Portal →
+              </Link>
+            </div>
+
+            <div className="mt-4 text-center text-xs text-gray-500">
                Support Line: <span className="font-semibold text-gray-700">1800-MMPS-HELP</span>
             </div>
           </form>

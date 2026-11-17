@@ -69,7 +69,19 @@ const Navbar = () => {
               </Link>
             ))}
 
-            <div className="pl-3 flex items-center gap-3">
+            <div className="pl-3 flex items-center gap-2.5">
+              <Link
+                to="/staff/portal"
+                className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
+                  isActive('/staff/portal')
+                    ? 'text-amber-400 bg-amber-400/10 border-amber-400/40'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5 border-white/15'
+                }`}
+                title="Staff Self-Service & Attendance Portal"
+              >
+                Staff Portal
+              </Link>
+
               <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSdcsCPrfDn5Xafwkq_xi5JiZygyOk_v3dvTOIsBjYzSEZGMrw/viewform"
                 target="_blank"
@@ -80,8 +92,8 @@ const Navbar = () => {
                 <ArrowRight size={14} />
               </a>
 
-              {user && (
-                <div className="flex items-center gap-2 pl-3 border-l border-white/10">
+              {user ? (
+                <div className="flex items-center gap-2 pl-2 border-l border-white/10">
                   <Link
                     to="/management/dashboard"
                     className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-all border border-white/10"
@@ -91,12 +103,20 @@ const Navbar = () => {
                   </Link>
                   <button
                     onClick={onLogout}
-                    className="bg-red-500/80 hover:bg-red-600 text-white p-2 rounded-full transition-all border border-red-400/20"
+                    className="bg-red-500/80 hover:bg-red-600 text-white p-2 rounded-full transition-all border border-red-400/20 cursor-pointer"
                     title="Logout"
                   >
                     <LogOut className="w-4 h-4" />
                   </button>
                 </div>
+              ) : (
+                <Link
+                  to="/login"
+                  className="text-slate-400 hover:text-white p-2 rounded-full transition-colors hover:bg-white/5 border border-transparent hover:border-white/10"
+                  title="Administration ERP Login"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                </Link>
               )}
             </div>
           </div>
@@ -151,6 +171,28 @@ const Navbar = () => {
                 <span>Enroll Now (Session 2026-27)</span>
                 <ArrowRight size={16} />
               </a>
+
+              <Link
+                to="/staff/portal"
+                className={`block px-4 py-2.5 rounded-xl text-sm font-bold tracking-wide transition-all ${
+                  isActive('/staff/portal')
+                    ? 'bg-amber-400/15 text-amber-400 border border-amber-400/30'
+                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                💼 Staff Attendance Portal
+              </Link>
+
+              {!user && (
+                <Link
+                  to="/login"
+                  className="block px-4 py-2.5 rounded-xl text-sm font-bold tracking-wide text-slate-400 hover:text-white hover:bg-white/5"
+                  onClick={() => setIsOpen(false)}
+                >
+                  🔐 Administration ERP Login
+                </Link>
+              )}
 
               {user && (
                 <div className="grid grid-cols-2 gap-3 mt-3">

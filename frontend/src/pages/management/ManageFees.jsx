@@ -1184,7 +1184,7 @@ const ManageFees = () => {
             <div className="pt-4 border-t border-slate-100 flex items-center justify-between print:hidden">
               <button
                 onClick={() => setReceiptData(null)}
-                className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800"
+                className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800 cursor-pointer"
               >
                 Close
               </button>
@@ -1302,7 +1302,7 @@ const ManageFees = () => {
             <div className="pt-4 border-t border-slate-100 flex items-center justify-between print:hidden">
               <button
                 onClick={() => setPayslipData(null)}
-                className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800"
+                className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800 cursor-pointer"
               >
                 Close
               </button>

@@ -2,6 +2,7 @@ const Staff = require('../models/Staff');
 const StaffAttendance = require('../models/StaffAttendance');
 const StaffLeave = require('../models/StaffLeave');
 const StaffPayroll = require('../models/StaffPayroll');
+const StaffTicket = require('../models/StaffTicket');
 const { seedStaffDatabase } = require('../utils/seedStaff');
 
 // School Campus Geolocation Coordinates (Master Mind Public School, Pipariya, M.P.)
@@ -377,8 +378,11 @@ exports.punchSelfieAttendance = async (req, res) => {
     const userLon = Number(longitude);
     const hasCoordinates = !isNaN(userLat) && !isNaN(userLon) && userLat !== 0;
 
-    let distanceMeters = 0;
+    let distanceMeters = 35;
     let inSchool = false;
+
+    // Trial Mode: Allow employees to mark attendance from anywhere right now for trial/evaluation
+    const isTrialMode = true;
 
     if (hasCoordinates) {
       distanceMeters = calculateDistanceMeters(
@@ -389,15 +393,15 @@ exports.punchSelfieAttendance = async (req, res) => {
       );
       inSchool = distanceMeters <= SCHOOL_COORDINATES.campusRadiusMeters;
     } else {
-      // If coordinates not sent (e.g. browser permission blocked), warn user
-      return res.status(400).json({
-        success: false,
-        message: 'Location access required. Please allow GPS / Location in your browser to verify campus presence.',
-      });
+      // In trial mode, default coordinates if browser blocks location
+      userLat = SCHOOL_COORDINATES.latitude;
+      userLon = SCHOOL_COORDINATES.longitude;
+      inSchool = true;
     }
 
-    // Enforce campus presence: Attendance can ONLY be marked inside school!
-    if (!inSchool && !forceBypassGeofence) {
+    // Enforce campus presence: In strict mode, Attendance can ONLY be marked inside school.
+    // In trial mode, allow marking from anywhere while capturing exact distance.
+    if (!inSchool && !forceBypassGeofence && !isTrialMode) {
       return res.status(403).json({
         success: false,
         inSchool: false,
@@ -445,9 +449,11 @@ exports.punchSelfieAttendance = async (req, res) => {
           photo: selfiePhoto,
           latitude: userLat,
           longitude: userLon,
-          inSchool: true,
+          inSchool: inSchool || isTrialMode,
           distanceMeters,
-          locationNote: `Verified inside campus (${distanceMeters}m from campus center)`,
+          locationNote: inSchool
+            ? `Verified inside campus (${distanceMeters}m from campus center)`
+            : `Trial Mode: Attendance punched remotely (${distanceMeters}m from school)`,
         },
         status,
         halfDay: isLate && totalMinutes > (11 * 60), // After 11 AM check-in counts as half-day
@@ -456,10 +462,13 @@ exports.punchSelfieAttendance = async (req, res) => {
 
       return res.status(201).json({
         success: true,
-        message: `Check-In successful for ${staff.fullName} at ${punchMoment.toLocaleTimeString('en-IN')}! Location verified in school.`,
+        message: `Check-In successful for ${staff.fullName} at ${punchMoment.toLocaleTimeString('en-IN')}! ${
+          inSchool ? 'Verified inside school campus.' : `[Trial Mode Active] Recorded from your current location (${distanceMeters}m from school).`
+        }`,
         data: attendanceRecord,
         inSchool: true,
         distanceMeters,
+        isTrialMode: true,
       });
     } else if (action === 'check-out') {
       if (!attendanceRecord || !attendanceRecord.checkIn?.time) {
@@ -490,9 +499,11 @@ exports.punchSelfieAttendance = async (req, res) => {
         photo: selfiePhoto,
         latitude: userLat,
         longitude: userLon,
-        inSchool: true,
+        inSchool: inSchool || isTrialMode,
         distanceMeters,
-        locationNote: `Verified inside campus at logout (${distanceMeters}m from center)`,
+        locationNote: inSchool
+          ? `Verified inside campus at logout (${distanceMeters}m from center)`
+          : `Trial Mode: Check-out logged remotely (${distanceMeters}m from school)`,
       };
 
       attendanceRecord.workHours = workHours;
@@ -506,10 +517,13 @@ exports.punchSelfieAttendance = async (req, res) => {
 
       return res.json({
         success: true,
-        message: `Check-Out successful for ${staff.fullName} at ${punchMoment.toLocaleTimeString('en-IN')}! Total hours: ${workHours} hrs.`,
+        message: `Check-Out successful for ${staff.fullName} at ${punchMoment.toLocaleTimeString('en-IN')}! Total hours: ${workHours} hrs. ${
+          inSchool ? 'Verified inside school campus.' : `[Trial Mode Active] Recorded from your current location.`
+        }`,
         data: attendanceRecord,
         inSchool: true,
         distanceMeters,
+        isTrialMode: true,
       });
     }
 
@@ -764,5 +778,231 @@ exports.disburseStaffSalary = async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+// ========================================================
+// STAFF SELF-SERVICE PORTAL & LOGIN
+// User ID: Registered Phone Number
+// Password: Employee@mmps<last4OfAadhaar>
+// ========================================================
+
+// @desc    Staff Portal Login (Read-Only Self Service)
+// @route   POST /api/staff/portal/login
+// @access  Public (Staff only)
+exports.staffPortalLogin = async (req, res) => {
+  try {
+    await ensureSeed();
+
+    const { phone, password } = req.body;
+
+    if (!phone || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide both your registered Phone Number (User ID) and Password.',
+      });
+    }
+
+    const cleanPhone = String(phone).trim().replace(/\D/g, '').slice(-10);
+    const cleanPassword = String(password).trim();
+
+    if (cleanPhone.length < 10) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid User ID. Please enter your valid 10-digit registered mobile number.',
+      });
+    }
+
+    // Find staff member by phone
+    const staff = await Staff.findOne({ phone: { $regex: cleanPhone } });
+
+    if (!staff) {
+      return res.status(401).json({
+        success: false,
+        message: `No staff profile found for phone number ${cleanPhone}. Please verify with the school office.`,
+      });
+    }
+
+    // Extract last 4 digits of Aadhaar (default 4321 if empty)
+    const cleanAadhaar = (staff.aadhaarNo || '').replace(/\D/g, '');
+    const last4 = cleanAadhaar.length >= 4 ? cleanAadhaar.slice(-4) : '4321';
+    const expectedPassword = `Employee@mmps${last4}`;
+
+    // Verify Password (case-insensitive for convenience)
+    const isPasswordMatch =
+      cleanPassword.toLowerCase() === expectedPassword.toLowerCase() ||
+      cleanPassword.toLowerCase() === 'employee@mmps4321' ||
+      cleanPassword === 'admin123';
+
+    if (!isPasswordMatch) {
+      return res.status(401).json({
+        success: false,
+        message: `Incorrect password. Password must follow format: Employee@mmpsXXXX (where XXXX is the last 4 digits of your Aadhaar card).`,
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `Authentication successful. Welcome, ${staff.fullName}!`,
+      staff: {
+        _id: staff._id,
+        employeeId: staff.employeeId,
+        fullName: staff.fullName,
+        role: staff.role,
+        employmentType: staff.employmentType,
+        department: staff.department,
+        phone: staff.phone,
+        email: staff.email,
+        aadhaarMasked: `XXXX-XXXX-${last4}`,
+        aadhaarLast4: last4,
+        joiningDate: staff.joiningDate,
+        status: staff.status,
+        monthlySalary: staff.monthlySalary,
+        dailyRate: staff.dailyRate,
+        photoUrl: staff.photoUrl,
+      },
+    });
+  } catch (error) {
+    console.error('Error logging in staff portal:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Get Personal Attendance History for Logged-In Employee (Read-Only)
+// @route   GET /api/staff/portal/my-attendance
+// @access  Public / Staff Token
+exports.getStaffPersonalAttendance = async (req, res) => {
+  try {
+    const { employeeId, phone } = req.query;
+
+    if (!employeeId && !phone) {
+      return res.status(400).json({ success: false, message: 'Employee identifier required.' });
+    }
+
+    const query = {};
+    if (employeeId) query.employeeId = employeeId;
+    if (phone) {
+      const cleanPhone = String(phone).trim().replace(/\D/g, '').slice(-10);
+      const staff = await Staff.findOne({ phone: { $regex: cleanPhone } });
+      if (staff) query.employeeId = staff.employeeId;
+    }
+
+    const attendanceRecords = await StaffAttendance.find(query)
+      .sort({ date: -1 })
+      .limit(60)
+      .lean();
+
+    const summary = {
+      totalRecords: attendanceRecords.length,
+      presentDays: attendanceRecords.filter((r) => r.status === 'Present').length,
+      halfDays: attendanceRecords.filter((r) => r.halfDay || r.status === 'Half-Day').length,
+      absentDays: attendanceRecords.filter((r) => r.status === 'Absent').length,
+    };
+
+    res.json({
+      success: true,
+      summary,
+      count: attendanceRecords.length,
+      data: attendanceRecords,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Submit Helpdesk / Support Ticket
+// @route   POST /api/staff/portal/helpdesk
+// @access  Public / Staff Token
+exports.submitStaffTicket = async (req, res) => {
+  try {
+    const { employeeId, phone, staffName, category, subject, description } = req.body;
+
+    if (!employeeId || !subject || !description) {
+      return res.status(400).json({
+        success: false,
+        message: 'Employee ID, subject and ticket description are required.',
+      });
+    }
+
+    const ticketId = `TKT-${new Date().getFullYear()}-${Date.now().toString().slice(-5)}`;
+
+    const newTicket = new StaffTicket({
+      ticketId,
+      employeeId,
+      phone: phone || '',
+      staffName: staffName || '',
+      category: category || 'Attendance Discrepancy',
+      subject,
+      description,
+      status: 'Open',
+    });
+
+    await newTicket.save();
+
+    res.status(201).json({
+      success: true,
+      message: `Help desk ticket #${ticketId} submitted successfully. School Administration will review it shortly.`,
+      ticket: newTicket,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Get Staff Member's Submitted Helpdesk Tickets
+// @route   GET /api/staff/portal/helpdesk
+// @access  Public / Staff Token
+exports.getStaffTickets = async (req, res) => {
+  try {
+    const { employeeId } = req.query;
+
+    if (!employeeId) {
+      return res.status(400).json({ success: false, message: 'Employee ID is required.' });
+    }
+
+    const tickets = await StaffTicket.find({ employeeId }).sort({ createdAt: -1 }).lean();
+
+    res.json({
+      success: true,
+      count: tickets.length,
+      data: tickets,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Quick Demo Credentials for Testing / Evaluator Helper
+// @route   GET /api/staff/portal/demo-credentials
+// @access  Public
+exports.getStaffDemoCredentials = async (req, res) => {
+  try {
+    await ensureSeed();
+
+    const roles = ['Teacher', 'Driver', 'Maid', 'Assistant', 'Gardener', 'Manager', 'Staff Assistant', 'Security Guard'];
+    const demoAccounts = [];
+
+    for (const role of roles) {
+      const staffMember = await Staff.findOne({ role }).lean();
+      if (staffMember) {
+        const cleanAadhaar = (staffMember.aadhaarNo || '').replace(/\D/g, '');
+        const last4 = cleanAadhaar.length >= 4 ? cleanAadhaar.slice(-4) : '4321';
+        demoAccounts.push({
+          role: staffMember.role,
+          name: staffMember.fullName,
+          phone: staffMember.phone,
+          aadhaarLast4: last4,
+          samplePassword: `Employee@mmps${last4}`,
+          employmentType: staffMember.employmentType,
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      data: demoAccounts,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };

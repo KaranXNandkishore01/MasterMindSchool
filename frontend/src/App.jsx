@@ -25,6 +25,7 @@ import ManageAnnouncements from './pages/management/ManageAnnouncements';
 import ManageJobs from './pages/management/ManageJobs';
 import ParentMessages from './pages/management/ParentMessages';
 import StaffSelfieAttendance from './pages/staff/StaffSelfieAttendance';
+import StaffPortal from './pages/staff/StaffPortal';
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
 
 function App() {
@@ -33,7 +34,9 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/staff/attendance" element={<StaffSelfieAttendance />} />
+        <Route path="/staff/portal" element={<StaffPortal />} />
+        <Route path="/staff/dashboard" element={<StaffPortal />} />
+        <Route path="/staff/attendance" element={<StaffPortal />} />
 
         {/* Public Routes */}
         <Route path="/" element={<PublicLayout />}>
