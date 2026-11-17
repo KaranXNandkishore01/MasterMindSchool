@@ -469,7 +469,8 @@ const ManageFees = () => {
           onClick={() => setReceiptData(null)}
         >
           <div
-            className="bg-white rounded-2xl sm:rounded-3xl max-w-lg w-full p-5 sm:p-8 shadow-2xl border border-slate-200 relative animate-scale-in max-h-[92vh] overflow-y-auto"
+            id="official-fee-receipt"
+            className="printable-erp-doc bg-white rounded-2xl sm:rounded-3xl max-w-lg w-full p-5 sm:p-8 shadow-2xl border border-slate-200 relative animate-scale-in max-h-[92vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button

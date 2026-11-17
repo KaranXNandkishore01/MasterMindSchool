@@ -1,12 +1,12 @@
 {
   "announcements": [
     {
-      "_id": "6aeae23d71d4ef726e4677d5",
-      "title": "Diwali Holidays",
-      "content": "Diwali holidays begin tomorrow. Wishing everyone a Happy Diwali!",
-      "date": "2026-11-04T07:43:57.055Z",
+      "_id": "6afbfd9191fc6ca35f3d7a23",
+      "title": "Classes",
+      "content": "The classes are live.",
+      "date": "2026-11-17T07:09:05.933Z",
       "isActive": true,
-      "createdAt": "2026-11-04T07:43:57.055Z"
+      "createdAt": "2026-11-17T07:09:05.933Z"
     },
     {
       "title": "Admissions Open for Academic Session 2026-27 (Nursery to Class XII)",
@@ -38,6 +38,16 @@
     }
   ],
   "jobs": [
+    {
+      "_id": "6afc0821492592c6e81c00d0",
+      "title": "Social Media Manager",
+      "description": "Media management.",
+      "requirements": "Understanding of Algorithms, 6 months  Experience and Good portfolio.",
+      "applyLink": "https://forms.gle/L6r7K6nw5DwewRPF8",
+      "jobType": "Part-Time",
+      "isActive": true,
+      "createdAt": "2026-11-17T07:54:10.022Z"
+    },
     {
       "title": "PGT - Senior Physics & Mathematics Educator",
       "description": "Seeking dynamic educators for Senior Secondary Classes (XI & XII). Responsible for curriculum delivery, practical lab experiments, and state board examination preparation.",
@@ -125,5 +135,6 @@
       "_id": "img-8"
     }
   ],
-  "contacts": []
+  "contacts": [],
+  "messages": []
 }

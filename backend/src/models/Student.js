@@ -52,17 +52,89 @@ const studentSchema = new mongoose.Schema({
   },
   bloodGroup: {
     type: String,
-    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Unknown'],
+    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Unknown', 'Not Specified', ''],
     default: 'Unknown',
+  },
+  aadhaarNo: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  category: {
+    type: String,
+    enum: ['General', 'OBC', 'SC', 'ST', 'EWS', 'Other'],
+    default: 'General',
+  },
+  nationality: {
+    type: String,
+    trim: true,
+    default: 'Indian',
+  },
+  religion: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  studentPhone: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  studentEmail: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    default: '',
   },
   fatherName: {
     type: String,
     required: true,
     trim: true,
   },
+  fatherOccupation: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  fatherPhone: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  fatherAadhaar: {
+    type: String,
+    trim: true,
+    default: '',
+  },
   motherName: {
     type: String,
     trim: true,
+    default: '',
+  },
+  motherOccupation: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  motherPhone: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  motherAadhaar: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  emergencyContact: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  emergencyRelation: {
+    type: String,
+    trim: true,
+    default: '',
   },
   parentPhone: {
     type: String,
@@ -78,6 +150,38 @@ const studentSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  permanentAddress: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  isFresher: {
+    type: Boolean,
+    default: true,
+  },
+  previousSchool: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  previousClass: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  previousMarksheet: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  previousTcNo: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  previousTcDate: {
+    type: Date,
+  },
   admissionDate: {
     type: Date,
     default: Date.now,
@@ -89,7 +193,7 @@ const studentSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Active', 'Inactive', 'Alumni', 'Suspended'],
+    enum: ['Active', 'Inactive', 'Alumni', 'Suspended', 'Withdrawn'],
     default: 'Active',
     index: true,
   },
@@ -103,6 +207,41 @@ const studentSchema = new mongoose.Schema({
   },
   withdrawalDate: {
     type: Date,
+  },
+  tcSerialNo: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  tcIssueDate: {
+    type: Date,
+  },
+  tcApplicationDate: {
+    type: Date,
+  },
+  totalWorkingDays: {
+    type: Number,
+    default: 210,
+  },
+  daysPresent: {
+    type: Number,
+    default: 195,
+  },
+  generalConduct: {
+    type: String,
+    default: 'Good',
+  },
+  duesClearedUpTo: {
+    type: String,
+    default: 'March 2027',
+  },
+  promotionStatus: {
+    type: String,
+    default: 'Promoted to Next Class',
+  },
+  remarks: {
+    type: String,
+    default: '',
   },
 }, {
   timestamps: true,

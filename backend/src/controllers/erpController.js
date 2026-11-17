@@ -1,7 +1,7 @@
 const Student = require('../models/Student');
 const Attendance = require('../models/Attendance');
 const FeeRecord = require('../models/FeeRecord');
-const { getCache, setCache, clearCache } = require('../utils/cache');
+const { getCache, setCache, clearCache, invalidateCache } = require('../utils/cache');
 
 // Standard MPBSE Class fee structures (can be adjusted)
 const CLASS_FEES = {
@@ -218,11 +218,34 @@ exports.createStudent = async (req, res) => {
       gender,
       dob,
       bloodGroup,
+      aadhaarNo,
+      category,
+      nationality,
+      religion,
+      studentPhone,
+      studentEmail,
       fatherName,
+      fatherOccupation,
+      fatherPhone,
+      fatherAadhaar,
       motherName,
+      motherOccupation,
+      motherPhone,
+      motherAadhaar,
+      emergencyContact,
+      emergencyRelation,
       parentPhone,
       parentEmail,
       address,
+      permanentAddress,
+      isFresher = true,
+      previousSchool,
+      previousClass,
+      previousMarksheet,
+      previousTcNo,
+      previousTcDate,
+      photoUrl,
+      admissionDate,
       academicYear = '2026-2027',
     } = req.body;
 
@@ -252,13 +275,36 @@ exports.createStudent = async (req, res) => {
       section: (section || 'A').toUpperCase(),
       stream: stream || 'None',
       gender,
-      dob: dob || new Date('2015-01-01'),
+      dob: dob || undefined,
       bloodGroup: bloodGroup || 'Unknown',
+      aadhaarNo: aadhaarNo || '',
+      category: category || 'General',
+      nationality: nationality || 'Indian',
+      religion: religion || '',
+      studentPhone: studentPhone || '',
+      studentEmail: studentEmail || '',
       fatherName,
-      motherName,
-      parentPhone,
-      parentEmail,
+      fatherOccupation: fatherOccupation || '',
+      fatherPhone: fatherPhone || parentPhone,
+      fatherAadhaar: fatherAadhaar || '',
+      motherName: motherName || '',
+      motherOccupation: motherOccupation || '',
+      motherPhone: motherPhone || '',
+      motherAadhaar: motherAadhaar || '',
+      emergencyContact: emergencyContact || '',
+      emergencyRelation: emergencyRelation || '',
+      parentPhone: parentPhone || fatherPhone || '',
+      parentEmail: parentEmail || '',
       address,
+      permanentAddress: permanentAddress || address,
+      isFresher: isFresher === true || isFresher === 'true',
+      previousSchool: previousSchool || '',
+      previousClass: previousClass || '',
+      previousMarksheet: previousMarksheet || '',
+      previousTcNo: previousTcNo || '',
+      previousTcDate: previousTcDate || undefined,
+      photoUrl: photoUrl || '',
+      admissionDate: admissionDate || Date.now(),
       academicYear,
       status: 'Active',
     });
@@ -294,7 +340,15 @@ exports.createStudent = async (req, res) => {
 // @access  Private
 exports.updateStudent = async (req, res) => {
   try {
-    const student = await Student.findByIdAndUpdate(req.params.id, req.body, {
+    const updateData = { ...req.body };
+    if (updateData.section) {
+      updateData.section = updateData.section.toUpperCase();
+    }
+    if (updateData.scholarNo) {
+      updateData.scholarNo = updateData.scholarNo.toUpperCase();
+    }
+
+    const student = await Student.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true,
     });
@@ -303,7 +357,7 @@ exports.updateStudent = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Student not found' });
     }
 
-    // Keep FeeRecord in sync with student name / class
+    // Keep FeeRecord in sync with student name / class / section
     await FeeRecord.findOneAndUpdate(
       { student: student._id },
       {
@@ -312,6 +366,8 @@ exports.updateStudent = async (req, res) => {
         section: student.section,
       }
     );
+
+    invalidateCache('erp_overview');
 
     res.json({ success: true, message: 'Student updated successfully', data: student });
   } catch (error) {
@@ -325,7 +381,19 @@ exports.updateStudent = async (req, res) => {
 // @access  Private
 exports.deleteStudent = async (req, res) => {
   try {
-    const { permanent = false, reason = 'Admission Withdrawn / TC Issued' } = { ...req.query, ...req.body };
+    const {
+      permanent = false,
+      reason = 'Admission Withdrawn (Transfer Certificate / TC Issued)',
+      tcSerialNo,
+      tcIssueDate,
+      tcApplicationDate,
+      totalWorkingDays,
+      daysPresent,
+      generalConduct,
+      duesClearedUpTo,
+      promotionStatus,
+      remarks,
+    } = { ...req.query, ...req.body };
 
     const student = await Student.findById(req.params.id);
     if (!student) {
@@ -343,10 +411,20 @@ exports.deleteStudent = async (req, res) => {
       });
     }
 
-    // Mark as withdrawn / Inactive with reason
+    // Mark as withdrawn / Inactive with full TC audit record
     student.status = 'Inactive';
     student.withdrawalReason = reason;
-    student.withdrawalDate = new Date();
+    student.withdrawalDate = tcIssueDate ? new Date(tcIssueDate) : new Date();
+    student.tcSerialNo = tcSerialNo || `TC/2026-27/${String(Math.floor(1000 + Math.random() * 9000))}`;
+    student.tcIssueDate = tcIssueDate ? new Date(tcIssueDate) : new Date();
+    student.tcApplicationDate = tcApplicationDate ? new Date(tcApplicationDate) : new Date();
+    if (totalWorkingDays) student.totalWorkingDays = Number(totalWorkingDays);
+    if (daysPresent) student.daysPresent = Number(daysPresent);
+    if (generalConduct) student.generalConduct = generalConduct;
+    if (duesClearedUpTo) student.duesClearedUpTo = duesClearedUpTo;
+    if (promotionStatus) student.promotionStatus = promotionStatus;
+    if (remarks) student.remarks = remarks;
+
     await student.save();
 
     // Mark corresponding FeeRecord status
@@ -359,7 +437,7 @@ exports.deleteStudent = async (req, res) => {
 
     res.json({
       success: true,
-      message: `Student ${student.firstName} ${student.lastName} (${student.scholarNo}) marked as Withdrawn (${reason}).`,
+      message: `Student ${student.firstName} ${student.lastName} (${student.scholarNo}) marked as Withdrawn. Transfer Certificate ${student.tcSerialNo} generated.`,
       data: student,
     });
   } catch (error) {

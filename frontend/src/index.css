@@ -56,3 +56,44 @@ body {
   outline: 2px solid rgba(59, 130, 246, 0.6);
   outline-offset: 2px;
 }
+
+/* Official Print Layout for ERP Documents & Transfer Certificates */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
+  }
+
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Target only when an official printable ERP document is active */
+  body:has(.printable-erp-doc) * {
+    visibility: hidden;
+  }
+  
+  body:has(.printable-erp-doc) .printable-erp-doc,
+  body:has(.printable-erp-doc) .printable-erp-doc * {
+    visibility: visible;
+  }
+  
+  .printable-erp-doc {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 20px 24px !important;
+    border: 2px solid #1e293b !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
+

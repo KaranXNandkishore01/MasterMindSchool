@@ -1,27 +1,36 @@
-import { useState, useEffect, useCallback, useId } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { broadcastUpdate } from '../../utils/realtimeSync';
 import {
   Users,
   Search,
-  Filter,
   Plus,
   ChevronLeft,
   ChevronRight,
   Phone,
   Eye,
+  Pencil,
   X,
-  UserCheck,
   UserX,
   CheckCircle2,
-  Calendar,
   Sparkles,
   UserMinus,
   Trash2,
-  RefreshCw,
-  AlertTriangle,
-  ShieldAlert
+  Award,
+  Printer,
+  FileText,
+  ShieldCheck,
+  CreditCard,
+  MapPin,
+  Calendar,
+  AlertCircle
 } from 'lucide-react';
+import TransferCertificateModal from '../../components/erp/TransferCertificateModal';
+import WithdrawalSuccessModal from '../../components/erp/WithdrawalSuccessModal';
+import AdmitStudentModal from '../../components/erp/AdmitStudentModal';
+import WithdrawStudentModal from '../../components/erp/WithdrawStudentModal';
+import EditStudentModal from '../../components/erp/EditStudentModal';
+import StudentProfileDocModal from '../../components/erp/StudentProfileDocModal';
 
 const CLASSES = [
   'All',
@@ -32,15 +41,6 @@ const CLASSES = [
 ];
 
 const SECTIONS = ['All', 'A', 'B', 'C'];
-
-const generateCaptcha = () => {
-  const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-  let code = '';
-  for (let i = 0; i < 5; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-};
 
 const ManageStudents = () => {
   const [students, setStudents] = useState([]);
@@ -53,38 +53,15 @@ const ManageStudents = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
-  // Modal states
+  // Modals & Action States
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [studentToEdit, setStudentToEdit] = useState(null);
+  const [studentForProfileDoc, setStudentForProfileDoc] = useState(null);
+  const [studentToWithdraw, setStudentToWithdraw] = useState(null);
+  const [withdrawnStudentForSuccess, setWithdrawnStudentForSuccess] = useState(null);
+  const [studentForTC, setStudentForTC] = useState(null);
   const [isSuccessToast, setIsSuccessToast] = useState('');
-
-  // Remove / Withdrawal Captcha Protection states
-  const [studentToRemove, setStudentToRemove] = useState(null);
-  const [captchaCode, setCaptchaCode] = useState('');
-  const [enteredCaptcha, setEnteredCaptcha] = useState('');
-  const [removalType, setRemovalType] = useState('withdraw');
-  const [withdrawalReason, setWithdrawalReason] = useState('Admission Withdrawn (Transfer Certificate / TC Issued)');
-  const [isRemoving, setIsRemoving] = useState(false);
-  const [captchaError, setCaptchaError] = useState('');
-  const captchaReasonId = useId();
-  const captchaInputId = useId();
-
-  // Form state
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    class: 'Class 10',
-    section: 'A',
-    stream: 'None',
-    gender: 'Male',
-    dob: '2012-01-01',
-    bloodGroup: 'B+',
-    fatherName: '',
-    motherName: '',
-    parentPhone: '',
-    parentEmail: '',
-    address: '',
-  });
 
   const fetchStudents = useCallback(async () => {
     setLoading(true);
@@ -123,76 +100,90 @@ const ManageStudents = () => {
     fetchStudents();
   }, [fetchStudents]);
 
-  const handleCreateStudent = async (e) => {
-    e.preventDefault();
+  const handleAdmitStudent = async (newStudentData) => {
     try {
-      await axios.post('/api/erp/students', formData, { withCredentials: true });
+      await axios.post('/api/erp/students', newStudentData, { withCredentials: true });
     } catch {
-      // Mock insert on standalone
+      // Mock insert on standalone mode
       const newMock = {
         _id: `mock-new-${Date.now()}`,
-        scholarNo: `MMPS-2026-${String(Math.floor(1000 + Math.random() * 9000))}`,
-        rollNo: Math.floor(1 + Math.random() * 40),
-        ...formData,
+        scholarNo: newStudentData.scholarNo || `MMPS-2026-${String(Math.floor(1000 + Math.random() * 9000))}`,
+        rollNo: newStudentData.rollNo || Math.floor(1 + Math.random() * 40),
+        ...newStudentData,
         status: 'Active',
       };
-      setStudents(prev => [newMock, ...prev]);
+      setStudents((prev) => [newMock, ...prev]);
     }
 
     setIsAddModalOpen(false);
-    setIsSuccessToast(`Student ${formData.firstName} ${formData.lastName} enrolled successfully!`);
-    setTimeout(() => setIsSuccessToast(''), 4000);
+    setIsSuccessToast(`Student ${newStudentData.firstName} ${newStudentData.lastName} enrolled successfully!`);
+    setTimeout(() => setIsSuccessToast(''), 5000);
     broadcastUpdate('students');
+    broadcastUpdate('fees');
     fetchStudents();
   };
 
-  const handleOpenRemove = (student) => {
-    setStudentToRemove(student);
-    setCaptchaCode(generateCaptcha());
-    setEnteredCaptcha('');
-    setRemovalType('withdraw');
-    setWithdrawalReason('Admission Withdrawn (Transfer Certificate / TC Issued)');
-    setCaptchaError('');
-  };
-
-  const handleRefreshCaptcha = () => {
-    setCaptchaCode(generateCaptcha());
-    setEnteredCaptcha('');
-    setCaptchaError('');
-  };
-
-  const handleConfirmRemove = async (e) => {
-    e.preventDefault();
-    if (!studentToRemove) return;
-
-    if (enteredCaptcha.trim().toUpperCase() !== captchaCode) {
-      setCaptchaError('Incorrect Captcha code. Please enter the exact code shown above.');
-      return;
-    }
-
-    setIsRemoving(true);
-    setCaptchaError('');
-
+  const handleUpdateStudent = async (studentId, updatedData) => {
     try {
-      const res = await axios.delete(`/api/erp/students/${studentToRemove._id}`, {
-        data: {
-          permanent: removalType === 'permanent',
-          reason: withdrawalReason,
-        },
-        withCredentials: true,
-      });
+      const res = await axios.put(`/api/erp/students/${studentId}`, updatedData, { withCredentials: true });
+      const updated = res.data?.data || { _id: studentId, ...updatedData };
 
-      setIsSuccessToast(res.data?.message || `Student ${studentToRemove.firstName} ${studentToRemove.lastName} removed successfully.`);
+      setStudents((prev) => prev.map((s) => (s._id === studentId ? { ...s, ...updated } : s)));
+      if (selectedStudent?._id === studentId) {
+        setSelectedStudent((prev) => ({ ...prev, ...updated }));
+      }
+
+      setStudentToEdit(null);
+      setIsSuccessToast(`Student ${updatedData.firstName} ${updatedData.lastName} record updated successfully!`);
       setTimeout(() => setIsSuccessToast(''), 5000);
-      setStudentToRemove(null);
       broadcastUpdate('students');
       broadcastUpdate('fees');
       fetchStudents();
     } catch (error) {
-      const msg = error.response?.data?.message || 'Failed to remove student. Please try again.';
-      setCaptchaError(msg);
-    } finally {
-      setIsRemoving(false);
+      const msg = error.response?.data?.message || 'Failed to update student.';
+      throw new Error(msg);
+    }
+  };
+
+  const handleConfirmWithdraw = async (student, payload) => {
+    try {
+      const res = await axios.delete(`/api/erp/students/${student._id}`, {
+        data: payload,
+        withCredentials: true,
+      });
+
+      const updatedStudent = res.data?.data || {
+        ...student,
+        status: payload.permanent ? 'Deleted' : 'Inactive',
+        withdrawalReason: payload.reason,
+        withdrawalDate: payload.tcIssueDate || new Date().toISOString(),
+        tcSerialNo: payload.tcSerialNo,
+        tcIssueDate: payload.tcIssueDate,
+        tcApplicationDate: payload.tcApplicationDate,
+        promotionStatus: payload.promotionStatus,
+        duesClearedUpTo: payload.duesClearedUpTo,
+        totalWorkingDays: payload.totalWorkingDays,
+        daysPresent: payload.daysPresent,
+        generalConduct: payload.generalConduct,
+        remarks: payload.remarks,
+      };
+
+      setStudentToWithdraw(null);
+
+      if (payload.permanent) {
+        setIsSuccessToast(`Student ${student.firstName} ${student.lastName} has been permanently removed.`);
+        setTimeout(() => setIsSuccessToast(''), 4500);
+      } else {
+        // Show official withdrawal & TC generation confirmation popup!
+        setWithdrawnStudentForSuccess(updatedStudent);
+      }
+
+      broadcastUpdate('students');
+      broadcastUpdate('fees');
+      fetchStudents();
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Failed to process student removal.';
+      throw new Error(msg);
     }
   };
 
@@ -218,14 +209,14 @@ const ManageStudents = () => {
               Student Directory & Enrollment
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
-              Active Registry for Enrolled Students across Classes Nursery to XII (Session 2026-27).
+              Official Registry for Enrolled Students across Classes Nursery to XII (Session 2026-27).
             </p>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="w-full sm:w-auto justify-center bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-extrabold px-5 py-3 rounded-xl transition-all shadow-md shadow-amber-500/20 flex items-center gap-2 text-xs uppercase tracking-wider cursor-pointer"
+              className="w-full sm:w-auto justify-center bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-black px-5 py-3 rounded-xl transition-all shadow-md shadow-amber-500/20 flex items-center gap-2 text-xs uppercase tracking-wider cursor-pointer"
             >
               <Plus size={16} /> Admit New Student
             </button>
@@ -243,25 +234,28 @@ const ManageStudents = () => {
             <p className="text-xl sm:text-2xl font-black text-amber-400 mt-0.5">15 (NUR - XII)</p>
           </div>
           <div className="bg-white/5 sm:bg-transparent p-2.5 sm:p-0 rounded-xl sm:rounded-none">
-            <span className="text-[10px] sm:text-xs text-slate-400 uppercase font-semibold">Gender Balance</span>
-            <p className="text-xl sm:text-2xl font-black text-white mt-0.5">52% 👦 / 48% 👧</p>
+            <span className="text-[10px] sm:text-xs text-slate-400 uppercase font-semibold">Academic Year</span>
+            <p className="text-xl sm:text-2xl font-black text-white mt-0.5">2026-27</p>
           </div>
           <div className="bg-white/5 sm:bg-transparent p-2.5 sm:p-0 rounded-xl sm:rounded-none">
             <span className="text-[10px] sm:text-xs text-slate-400 uppercase font-semibold">Affiliation</span>
-            <p className="text-xl sm:text-2xl font-black text-emerald-400 mt-0.5">MPBSE Board</p>
+            <p className="text-xl sm:text-2xl font-black text-amber-400 mt-0.5">MPBSE / CBSE</p>
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-sm flex flex-col lg:flex-row gap-3 sm:gap-4 items-stretch lg:items-center justify-between">
-        <div className="relative w-full lg:w-96">
-          <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
           <input
             type="text"
             value={searchTerm}
-            onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
-            placeholder="Search Name, Scholar No, Phone..."
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Search by Name, Scholar No, Phone, Father Name..."
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none text-xs sm:text-sm transition-all"
           />
         </div>
@@ -272,11 +266,16 @@ const ManageStudents = () => {
             <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Class:</span>
             <select
               value={selectedClass}
-              onChange={(e) => { setSelectedClass(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setSelectedClass(e.target.value);
+                setPage(1);
+              }}
               className="w-full sm:w-auto px-2.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 outline-none cursor-pointer"
             >
               {CLASSES.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
           </div>
@@ -286,11 +285,16 @@ const ManageStudents = () => {
             <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Sec:</span>
             <select
               value={selectedSection}
-              onChange={(e) => { setSelectedSection(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setSelectedSection(e.target.value);
+                setPage(1);
+              }}
               className="w-full sm:w-auto px-2.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 outline-none cursor-pointer"
             >
               {SECTIONS.map((s) => (
-                <option key={s} value={s}>{s}</option>
+                <option key={s} value={s}>
+                  {s}
+                </option>
               ))}
             </select>
           </div>
@@ -300,12 +304,15 @@ const ManageStudents = () => {
             <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Status:</span>
             <select
               value={selectedStatus}
-              onChange={(e) => { setSelectedStatus(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setSelectedStatus(e.target.value);
+                setPage(1);
+              }}
               className="w-full sm:w-auto px-2.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 outline-none cursor-pointer"
             >
-              <option value="All">All</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option value="All">All Statuses</option>
+              <option value="Active">Active Enrolled</option>
+              <option value="Inactive">Withdrawn / T.C. Issued</option>
             </select>
           </div>
         </div>
@@ -320,7 +327,7 @@ const ManageStudents = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-left text-sm text-slate-600">
+          <table className="w-full min-w-[840px] text-left text-sm text-slate-600">
             <thead className="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500 font-extrabold border-b border-slate-200">
               <tr>
                 <th className="py-4 px-6">Scholar No</th>
@@ -350,64 +357,128 @@ const ManageStudents = () => {
                   </td>
                 </tr>
               ) : (
-                students.map((student) => (
-                  <tr key={student._id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3.5 px-6 font-mono text-xs font-extrabold text-blue-900">
-                      {student.scholarNo}
-                    </td>
-                    <td className="py-3.5 px-6 font-bold text-slate-900">
-                      {student.firstName} {student.lastName}
-                    </td>
-                    <td className="py-3.5 px-6">
-                      <span className="inline-block bg-blue-50 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-md border border-blue-200/60">
-                        {student.class} - {student.section}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-6 font-bold text-slate-700">
-                      #{student.rollNo}
-                    </td>
-                    <td className="py-3.5 px-6">
-                      <span className={`text-xs font-semibold ${student.gender === 'Female' ? 'text-rose-600' : 'text-blue-600'}`}>
-                        {student.gender}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-6 text-xs">
-                      <div className="font-semibold text-slate-800">{student.fatherName}</div>
-                      <div className="text-slate-500 flex items-center gap-1 mt-0.5">
-                        <Phone size={12} className="text-slate-400" />
-                        {student.parentPhone}
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-6">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                        student.status === 'Active'
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                          : 'bg-slate-100 text-slate-600 border border-slate-200'
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${student.status === 'Active' ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
-                        {student.status}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-6 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => setSelectedStudent(student)}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-bold rounded-lg text-xs transition-colors cursor-pointer"
-                          title="View Details"
+                students.map((student) => {
+                  const isActive = student.status === 'Active';
+                  return (
+                    <tr key={student._id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-3.5 px-6 font-mono text-xs font-extrabold text-blue-900">
+                        {student.scholarNo}
+                      </td>
+                      <td className="py-3.5 px-6 font-bold text-slate-900">
+                        <div className="flex items-center gap-2.5">
+                          {student.photoUrl ? (
+                            <img
+                              src={student.photoUrl}
+                              alt=""
+                              className="w-7 h-7 rounded-full object-cover border border-slate-200"
+                            />
+                          ) : (
+                            <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center justify-center">
+                              {student.firstName[0]}
+                            </div>
+                          )}
+                          <span>
+                            {student.firstName} {student.lastName}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-6">
+                        <span className="inline-block bg-blue-50 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-md border border-blue-200/60">
+                          {student.class} - {student.section}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-6 font-bold text-slate-700">
+                        #{student.rollNo}
+                      </td>
+                      <td className="py-3.5 px-6">
+                        <span
+                          className={`text-xs font-semibold ${
+                            student.gender === 'Female' ? 'text-rose-600' : 'text-blue-600'
+                          }`}
                         >
-                          <Eye size={14} /> View
-                        </button>
-                        <button
-                          onClick={() => handleOpenRemove(student)}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-lg text-xs transition-colors cursor-pointer border border-rose-200"
-                          title="Withdraw Admission / Remove Student"
+                          {student.gender}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-6 text-xs">
+                        <div className="font-semibold text-slate-800">{student.fatherName}</div>
+                        <div className="text-slate-500 flex items-center gap-1 mt-0.5">
+                          <Phone size={12} className="text-slate-400" />
+                          {student.parentPhone}
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-6">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                            isActive
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-amber-50 text-amber-800 border border-amber-200'
+                          }`}
                         >
-                          <UserMinus size={14} /> Remove
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              isActive ? 'bg-emerald-500' : 'bg-amber-500'
+                            }`}
+                          ></span>
+                          {isActive ? 'Active' : 'Withdrawn (TC)'}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-6 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => setSelectedStudent(student)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-bold rounded-lg text-xs transition-colors cursor-pointer"
+                            title="View Student Profile"
+                          >
+                            <Eye size={13} /> View
+                          </button>
+
+                          <button
+                            onClick={() => setStudentToEdit(student)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-800 font-bold rounded-lg text-xs transition-colors cursor-pointer border border-blue-200"
+                            title="Edit Student Information"
+                          >
+                            <Pencil size={13} /> Edit
+                          </button>
+
+                          <button
+                            onClick={() => setStudentForProfileDoc(student)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 font-bold rounded-lg text-xs transition-colors cursor-pointer border border-indigo-200"
+                            title="Print Official Student Cumulative Record (A4)"
+                          >
+                            <FileText size={13} /> Dossier
+                          </button>
+
+                          {isActive ? (
+                            <button
+                              onClick={() => setStudentToWithdraw(student)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold rounded-lg text-xs transition-colors cursor-pointer border border-amber-300"
+                              title="Withdraw Admission & Issue T.C."
+                            >
+                              <UserMinus size={13} /> Withdraw
+                            </button>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => setStudentForTC(student)}
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-gradient-to-r from-amber-50 to-yellow-50 hover:from-amber-100 hover:to-yellow-100 text-amber-950 font-black rounded-lg text-xs transition-colors cursor-pointer border border-amber-300 shadow-sm"
+                                title="View & Print Official School Transfer Certificate (T.C.)"
+                              >
+                                <Award size={13} className="text-amber-800" /> T.C.
+                              </button>
+                              <button
+                                onClick={() => setStudentToWithdraw(student)}
+                                className="inline-flex items-center p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-lg text-xs transition-colors cursor-pointer border border-rose-200"
+                                title="Permanent Delete"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -416,7 +487,8 @@ const ManageStudents = () => {
         {/* Pagination Bar */}
         <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
           <span className="text-xs font-semibold text-slate-500">
-            Showing Page <span className="font-bold text-slate-800">{page}</span> of <span className="font-bold text-slate-800">{totalPages}</span>
+            Showing Page <span className="font-bold text-slate-800">{page}</span> of{' '}
+            <span className="font-bold text-slate-800">{totalPages}</span>
           </span>
           <div className="flex items-center gap-2">
             <button
@@ -444,25 +516,46 @@ const ManageStudents = () => {
           onClick={() => setSelectedStudent(null)}
         >
           <div
-            className="bg-white rounded-2xl sm:rounded-3xl max-w-lg w-full p-5 sm:p-8 shadow-2xl border border-slate-100 relative animate-scale-in max-h-[92vh] overflow-y-auto"
+            className="bg-white rounded-3xl max-w-xl w-full p-5 sm:p-8 shadow-2xl border border-slate-100 relative animate-scale-in max-h-[92vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setSelectedStudent(null)}
-              className="absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full hover:bg-slate-100 cursor-pointer"
+              className="absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 cursor-pointer"
             >
               <X size={20} />
             </button>
 
-            <div className="flex items-center gap-3.5 sm:gap-4 mb-5 sm:mb-6">
-              <div className="w-13 h-13 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-blue-100 text-blue-900 font-extrabold text-lg sm:text-xl flex items-center justify-center shadow-inner shrink-0">
-                {selectedStudent.firstName[0]}{selectedStudent.lastName[0]}
-              </div>
+            {/* Profile Header */}
+            <div className="flex items-center gap-4 mb-5">
+              {selectedStudent.photoUrl ? (
+                <img
+                  src={selectedStudent.photoUrl}
+                  alt=""
+                  className="w-16 h-16 rounded-2xl object-cover border-2 border-slate-200 shadow-md shrink-0"
+                />
+              ) : (
+                <div className="w-16 h-16 rounded-2xl bg-blue-100 text-blue-900 font-extrabold text-xl flex items-center justify-center shadow-inner shrink-0">
+                  {selectedStudent.firstName[0]}
+                  {selectedStudent.lastName[0]}
+                </div>
+              )}
               <div>
-                <span className="text-[10px] sm:text-[11px] font-mono font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                  {selectedStudent.scholarNo}
-                </span>
-                <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 mt-0.5 sm:mt-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-mono font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                    {selectedStudent.scholarNo}
+                  </span>
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      selectedStudent.status === 'Active'
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : 'bg-amber-50 text-amber-800'
+                    }`}
+                  >
+                    {selectedStudent.status}
+                  </span>
+                </div>
+                <h3 className="text-xl font-black text-slate-900 mt-1">
                   {selectedStudent.firstName} {selectedStudent.lastName}
                 </h3>
                 <p className="text-xs text-slate-500 font-medium">
@@ -471,413 +564,224 @@ const ManageStudents = () => {
               </div>
             </div>
 
-            <div className="space-y-3 sm:space-y-3.5 text-xs text-slate-700 border-t border-slate-100 pt-4 sm:pt-5">
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-                <div className="p-2.5 sm:p-3 bg-slate-50 rounded-xl">
-                  <span className="text-slate-400 font-bold block mb-0.5 uppercase tracking-wider text-[10px]">Father Name</span>
-                  <span className="font-bold text-slate-900">{selectedStudent.fatherName}</span>
+            {/* Details Grid */}
+            <div className="space-y-3 text-xs text-slate-700 border-t border-slate-100 pt-4">
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="p-2.5 bg-slate-50 rounded-xl">
+                  <span className="text-slate-400 font-bold block mb-0.5 uppercase tracking-wider text-[10px]">
+                    Date of Birth
+                  </span>
+                  <span className="font-bold text-slate-900">
+                    {selectedStudent.dob ? new Date(selectedStudent.dob).toLocaleDateString('en-IN') : 'Not Specified'}
+                  </span>
                 </div>
-                <div className="p-2.5 sm:p-3 bg-slate-50 rounded-xl">
-                  <span className="text-slate-400 font-bold block mb-0.5 uppercase tracking-wider text-[10px]">Blood Group</span>
-                  <span className="font-bold text-slate-900">{selectedStudent.bloodGroup}</span>
+                <div className="p-2.5 bg-slate-50 rounded-xl">
+                  <span className="text-slate-400 font-bold block mb-0.5 uppercase tracking-wider text-[10px]">
+                    Blood Group
+                  </span>
+                  <span className="font-bold text-slate-900">
+                    {selectedStudent.bloodGroup || 'Not Specified'}
+                  </span>
                 </div>
               </div>
 
-              <div className="p-2.5 sm:p-3 bg-slate-50 rounded-xl">
-                <span className="text-slate-400 font-bold block mb-0.5 uppercase tracking-wider text-[10px]">Parent Phone</span>
-                <a href={`tel:${selectedStudent.parentPhone}`} className="font-bold text-blue-700 hover:underline">
-                  {selectedStudent.parentPhone}
-                </a>
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="p-2.5 bg-slate-50 rounded-xl">
+                  <span className="text-slate-400 font-bold block mb-0.5 uppercase tracking-wider text-[10px]">
+                    Student Aadhaar Card
+                  </span>
+                  <span className="font-mono font-bold text-slate-900">
+                    {selectedStudent.aadhaarNo || 'Not Provided'}
+                  </span>
+                </div>
+                <div className="p-2.5 bg-slate-50 rounded-xl">
+                  <span className="text-slate-400 font-bold block mb-0.5 uppercase tracking-wider text-[10px]">
+                    Category / Nationality
+                  </span>
+                  <span className="font-bold text-slate-900">
+                    {selectedStudent.category || 'General'} • {selectedStudent.nationality || 'Indian'}
+                  </span>
+                </div>
               </div>
 
-              <div className="p-2.5 sm:p-3 bg-slate-50 rounded-xl">
-                <span className="text-slate-400 font-bold block mb-0.5 uppercase tracking-wider text-[10px]">Residential Address</span>
+              {/* Parents Section */}
+              <div className="p-3 bg-slate-50 rounded-xl space-y-2">
+                <span className="text-slate-400 font-bold block uppercase tracking-wider text-[10px]">
+                  Parent & Guardian Information
+                </span>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <span className="text-slate-500 text-[11px] block">Father:</span>
+                    <span className="font-bold text-slate-900">{selectedStudent.fatherName}</span>
+                    {selectedStudent.fatherAadhaar && (
+                      <span className="block text-[10px] font-mono text-slate-500">
+                        Aadhaar: {selectedStudent.fatherAadhaar}
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <span className="text-slate-500 text-[11px] block">Mother:</span>
+                    <span className="font-bold text-slate-900">{selectedStudent.motherName || '—'}</span>
+                    {selectedStudent.motherAadhaar && (
+                      <span className="block text-[10px] font-mono text-slate-500">
+                        Aadhaar: {selectedStudent.motherAadhaar}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-1.5 border-t border-slate-200 flex justify-between items-center">
+                  <span className="text-slate-500">Contact Phone:</span>
+                  <a href={`tel:${selectedStudent.parentPhone}`} className="font-bold text-blue-700 hover:underline">
+                    {selectedStudent.parentPhone}
+                  </a>
+                </div>
+              </div>
+
+              {/* Address */}
+              <div className="p-2.5 bg-slate-50 rounded-xl">
+                <span className="text-slate-400 font-bold block mb-0.5 uppercase tracking-wider text-[10px]">
+                  Residential Address
+                </span>
                 <span className="font-semibold text-slate-800">{selectedStudent.address}</span>
               </div>
+
+              {/* Academic History Status */}
+              <div className="p-2.5 bg-slate-50 rounded-xl">
+                <span className="text-slate-400 font-bold block mb-0.5 uppercase tracking-wider text-[10px]">
+                  Enrollment History
+                </span>
+                {selectedStudent.isFresher ? (
+                  <span className="font-bold text-emerald-700">🌟 Fresher Admission (First time formal schooling)</span>
+                ) : (
+                  <div className="text-slate-800 space-y-0.5">
+                    <p>Previous School: <strong>{selectedStudent.previousSchool || 'Registered Previous School'}</strong></p>
+                    {selectedStudent.previousMarksheet && <p>Marksheet: <strong>{selectedStudent.previousMarksheet}</strong></p>}
+                    {selectedStudent.previousTcNo && <p>Previous T.C.: <strong>{selectedStudent.previousTcNo}</strong></p>}
+                  </div>
+                )}
+              </div>
+
+              {/* Withdrawn Info (if applicable) */}
+              {selectedStudent.status !== 'Active' && (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-1 text-amber-950">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold uppercase text-[10px] text-amber-800">Transfer Certificate No:</span>
+                    <span className="font-mono font-black">{selectedStudent.tcSerialNo || 'Generated'}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-amber-800 font-medium">Reason for Leaving:</span>
+                    <span className="font-semibold">{selectedStudent.withdrawalReason || 'T.C. Issued'}</span>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 mt-5 sm:mt-6">
+            {/* Bottom Modal Actions */}
+            <div className="flex flex-wrap items-center gap-2 mt-5">
               <button
                 onClick={() => setSelectedStudent(null)}
-                className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider cursor-pointer text-center"
+                className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer text-center"
               >
-                Close Details
+                Close
               </button>
+
               <button
                 onClick={() => {
                   const st = selectedStudent;
                   setSelectedStudent(null);
-                  handleOpenRemove(st);
+                  setStudentToEdit(st);
                 }}
-                className="px-4 py-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl text-xs border border-rose-200 cursor-pointer flex items-center justify-center gap-1.5"
-                title="Withdraw Admission"
+                className="px-4 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold rounded-xl text-xs border border-blue-300 cursor-pointer flex items-center justify-center gap-1.5"
               >
-                <UserMinus size={14} /> Withdraw / Remove
+                <Pencil size={14} /> Edit Record
               </button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* New Admission Modal */}
-      {isAddModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3.5 sm:p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in"
-          onClick={() => setIsAddModalOpen(false)}
-        >
-          <div
-            className="bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full p-5 sm:p-8 shadow-2xl border border-slate-100 max-h-[92vh] overflow-y-auto relative animate-scale-in"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setIsAddModalOpen(false)}
-              className="absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full hover:bg-slate-100 cursor-pointer"
-            >
-              <X size={20} />
-            </button>
+              <button
+                onClick={() => {
+                  const st = selectedStudent;
+                  setSelectedStudent(null);
+                  setStudentForProfileDoc(st);
+                }}
+                className="px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-950 font-bold rounded-xl text-xs border border-indigo-300 cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <FileText size={14} /> Print Dossier
+              </button>
 
-            <div className="mb-5 sm:mb-6">
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-600 block mb-1">
-                Admission Portal 2026-27
-              </span>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">Admit New Student</h2>
-              <p className="text-xs text-slate-500 mt-1">
-                Enter student and parent demographic information to register in MMPS ERP.
-              </p>
-            </div>
-
-            <form onSubmit={handleCreateStudent} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">First Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.firstName}
-                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-600"
-                    placeholder="e.g. Shaurya"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Last Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.lastName}
-                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-600"
-                    placeholder="e.g. Rajput"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Class *</label>
-                  <select
-                    value={formData.class}
-                    onChange={(e) => setFormData({ ...formData, class: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-600"
-                  >
-                    {CLASSES.filter(c => c !== 'All').map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Section *</label>
-                  <select
-                    value={formData.section}
-                    onChange={(e) => setFormData({ ...formData, section: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-600"
-                  >
-                    <option value="A">Section A</option>
-                    <option value="B">Section B</option>
-                    <option value="C">Section C</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Gender *</label>
-                  <select
-                    value={formData.gender}
-                    onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-600"
-                  >
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Father Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.fatherName}
-                    onChange={(e) => setFormData({ ...formData, fatherName: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-600"
-                    placeholder="e.g. Ramesh Rajput"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Parent Phone *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={formData.parentPhone}
-                    onChange={(e) => setFormData({ ...formData, parentPhone: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-600"
-                    placeholder="+91 98765 43210"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Residential Address *</label>
-                <textarea
-                  rows="2"
-                  required
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-600 resize-none"
-                  placeholder="Street, Colony, Town, Pipariya"
-                ></textarea>
-              </div>
-
-              <div className="pt-4 flex items-center justify-end gap-3">
+              {selectedStudent.status !== 'Active' ? (
                 <button
-                  type="button"
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800 rounded-xl"
+                  onClick={() => {
+                    const st = selectedStudent;
+                    setSelectedStudent(null);
+                    setStudentForTC(st);
+                  }}
+                  className="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider cursor-pointer flex items-center justify-center gap-1.5 shadow"
                 >
-                  Cancel
+                  <Award size={14} /> View T.C.
                 </button>
+              ) : (
                 <button
-                  type="submit"
-                  className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-md shadow-amber-500/20 cursor-pointer"
+                  onClick={() => {
+                    const st = selectedStudent;
+                    setSelectedStudent(null);
+                    setStudentToWithdraw(st);
+                  }}
+                  className="px-4 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold rounded-xl text-xs border border-amber-300 cursor-pointer flex items-center justify-center gap-1.5"
                 >
-                  Confirm Admission
+                  <UserMinus size={14} /> Withdraw
                 </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Remove / Withdraw Student Captcha Protection Modal */}
-      {studentToRemove && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in"
-          onClick={() => setStudentToRemove(null)}
-        >
-          <div
-            className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-rose-100 relative animate-scale-in"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setStudentToRemove(null)}
-              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full hover:bg-slate-100 cursor-pointer"
-            >
-              <X size={20} />
-            </button>
-
-            {/* Header */}
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
-                <ShieldAlert size={24} />
-              </div>
-              <div>
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-rose-600 block">
-                  Security Protected Action
-                </span>
-                <h3 className="text-xl font-black text-slate-900">
-                  Withdraw / Remove Student
-                </h3>
-              </div>
-            </div>
-
-            {/* Student Info Card */}
-            <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 mb-4 space-y-1 text-xs">
-              <div className="flex justify-between">
-                <span className="text-slate-500 font-medium">Student Name:</span>
-                <span className="font-extrabold text-slate-900">{studentToRemove.firstName} {studentToRemove.lastName}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500 font-medium">Scholar Number:</span>
-                <span className="font-mono font-bold text-blue-900">{studentToRemove.scholarNo}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500 font-medium">Class & Section:</span>
-                <span className="font-bold text-slate-800">{studentToRemove.class} - {studentToRemove.section} (Roll #{studentToRemove.rollNo})</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500 font-medium">Father's Name:</span>
-                <span className="font-semibold text-slate-800">{studentToRemove.fatherName}</span>
-              </div>
-            </div>
-
-            <form onSubmit={handleConfirmRemove} className="space-y-4">
-              {/* Removal Type Choice */}
-              <div>
-                <span className="block text-xs font-bold text-slate-700 uppercase mb-1.5">Action Type</span>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setRemovalType('withdraw')}
-                    className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer ${
-                      removalType === 'withdraw'
-                        ? 'bg-amber-50 border-amber-300 ring-2 ring-amber-400'
-                        : 'bg-white border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
-                    <span className="block text-xs font-extrabold text-amber-900">Withdraw Admission</span>
-                    <span className="block text-[10px] text-amber-700 leading-tight mt-0.5">Issue TC & mark Inactive (keeps audit ledger)</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setRemovalType('permanent')}
-                    className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer ${
-                      removalType === 'permanent'
-                        ? 'bg-rose-50 border-rose-300 ring-2 ring-rose-400'
-                        : 'bg-white border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
-                    <span className="block text-xs font-extrabold text-rose-900">Permanent Delete</span>
-                    <span className="block text-[10px] text-rose-700 leading-tight mt-0.5">Completely erase student & fee records</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Reason Dropdown */}
-              <div>
-                <label htmlFor={captchaReasonId} className="block text-xs font-bold text-slate-700 uppercase mb-1">Reason for Removal *</label>
-                <select
-                  id={captchaReasonId}
-                  value={withdrawalReason}
-                  onChange={(e) => setWithdrawalReason(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold outline-none focus:ring-2 focus:ring-rose-500 bg-white"
-                >
-                  <option value="Admission Withdrawn (Transfer Certificate / TC Issued)">Admission Withdrawn (Transfer Certificate / TC Issued)</option>
-                  <option value="Family Relocated to another city">Family Relocated to another city</option>
-                  <option value="Admitted to another institution">Admitted to another institution</option>
-                  <option value="Parent Request / Discontinued">Parent Request / Discontinued</option>
-                  <option value="Erroneously registered entry">Erroneously registered entry</option>
-                </select>
-              </div>
-
-              {/* Captcha Box */}
-              <div className="bg-slate-900 text-white p-4 rounded-2xl space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
-                    Security Verification Code
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleRefreshCaptcha}
-                    className="inline-flex items-center gap-1 text-[11px] text-slate-300 hover:text-white cursor-pointer px-2 py-0.5 rounded bg-white/10"
-                    title="Generate new Captcha"
-                  >
-                    <RefreshCw size={12} /> New Code
-                  </button>
-                </div>
-
-                {/* Visual Distorted Captcha Display */}
-                <div className="bg-gradient-to-r from-slate-800 via-blue-950 to-slate-800 border-2 border-dashed border-amber-400/50 rounded-xl py-3 px-4 flex items-center justify-center gap-3 select-none">
-                  {captchaCode.split('').map((char, index) => (
-                    <span
-                      key={index}
-                      className="font-mono text-2xl font-black tracking-widest text-amber-300 transform"
-                      style={{
-                        display: 'inline-block',
-                        transform: `rotate(${((index % 2 === 0 ? 1 : -1) * (index + 1) * 3)}deg)`,
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.6)',
-                      }}
-                    >
-                      {char}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Input */}
-                <div>
-                  <label htmlFor={captchaInputId} className="block text-[11px] font-bold text-slate-300 mb-1">
-                    Type the 5-character Captcha code above to confirm:
-                  </label>
-                  <input
-                    id={captchaInputId}
-                    type="text"
-                    required
-                    maxLength={5}
-                    value={enteredCaptcha}
-                    onChange={(e) => {
-                      setEnteredCaptcha(e.target.value);
-                      setCaptchaError('');
-                    }}
-                    placeholder="Enter code here..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 text-white placeholder-slate-500 font-mono text-center tracking-widest text-lg font-black border border-slate-700 outline-none focus:border-amber-400 uppercase"
-                  />
-                </div>
-
-                {/* Status indicator */}
-                <div className="text-center text-xs">
-                  {enteredCaptcha.trim().toUpperCase() === captchaCode ? (
-                    <span className="text-emerald-400 font-bold inline-flex items-center gap-1">
-                      <CheckCircle2 size={13} /> Captcha verified! Ready to confirm removal.
-                    </span>
-                  ) : (
-                    <span className="text-slate-400 text-[11px]">
-                      Type exact code to enable the removal button
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {captchaError && (
-                <div className="bg-rose-50 border border-rose-300 text-rose-800 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
-                  <AlertTriangle size={15} className="shrink-0 text-rose-600" />
-                  <span>{captchaError}</span>
-                </div>
               )}
-
-              {/* Buttons */}
-              <div className="pt-2 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setStudentToRemove(null)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-100 cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={enteredCaptcha.trim().toUpperCase() !== captchaCode || isRemoving}
-                  className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs font-black shadow-md cursor-pointer transition-all flex items-center gap-2"
-                >
-                  {isRemoving ? (
-                    <>
-                      <RefreshCw size={14} className="animate-spin" />
-                      <span>Removing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Trash2 size={14} />
-                      <span>Confirm & Remove Student</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Multi-Section Professional ERP New Admission Dialog */}
+      <AdmitStudentModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdmit={handleAdmitStudent}
+      />
+
+      {/* Edit Student Record Modal */}
+      <EditStudentModal
+        student={studentToEdit}
+        isOpen={!!studentToEdit}
+        onClose={() => setStudentToEdit(null)}
+        onSave={handleUpdateStudent}
+      />
+
+      {/* Official Student Admission Dossier & Cumulative Record Printable Modal */}
+      <StudentProfileDocModal
+        student={studentForProfileDoc}
+        onClose={() => setStudentForProfileDoc(null)}
+      />
+
+      {/* Official Withdrawal / Removal Action Modal */}
+      <WithdrawStudentModal
+        student={studentToWithdraw}
+        isOpen={!!studentToWithdraw}
+        onClose={() => setStudentToWithdraw(null)}
+        onConfirm={handleConfirmWithdraw}
+      />
+
+      {/* Withdrawal Success & Immediate T.C. Action Pop Up */}
+      <WithdrawalSuccessModal
+        student={withdrawnStudentForSuccess}
+        onOpenTC={(student) => {
+          setWithdrawnStudentForSuccess(null);
+          setStudentForTC(student);
+        }}
+        onClose={() => setWithdrawnStudentForSuccess(null)}
+      />
+
+      {/* Official School Transfer Certificate (T.C.) Printable Document Modal */}
+      <TransferCertificateModal
+        student={studentForTC}
+        onClose={() => setStudentForTC(null)}
+      />
     </div>
   );
 };
 
 export default ManageStudents;
-

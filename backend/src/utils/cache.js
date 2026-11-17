@@ -29,6 +29,7 @@ const clearCache = (key) => {
 module.exports = {
   getCache,
   setCache,
-  clearCache
+  clearCache,
+  invalidateCache: clearCache
 };
 

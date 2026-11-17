@@ -6,11 +6,11 @@ import { Lock, Mail, GraduationCap, Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
   const [formData, setFormData] = useState({ 
-    managementId: localStorage.getItem('rememberedMgmtId') || '', 
+    managementId: '', 
     password: '' 
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(!!localStorage.getItem('rememberedMgmtId'));
+  const [isReadOnly, setIsReadOnly] = useState(true);
   
   const idInputRef = useRef(null);
   const { managementId, password } = formData;
@@ -23,10 +23,8 @@ const Login = () => {
   );
 
   useEffect(() => {
-    // Auto-focus the Management ID field upon mount
-    if (idInputRef.current) {
-      idInputRef.current.focus();
-    }
+    // Clear any previously saved credential traces so the login page always opens completely empty
+    localStorage.removeItem('rememberedMgmtId');
   }, []);
 
   useEffect(() => {
@@ -65,12 +63,8 @@ const Login = () => {
       return;
     }
 
-    // Handle "Remember me"
-    if (rememberMe) {
-      localStorage.setItem('rememberedMgmtId', trimmedId);
-    } else {
-      localStorage.removeItem('rememberedMgmtId');
-    }
+    // Ensure no credentials linger in localStorage
+    localStorage.removeItem('rememberedMgmtId');
 
     const userData = { managementId: trimmedId, password: trimmedPassword };
     const result = await dispatch(login(userData));
@@ -100,26 +94,35 @@ const Login = () => {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4 sm:px-0">
         <div className="bg-white py-10 px-6 sm:px-10 shadow-2xl rounded-3xl sm:rounded-[2rem] border border-gray-100 backdrop-blur-xl bg-opacity-95">
-          <form className="space-y-6" onSubmit={onSubmit}>
+          <form className="space-y-6" onSubmit={onSubmit} autoComplete="off">
+            {/* Decoy fields to swallow aggressive browser auto-fill heuristics */}
+            <input type="text" name="decoy_username" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
+            <input type="password" name="decoy_password" tabIndex={-1} autoComplete="new-password" className="hidden" aria-hidden="true" />
             
-            {/* Quick Login Shortcut Pills */}
+            {/* Quick Role Selection Pills (Only fills User ID; Password stays empty for security) */}
             <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
               <span className="block text-center text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
-                Quick Role Credentials
+                Quick Role Selector
               </span>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  onClick={() => setFormData({ managementId: 'teacher_mmps', password: 'Teacher28$$' })}
-                  className="px-2.5 py-2 text-xs font-bold rounded-xl bg-blue-50 text-blue-800 hover:bg-blue-100 border border-blue-200 transition-all text-center"
+                  onClick={() => {
+                    setIsReadOnly(false);
+                    setFormData({ managementId: 'teacher_mmps', password: '' });
+                  }}
+                  className="px-2.5 py-2 text-xs font-bold rounded-xl bg-blue-50 text-blue-800 hover:bg-blue-100 border border-blue-200 transition-all text-center cursor-pointer"
                 >
                   👩‍🏫 Class Teacher
                   <span className="block text-[10px] text-blue-600 font-normal mt-0.5">teacher_mmps</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => setFormData({ managementId: 'mastersagar_mgt', password: 'Madam28$$' })}
-                  className="px-2.5 py-2 text-xs font-bold rounded-xl bg-amber-50 text-amber-900 hover:bg-amber-100 border border-amber-200 transition-all text-center"
+                  onClick={() => {
+                    setIsReadOnly(false);
+                    setFormData({ managementId: 'mastersagar_mgt', password: '' });
+                  }}
+                  className="px-2.5 py-2 text-xs font-bold rounded-xl bg-amber-50 text-amber-900 hover:bg-amber-100 border border-amber-200 transition-all text-center cursor-pointer"
                 >
                   🏛️ Management
                   <span className="block text-[10px] text-amber-700 font-normal mt-0.5">mastersagar_mgt</span>
@@ -145,8 +148,15 @@ const Login = () => {
                   name="managementId"
                   value={managementId}
                   onChange={onChange}
+                  readOnly={isReadOnly}
+                  onFocus={() => setIsReadOnly(false)}
+                  onTouchStart={() => setIsReadOnly(false)}
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="none"
+                  spellCheck="false"
                   className="focus:ring-2 flex-1 block w-full rounded-xl sm:text-sm border-gray-300 px-4 py-3 pl-10 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 text-gray-900 border outline-none transition-all focus:bg-white"
-                  placeholder="mastersagar_mgt"
+                  placeholder="e.g. teacher_mmps or mastersagar_mgt"
                   required
                 />
               </div>
@@ -163,8 +173,15 @@ const Login = () => {
                   name="password"
                   value={password}
                   onChange={onChange}
+                  readOnly={isReadOnly}
+                  onFocus={() => setIsReadOnly(false)}
+                  onTouchStart={() => setIsReadOnly(false)}
+                  autoComplete="new-password"
+                  autoCorrect="off"
+                  autoCapitalize="none"
+                  spellCheck="false"
                   className="focus:ring-2 flex-1 block w-full rounded-xl sm:text-sm border-gray-300 px-4 py-3 pl-10 pr-10 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 text-gray-900 border outline-none transition-all focus:bg-white"
-                  placeholder="••••••••"
+                  placeholder="Enter your password"
                   required
                 />
                 <div 
@@ -176,21 +193,7 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between mt-2">
-              <div className="flex items-center">
-                <input 
-                  id="remember-me" 
-                  name="remember-me" 
-                  type="checkbox" 
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer" 
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 cursor-pointer">
-                  Remember me
-                </label>
-              </div>
-
+            <div className="flex items-center justify-end mt-1">
               <div className="text-sm">
                 <a href="#" className="font-semibold text-blue-600 hover:text-blue-500 transition-colors">
                   Forgot password?
@@ -202,7 +205,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-blue-900 bg-yellow-500 hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all transform hover:-translate-y-0.5"
+                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-blue-900 bg-yellow-500 hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all transform hover:-translate-y-0.5 cursor-pointer disabled:opacity-50"
               >
                 {isLoading ? (
                    <div className="w-5 h-5 border-2 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
