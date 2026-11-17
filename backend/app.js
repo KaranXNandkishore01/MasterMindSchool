@@ -61,12 +61,14 @@ const userRoutes = require('./src/routes/userRoutes');
 const managementRoutes = require('./src/routes/managementRoutes');
 const publicRoutes = require('./src/routes/publicRoutes');
 const erpRoutes = require('./src/routes/erpRoutes');
+const staffRoutes = require('./src/routes/staffRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/management', managementRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/erp', erpRoutes);
+app.use('/api/staff', staffRoutes);
 
 // Error Handling Middleware placeholder
 app.use((err, req, res, next) => {

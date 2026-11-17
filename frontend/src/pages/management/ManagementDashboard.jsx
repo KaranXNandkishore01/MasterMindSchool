@@ -10,7 +10,8 @@ import {
   Mail,
   ArrowUpRight,
   Sparkles,
-  GraduationCap
+  UserCheck,
+  Smartphone
 } from 'lucide-react';
 import { subscribeToUpdates } from '../../utils/realtimeSync';
 
@@ -27,6 +28,12 @@ const ManagementDashboard = () => {
     recentAdmissions: [],
   });
 
+  const [staffStats, setStaffStats] = useState({
+    totalStaff: 300,
+    present: 274,
+    halfDay: 8,
+  });
+
   useEffect(() => {
     let isMounted = true;
 
@@ -34,6 +41,19 @@ const ManagementDashboard = () => {
       .then((res) => {
         if (isMounted && res.data?.success && res.data?.data) {
           setStats((prev) => ({ ...prev, ...res.data.data }));
+        }
+      })
+      .catch(() => {});
+
+    axios.get('/api/staff/overview', { withCredentials: true })
+      .then((res) => {
+        if (isMounted && res.data?.success && res.data?.data) {
+          const d = res.data.data;
+          setStaffStats({
+            totalStaff: d.totalStaff || 300,
+            present: d.todayAttendance?.present || 274,
+            halfDay: d.todayAttendance?.halfDay || 8,
+          });
         }
       })
       .catch(() => {});
@@ -75,15 +95,21 @@ const ManagementDashboard = () => {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
             <Link
               to="/management/students"
-              className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 text-slate-950 font-extrabold px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all shadow-lg shadow-amber-500/20 text-xs uppercase tracking-wider text-center"
+              className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 text-slate-950 font-extrabold px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl transition-all shadow-lg shadow-amber-500/20 text-xs uppercase tracking-wider text-center"
             >
               + Admit Student
             </Link>
             <Link
-              to="/management/attendance"
-              className="bg-white/10 hover:bg-white/20 text-white border border-white/15 font-extrabold px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-xs uppercase tracking-wider text-center"
+              to="/management/staff"
+              className="bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl transition-all shadow-md text-xs uppercase tracking-wider text-center flex items-center justify-center gap-1.5"
             >
-              Take Attendance
+              <UserCheck size={14} /> Staff & HR (300)
+            </Link>
+            <Link
+              to="/staff/attendance"
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/15 font-extrabold px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl transition-all text-xs uppercase tracking-wider text-center flex items-center justify-center gap-1.5"
+            >
+              <Smartphone size={14} /> Selfie Punch
             </Link>
           </div>
         </div>
@@ -149,23 +175,26 @@ const ManagementDashboard = () => {
         </div>
 
         {/* Teaching Faculty & Staff */}
-        <div className="bg-white p-4.5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+        <Link
+          to="/management/staff"
+          className="bg-white p-4.5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-sm hover:border-indigo-500 hover:shadow-md transition-all block group"
+        >
           <div className="flex items-center justify-between mb-3 sm:mb-4">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-              <GraduationCap size={22} />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors flex items-center justify-center">
+              <UserCheck size={22} />
             </div>
             <span className="text-[10px] sm:text-[11px] font-extrabold text-indigo-700 bg-indigo-50 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full uppercase tracking-wider">
-              Faculty
+              Staff & HR
             </span>
           </div>
-          <span className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Active Staff</span>
+          <span className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Total Staff Members</span>
           <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-            64
+            {staffStats.totalStaff}
           </h3>
           <p className="text-[11px] sm:text-xs text-slate-500 mt-1.5 sm:mt-2 flex items-center gap-1">
-            <span className="text-indigo-600 font-bold">1:31</span> Student-Teacher Ratio
+            <span className="text-emerald-600 font-bold">{staffStats.present} Present</span> • <span className="text-amber-600 font-bold">{staffStats.halfDay} Half-day</span>
           </p>
-        </div>
+        </Link>
       </div>
 
       {/* ERP Quick Navigation Bento Grid */}
@@ -192,7 +221,24 @@ const ManagementDashboard = () => {
             </p>
           </Link>
 
-          {/* Module 2: Attendance Engine */}
+          {/* Module 2: Staff & HR Operations */}
+          <Link
+            to="/management/staff"
+            className="group bg-white p-4.5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-sm hover:border-indigo-500 hover:shadow-lg transition-all"
+          >
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                <UserCheck size={20} />
+              </div>
+              <ArrowUpRight size={18} className="text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+            </div>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1">Staff & HR Management</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Manage ~300 staff members, geofenced mobile selfie attendance, leaves, half-days & payroll disbursement.
+            </p>
+          </Link>
+
+          {/* Module 3: Daily Attendance Engine */}
           <Link
             to="/management/attendance"
             className="group bg-white p-4.5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-sm hover:border-emerald-500 hover:shadow-lg transition-all"

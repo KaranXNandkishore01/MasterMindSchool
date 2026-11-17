@@ -17,12 +17,14 @@ import Login from './pages/auth/Login';
 
 import ManagementDashboard from './pages/management/ManagementDashboard';
 import ManageStudents from './pages/management/ManageStudents';
+import ManageStaff from './pages/management/ManageStaff';
 import ManageAttendance from './pages/management/ManageAttendance';
 import ManageFees from './pages/management/ManageFees';
 import ManageImages from './pages/management/ManageImages';
 import ManageAnnouncements from './pages/management/ManageAnnouncements';
 import ManageJobs from './pages/management/ManageJobs';
 import ParentMessages from './pages/management/ParentMessages';
+import StaffSelfieAttendance from './pages/staff/StaffSelfieAttendance';
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
 
 function App() {
@@ -31,6 +33,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/staff/attendance" element={<StaffSelfieAttendance />} />
 
         {/* Public Routes */}
         <Route path="/" element={<PublicLayout />}>
@@ -54,6 +57,7 @@ function App() {
           <Route element={<DashboardLayout />}>
             <Route path="/management/dashboard" element={<ManagementDashboard />} />
             <Route path="/management/students" element={<ManageStudents />} />
+            <Route path="/management/staff" element={<ManageStaff />} />
             <Route path="/management/attendance" element={<ManageAttendance />} />
             <Route path="/management/fees" element={<ManageFees />} />
             <Route path="/management/images" element={<ManageImages />} />

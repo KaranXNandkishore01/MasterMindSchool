@@ -5,6 +5,7 @@ import {
   LogOut,
   Home,
   Users,
+  UserCheck,
   BookOpen,
   Calendar,
   DollarSign,
@@ -41,6 +42,7 @@ const DashboardLayout = () => {
   const erpNavLinks = [
     { name: 'Dashboard', path: '/management/dashboard', icon: <Home size={19} /> },
     { name: 'Students (SIS)', path: '/management/students', icon: <Users size={19} /> },
+    { name: 'Staff & HR', path: '/management/staff', icon: <UserCheck size={19} /> },
     { name: 'Daily Attendance', path: '/management/attendance', icon: <Calendar size={19} /> },
     { name: 'Fees & Finance', path: '/management/fees', icon: <DollarSign size={19} /> },
     { name: "Teacher's Desk", path: '/teacher/dashboard', icon: <GraduationCap size={19} /> },
