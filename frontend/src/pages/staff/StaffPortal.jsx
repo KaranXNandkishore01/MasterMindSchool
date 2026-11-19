@@ -114,24 +114,18 @@ const StaffPortal = () => {
   const [isSubmittingTicket, setIsSubmittingTicket] = useState(false);
   const [ticketSuccess, setTicketSuccess] = useState('');
 
-  // Fetch demo credentials for testing ease
+  // Fetch active employee login helpers if available
   useEffect(() => {
     axios.get('/api/staff/portal/demo-credentials')
       .then((res) => {
-        if (res.data?.success && res.data.data) {
+        if (res.data?.success && Array.isArray(res.data.data)) {
           setDemoAccounts(res.data.data);
+        } else {
+          setDemoAccounts([]);
         }
       })
       .catch(() => {
-        // Fallback sample accounts across different roles
-        setDemoAccounts([
-          { role: 'Teacher', name: 'Rajesh Sharma', phone: '9826012345', aadhaarLast4: '4321', samplePassword: 'Employee@mmps4321' },
-          { role: 'Driver', name: 'Manoj Patel', phone: '9826023456', aadhaarLast4: '5678', samplePassword: 'Employee@mmps5678' },
-          { role: 'Maid', name: 'Sunita Verma', phone: '9826034567', aadhaarLast4: '8765', samplePassword: 'Employee@mmps8765' },
-          { role: 'Assistant', name: 'Amit Tiwari', phone: '9826045678', aadhaarLast4: '2345', samplePassword: 'Employee@mmps2345' },
-          { role: 'Gardener', name: 'Ramesh Yadav', phone: '9826056789', aadhaarLast4: '3456', samplePassword: 'Employee@mmps3456' },
-          { role: 'Manager', name: 'Sanjay Mishra', phone: '9826067890', aadhaarLast4: '9876', samplePassword: 'Employee@mmps9876' },
-        ]);
+        setDemoAccounts([]);
       });
   }, []);
 
@@ -607,8 +601,8 @@ const StaffPortal = () => {
           </div>
 
           <div className="text-center mt-6 text-xs text-slate-400">
-            <Link to="/login" className="hover:text-white transition-colors">
-              ← Return to Management & Administration Login
+            <Link to="/" className="hover:text-white transition-colors">
+              ← Return to MMPS Home
             </Link>
           </div>
         </div>
@@ -637,31 +631,44 @@ const StaffPortal = () => {
               </div>
 
               <div className="divide-y divide-slate-100 mt-3">
-                {demoAccounts.map((acc, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => handleSelectDemoAccount(acc)}
-                    className="py-3 px-2 flex items-center justify-between hover:bg-slate-50 rounded-xl cursor-pointer transition-colors group"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-extrabold text-slate-900">{acc.name}</span>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                          {acc.role}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
-                        User ID: <span className="font-mono font-bold text-blue-900">{acc.phone}</span> • Last 4 Aadhaar: <span className="font-mono font-bold">{acc.aadhaarLast4}</span>
-                      </p>
-                      <p className="text-[11px] text-slate-400">
-                        Password: <code className="bg-slate-100 text-slate-700 px-1 py-0.5 rounded font-mono">{acc.samplePassword}</code>
-                      </p>
+                {demoAccounts.length === 0 ? (
+                  <div className="py-8 text-center text-slate-500">
+                    <p className="font-bold text-slate-800 text-sm">No Sample Accounts Active</p>
+                    <p className="text-xs text-slate-500 mt-1.5 max-w-sm mx-auto leading-relaxed">
+                      Staff accounts will appear once registered. Add staff members in the <strong>Admin Staff ERP</strong>, and their login credentials will automatically be active:
+                    </p>
+                    <div className="mt-3 inline-block bg-slate-50 border border-slate-200 rounded-xl p-3 text-left font-mono text-[11px] text-slate-700">
+                      <div>User ID: <strong>Registered 10-Digit Mobile Phone</strong></div>
+                      <div className="mt-1">Password: <strong>Employee@mmps[Last 4 Digits of Aadhaar]</strong></div>
                     </div>
-                    <span className="text-xs font-bold text-blue-600 group-hover:translate-x-1 transition-transform">
-                      Use →
-                    </span>
                   </div>
-                ))}
+                ) : (
+                  demoAccounts.map((acc, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => handleSelectDemoAccount(acc)}
+                      className="py-3 px-2 flex items-center justify-between hover:bg-slate-50 rounded-xl cursor-pointer transition-colors group"
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-extrabold text-slate-900">{acc.name}</span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                            {acc.role}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 mt-0.5">
+                          User ID: <span className="font-mono font-bold text-blue-900">{acc.phone}</span> • Last 4 Aadhaar: <span className="font-mono font-bold">{acc.aadhaarLast4}</span>
+                        </p>
+                        <p className="text-[11px] text-slate-400">
+                          Password: <code className="bg-slate-100 text-slate-700 px-1 py-0.5 rounded font-mono">{acc.samplePassword}</code>
+                        </p>
+                      </div>
+                      <span className="text-xs font-bold text-blue-600 group-hover:translate-x-1 transition-transform">
+                        Use →
+                      </span>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>

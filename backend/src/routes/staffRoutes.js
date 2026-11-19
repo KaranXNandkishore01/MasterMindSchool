@@ -7,6 +7,8 @@ const {
   createStaff,
   updateStaff,
   deleteStaff,
+  relieveStaff,
+  wipeDummyStaff,
   punchSelfieAttendance,
   getStaffAttendanceRoster,
   adjustStaffAttendance,
@@ -54,6 +56,9 @@ router.get('/payroll', getStaffPayroll);
 router.get('/payroll/list', getStaffPayroll);
 router.post('/payroll/disburse', disburseStaffSalary);
 router.post('/payroll/disburse/:id', disburseStaffSalary);
+
+router.delete('/wipe/dummy', wipeDummyStaff);
+router.post('/:id/relieve', relieveStaff);
 
 router.route('/:id')
   .get(getStaffById)

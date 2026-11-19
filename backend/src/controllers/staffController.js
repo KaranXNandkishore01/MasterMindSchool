@@ -31,16 +31,9 @@ function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
   return Math.round(R * c);
 }
 
-// Auto-seed check on first call
-let isSeedChecked = false;
+// Auto-seeding disabled to ensure only real staff data is retained
 async function ensureSeed() {
-  if (!isSeedChecked) {
-    isSeedChecked = true;
-    const count = await Staff.countDocuments();
-    if (count < 250) {
-      await seedStaffDatabase();
-    }
-  }
+  return;
 }
 
 // @desc    Get Staff Overview KPIs
@@ -274,7 +267,7 @@ exports.createStaff = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: `Staff member ${newStaff.fullName} (${newStaff.employeeId}) onboarded successfully.`,
+      message: `Staff member ${newStaff.fullName} (${newStaff.employeeId}) added successfully.`,
       data: newStaff,
     });
   } catch (error) {
@@ -315,20 +308,102 @@ exports.updateStaff = async (req, res) => {
   }
 };
 
-// @desc    Delete Staff Member
-// @route   DELETE /api/staff/:id
+// @desc    Relieve Staff Member & Issue Official Experience Record
+// @route   POST /api/staff/:id/relieve
 // @access  Private
-exports.deleteStaff = async (req, res) => {
+exports.relieveStaff = async (req, res) => {
   try {
+    const { relievingDate, relievingReason, relievingRemarks, conductRating } = req.body || {};
     const staff = await Staff.findById(req.params.id);
     if (!staff) {
       return res.status(404).json({ success: false, message: 'Staff member not found' });
     }
 
-    await Staff.findByIdAndDelete(req.params.id);
+    const refYear = new Date().getFullYear();
+    const cleanId = (staff.employeeId || 'STF').replace(/[^A-Z0-9]/gi, '');
+    const experienceRefNo = `MMPS/EXP/${refYear}/${cleanId}`;
+
+    staff.status = 'Relieved';
+    staff.relievingDate = relievingDate ? new Date(relievingDate) : new Date();
+    staff.relievingReason = relievingReason || 'Formal Resignation / Completion of Service';
+    staff.relievingRemarks = relievingRemarks || 'Relieved in good standing with exemplary conduct.';
+    staff.conductRating = conductRating || 'Exemplary';
+    staff.experienceRefNo = experienceRefNo;
+
+    await staff.save();
+
     res.json({
       success: true,
-      message: `Staff member ${staff.fullName} (${staff.employeeId}) removed from directory.`,
+      message: `Staff member ${staff.fullName} (${staff.employeeId}) has been officially relieved. Experience letter generated.`,
+      data: staff,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Wipe All Dummy Staff Members & Related Records
+// @route   DELETE /api/staff/wipe/dummy
+// @access  Private / Admin
+exports.wipeDummyStaff = async (req, res) => {
+  try {
+    const deletedStaff = await Staff.deleteMany({});
+    const deletedAtt = await StaffAttendance.deleteMany({});
+    const deletedPay = await StaffPayroll.deleteMany({});
+    const deletedLeave = await StaffLeave.deleteMany({});
+    const deletedTicket = await StaffTicket.deleteMany({});
+
+    res.json({
+      success: true,
+      message: `Cleaned up dummy records: ${deletedStaff.deletedCount} staff records, ${deletedAtt.deletedCount} attendance logs, and ${deletedPay.deletedCount} payroll entries removed. Staff directory is now fresh for real staff.`,
+      deletedCount: deletedStaff.deletedCount,
+      details: {
+        staff: deletedStaff.deletedCount,
+        attendance: deletedAtt.deletedCount,
+        payroll: deletedPay.deletedCount,
+        leaves: deletedLeave.deletedCount,
+        tickets: deletedTicket.deletedCount,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Delete Staff Member (Hard Delete or Relieve)
+// @route   DELETE /api/staff/:id
+// @access  Private
+exports.deleteStaff = async (req, res) => {
+  try {
+    const isHardDelete = req.query.permanent === 'true';
+    const staff = await Staff.findById(req.params.id);
+    if (!staff) {
+      return res.status(404).json({ success: false, message: 'Staff member not found' });
+    }
+
+    if (isHardDelete) {
+      await Staff.findByIdAndDelete(req.params.id);
+      return res.json({
+        success: true,
+        message: `Staff member ${staff.fullName} (${staff.employeeId}) permanently deleted from system.`,
+      });
+    }
+
+    // Default action: Relieve and generate experience certificate details
+    const refYear = new Date().getFullYear();
+    const cleanId = (staff.employeeId || 'STF').replace(/[^A-Z0-9]/gi, '');
+    staff.status = 'Relieved';
+    staff.relievingDate = req.body?.relievingDate ? new Date(req.body.relievingDate) : new Date();
+    staff.relievingReason = req.body?.relievingReason || 'Relieved from Service';
+    staff.relievingRemarks = req.body?.relievingRemarks || 'Relieved in good standing with exemplary service record.';
+    staff.conductRating = req.body?.conductRating || 'Exemplary';
+    staff.experienceRefNo = `MMPS/EXP/${refYear}/${cleanId}`;
+    await staff.save();
+
+    res.json({
+      success: true,
+      message: `Staff member ${staff.fullName} (${staff.employeeId}) marked as Relieved. Official Experience Letter is now available.`,
+      data: staff,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

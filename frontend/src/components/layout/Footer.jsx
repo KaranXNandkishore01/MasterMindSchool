@@ -117,16 +117,6 @@ const Footer = () => {
                   Parent Helpdesk
                 </Link>
               </li>
-              <li className="pt-2 border-t border-white/5">
-                <Link to="/staff/portal" className="text-amber-400 hover:text-amber-300 font-semibold transition-colors inline-flex items-center gap-1.5">
-                  💼 Staff Attendance Portal
-                </Link>
-              </li>
-              <li>
-                <Link to="/login" className="text-slate-400 hover:text-amber-400 transition-colors inline-flex items-center gap-1.5">
-                  🔐 Administration ERP Login
-                </Link>
-              </li>
             </ul>
           </div>
 

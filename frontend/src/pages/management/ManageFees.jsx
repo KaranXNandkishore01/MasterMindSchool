@@ -45,69 +45,6 @@ const STAFF_ROLES = [
 
 const EMPLOYMENT_TYPES = ['All', 'Full-Time', 'Part-Time'];
 
-// Realistic Generator for ~300 School Staff Members
-const generateMockStaffPayroll = () => {
-  const rolesConfig = [
-    { role: 'Teacher', dept: 'Academic', prefix: 'TEA', count: 180, baseSal: 26000, partTimeRatio: 0.08 },
-    { role: 'Driver', dept: 'Transport', prefix: 'DRI', count: 35, baseSal: 16500, partTimeRatio: 0.14 },
-    { role: 'Maid', dept: 'Housekeeping', prefix: 'MAD', count: 30, baseSal: 11000, partTimeRatio: 0.16 },
-    { role: 'Assistant', dept: 'Administration', prefix: 'AST', count: 15, baseSal: 18000, partTimeRatio: 0.2 },
-    { role: 'Gardener', dept: 'Grounds', prefix: 'GAR', count: 8, baseSal: 12500, partTimeRatio: 0.25 },
-    { role: 'Manager', dept: 'Operations', prefix: 'MGR', count: 6, baseSal: 45000, partTimeRatio: 0 },
-    { role: 'Staff Assistant', dept: 'Support', prefix: 'STA', count: 15, baseSal: 17500, partTimeRatio: 0.2 },
-    { role: 'Security Guard', dept: 'Security', prefix: 'SEC', count: 11, baseSal: 14000, partTimeRatio: 0 },
-  ];
-
-  const firstNames = ['Rajesh', 'Suresh', 'Amit', 'Pooja', 'Sunita', 'Kavita', 'Manoj', 'Ramesh', 'Deepak', 'Neeta', 'Vikas', 'Praveen', 'Rekha', 'Anita', 'Sunil', 'Vijay', 'Geeta', 'Anjali', 'Arun', 'Pankaj', 'Dinesh', 'Sarita', 'Kamlesh', 'Brijesh', 'Kiran', 'Meena', 'Rohit', 'Ashok', 'Sanjay', 'Hemant'];
-  const lastNames = ['Sharma', 'Verma', 'Patel', 'Tiwari', 'Yadav', 'Gupta', 'Singh', 'Chouhan', 'Mishra', 'Dubey', 'Rathore', 'Pandey', 'Malviya', 'Thakur', 'Nema', 'Jain', 'Mehra', 'Soni', 'Bhatt', 'Rao'];
-
-  const list = [];
-  let globalIndex = 1;
-
-  for (const cfg of rolesConfig) {
-    for (let i = 1; i <= cfg.count; i++) {
-      const fn = firstNames[(globalIndex * 7 + i) % firstNames.length];
-      const ln = lastNames[(globalIndex * 13 + i) % lastNames.length];
-      const fullName = `${fn} ${ln}`;
-      const empId = `MMPS-${cfg.prefix}-${String(i).padStart(3, '0')}`;
-      const isPartTime = (i / cfg.count) <= cfg.partTimeRatio;
-      const employmentType = isPartTime ? 'Part-Time' : 'Full-Time';
-      const baseSalary = isPartTime ? Math.round(cfg.baseSal * 0.6) : cfg.baseSal + ((i % 5) * 1000);
-      const halfDays = (i % 7 === 0) ? 2 : (i % 4 === 0) ? 1 : 0;
-      const leaveDays = (i % 11 === 0) ? 1 : 0;
-      const dailyRate = Math.round(baseSalary / 26);
-      const deductions = Math.round((halfDays * 0.5 * dailyRate) + (leaveDays * dailyRate));
-      const netPayable = Math.max(0, baseSalary - deductions);
-      const isPaid = (i % 5 !== 0); // ~80% paid, 20% pending
-      
-      list.push({
-        _id: `mock-payroll-${globalIndex}`,
-        employeeId: empId,
-        staffName: fullName,
-        role: cfg.role,
-        department: cfg.dept,
-        employmentType,
-        monthYear: '2026-11',
-        baseSalary,
-        dailyRate,
-        halfDayCount: halfDays,
-        leaveCount: leaveDays,
-        deductions,
-        netPayable,
-        paymentStatus: isPaid ? 'Paid' : 'Pending',
-        paymentMode: isPaid ? 'Bank Transfer' : null,
-        transactionRef: isPaid ? `TXN-SBI-${20260000 + globalIndex}` : '',
-        disbursedAt: isPaid ? '2026-11-05' : null,
-        paySlipNo: `SLIP-2026-${String(globalIndex).padStart(4, '0')}`,
-      });
-
-      globalIndex++;
-    }
-  }
-
-  return list;
-};
-
 const ManageFees = () => {
   // Top-Level Active Tab: 'student' (Student Fees & Dues) | 'staff' (Staff Payroll & Finance)
   const [activeTab, setActiveTab] = useState('student');
@@ -204,15 +141,13 @@ const ManageFees = () => {
         },
         withCredentials: true,
       });
-      if (res.data?.success && res.data.data?.length > 0) {
+      if (res.data?.success && Array.isArray(res.data.data)) {
         setStaffPayrollData(res.data.data);
       } else {
-        // Fallback to seeded ~300 staff members
-        setStaffPayrollData(generateMockStaffPayroll());
+        setStaffPayrollData([]);
       }
     } catch {
-      // Fallback to seeded ~300 staff members
-      setStaffPayrollData(generateMockStaffPayroll());
+      setStaffPayrollData([]);
     } finally {
       setLoadingStaffPayroll(false);
     }
@@ -358,7 +293,7 @@ const ManageFees = () => {
 
   // Staff summary calculations
   const staffSummary = useMemo(() => {
-    const totalStaff = staffPayrollData.length || 300;
+    const totalStaff = staffPayrollData.length;
     const fullTimeCount = staffPayrollData.filter((s) => s.employmentType === 'Full-Time').length;
     const partTimeCount = staffPayrollData.filter((s) => s.employmentType === 'Part-Time').length;
     const totalBudget = staffPayrollData.reduce((acc, s) => acc + (s.netPayable || 0), 0);
@@ -780,13 +715,14 @@ const ManageFees = () => {
                     <tr>
                       <td colSpan="9" className="text-center py-12 text-slate-400">
                         <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent mb-2"></div>
-                        <p className="text-xs font-bold uppercase tracking-wider">Loading Staff Payroll (~300 members)...</p>
+                        <p className="text-xs font-bold uppercase tracking-wider">Loading Staff Payroll...</p>
                       </td>
                     </tr>
                   ) : paginatedStaff.length === 0 ? (
                     <tr>
-                      <td colSpan="9" className="text-center py-12 text-slate-400 font-bold">
-                        No staff members found matching selected role or employment type filters
+                      <td colSpan="9" className="text-center py-12 text-slate-400">
+                        <p className="font-bold text-slate-700 text-sm">No staff payroll records found</p>
+                        <p className="text-xs text-slate-400 mt-1">Staff members added in the Staff ERP directory will appear here with monthly compensation.</p>
                       </td>
                     </tr>
                   ) : (

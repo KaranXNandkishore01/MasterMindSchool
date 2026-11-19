@@ -39,16 +39,6 @@
   ],
   "jobs": [
     {
-      "_id": "6afc0821492592c6e81c00d0",
-      "title": "Social Media Manager",
-      "description": "Media management.",
-      "requirements": "Understanding of Algorithms, 6 months  Experience and Good portfolio.",
-      "applyLink": "https://forms.gle/L6r7K6nw5DwewRPF8",
-      "jobType": "Part-Time",
-      "isActive": true,
-      "createdAt": "2026-11-17T07:54:10.022Z"
-    },
-    {
       "title": "PGT - Senior Physics & Mathematics Educator",
       "description": "Seeking dynamic educators for Senior Secondary Classes (XI & XII). Responsible for curriculum delivery, practical lab experiments, and state board examination preparation.",
       "requirements": "M.Sc in Physics or Mathematics with B.Ed. Minimum 2-3 years teaching experience in MPBSE or CBSE board schools.",
@@ -86,6 +76,13 @@
     }
   ],
   "images": [
+    {
+      "_id": "6aff1c04a3a1903915a1e65b",
+      "imageUrl": "/uploads/1795103748253-Jr_Mmps.png",
+      "caption": "Sub Logo For Kids house",
+      "category": "Campus",
+      "createdAt": "2026-11-19T15:55:48.262Z"
+    },
     {
       "imageUrl": "/gallery/schoolphoto.png",
       "caption": "Main Academic Campus & Courtyard, Pipariya",

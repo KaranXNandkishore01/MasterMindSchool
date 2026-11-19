@@ -15,7 +15,6 @@ import {
   CheckCircle2,
   Sparkles,
   UserMinus,
-  Trash2,
   Award,
   Printer,
   FileText,
@@ -35,6 +34,9 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import sitelogo from '../../assets/sitelogo.png';
+import StaffExperienceLetterModal from '../../components/erp/StaffExperienceLetterModal';
+import RemoveStaffModal from '../../components/erp/RemoveStaffModal';
+import StaffProfileDocModal from '../../components/erp/StaffProfileDocModal';
 
 const ROLES = [
   'All',
@@ -86,6 +88,8 @@ const ManageStaff = () => {
   // Modals
   const [isAddStaffOpen, setIsAddStaffOpen] = useState(false);
   const [selectedStaffForView, setSelectedStaffForView] = useState(null);
+  const [staffForExperienceLetter, setStaffForExperienceLetter] = useState(null);
+  const [staffForRemove, setStaffForRemove] = useState(null);
   const [staffToEdit, setStaffToEdit] = useState(null);
   const [viewingSelfie, setViewingSelfie] = useState(null); // { photo, staffName, time, type, distance }
   const [isLogLeaveOpen, setIsLogLeaveOpen] = useState(false);
@@ -134,27 +138,26 @@ const ManageStaff = () => {
         setOverview(res.data.data);
       }
     } catch {
-      // Mock overview fallback
       setOverview({
-        totalStaff: 300,
-        fullTimeCount: 260,
-        partTimeCount: 40,
+        totalStaff: 0,
+        fullTimeCount: 0,
+        partTimeCount: 0,
         rolesBreakdown: {
-          teachers: 180,
-          drivers: 35,
-          maids: 30,
-          assistants: 15,
-          gardeners: 8,
-          managers: 6,
-          staffAssistants: 15,
-          guards: 11,
+          teachers: 0,
+          drivers: 0,
+          maids: 0,
+          assistants: 0,
+          gardeners: 0,
+          managers: 0,
+          staffAssistants: 0,
+          guards: 0,
         },
         todayAttendance: {
-          present: 274,
-          halfDay: 8,
-          onLeave: 6,
-          absent: 12,
-          totalPunched: 282,
+          present: 0,
+          halfDay: 0,
+          onLeave: 0,
+          absent: 0,
+          totalPunched: 0,
         },
       });
     }
@@ -259,7 +262,7 @@ const ManageStaff = () => {
         setIsToast(`Staff member ${staffFormData.fullName} updated successfully.`);
       } else {
         await axios.post('/api/staff', staffFormData);
-        setIsToast(`Staff member ${staffFormData.fullName} onboarded successfully.`);
+        setIsToast(`Staff member ${staffFormData.fullName} added successfully.`);
       }
       setIsAddStaffOpen(false);
       setStaffToEdit(null);
@@ -325,7 +328,7 @@ const ManageStaff = () => {
               Staff Directory, Geofenced Attendance & Payroll
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
-              Enterprise management for ~300 school employees: Teachers, Drivers, Housekeeping/Maids, Assistants, Gardeners, and Administrative Staff.
+              Enterprise Human Resources management for Master Mind Public School: Teachers, Drivers, Housekeeping/Maids, Assistants, Gardeners, and Administrative Staff.
             </p>
           </div>
 
@@ -362,7 +365,7 @@ const ManageStaff = () => {
               className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
             >
               <Plus size={15} />
-              <span>Onboard Staff</span>
+              <span>Add New Staff</span>
             </button>
           </div>
         </div>
@@ -391,7 +394,7 @@ const ManageStaff = () => {
             <div className="bg-white/5 p-3 rounded-xl">
               <span className="text-slate-400 uppercase font-semibold text-[10px] block">Teachers & Faculty</span>
               <p className="text-xl sm:text-2xl font-black text-amber-400 mt-0.5">
-                {overview.rolesBreakdown?.teachers || 180} Educators
+                {overview.rolesBreakdown?.teachers ?? 0} Educators
               </p>
               <span className="text-[10px] text-slate-300">Academic & Senior Faculty</span>
             </div>
@@ -399,7 +402,7 @@ const ManageStaff = () => {
             <div className="bg-white/5 p-3 rounded-xl">
               <span className="text-slate-400 uppercase font-semibold text-[10px] block">Support & Operations</span>
               <p className="text-xl sm:text-2xl font-black text-white mt-0.5">
-                {(overview.rolesBreakdown?.drivers || 35) + (overview.rolesBreakdown?.maids || 30) + (overview.rolesBreakdown?.gardeners || 8) + (overview.rolesBreakdown?.guards || 11)} Staff
+                {(overview.rolesBreakdown?.drivers ?? 0) + (overview.rolesBreakdown?.maids ?? 0) + (overview.rolesBreakdown?.gardeners ?? 0) + (overview.rolesBreakdown?.guards ?? 0)} Staff
               </p>
               <span className="text-[10px] text-slate-300">Transport, Housekeeping & Security</span>
             </div>
@@ -418,7 +421,7 @@ const ManageStaff = () => {
           }`}
         >
           <Users size={16} />
-          <span>Staff Directory (~300)</span>
+          <span>Staff Directory</span>
         </button>
 
         <button
@@ -531,9 +534,16 @@ const ManageStaff = () => {
                     </tr>
                   ) : staffList.length === 0 ? (
                     <tr>
-                      <td colSpan="8" className="py-12 text-center text-slate-400">
-                        <UserX size={36} className="mx-auto mb-2 text-slate-300" />
-                        <p className="font-bold text-slate-700">No staff members found</p>
+                      <td colSpan="8" className="py-14 text-center">
+                        <div className="max-w-md mx-auto space-y-2">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto">
+                            <Users size={24} />
+                          </div>
+                          <p className="font-extrabold text-slate-800 text-sm">Staff Directory is Empty</p>
+                          <p className="text-xs text-slate-400">
+                            No staff records found. Click <strong>"+ Add New Staff"</strong> above to register school employees.
+                          </p>
+                        </div>
                       </td>
                     </tr>
                   ) : (
@@ -570,8 +580,12 @@ const ManageStaff = () => {
                           ₹{st.monthlySalary?.toLocaleString()}
                         </td>
                         <td className="py-3.5 px-5">
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full border ${
+                            st.status === 'Relieved'
+                              ? 'text-amber-800 bg-amber-50 border-amber-200'
+                              : 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${st.status === 'Relieved' ? 'bg-amber-500' : 'bg-emerald-500'}`}></span>
                             {st.status}
                           </span>
                         </td>
@@ -580,7 +594,7 @@ const ManageStaff = () => {
                             <button
                               onClick={() => setSelectedStaffForView(st)}
                               className="p-1.5 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-bold rounded-lg text-xs cursor-pointer"
-                              title="View Profile"
+                              title="View Official Dossier with QR Code"
                             >
                               <Eye size={13} />
                             </button>
@@ -606,6 +620,20 @@ const ManageStaff = () => {
                               title="Edit Record"
                             >
                               <Pencil size={13} />
+                            </button>
+                            <button
+                              onClick={() => setStaffForExperienceLetter(st)}
+                              className="p-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold rounded-lg text-xs cursor-pointer border border-amber-200"
+                              title="Official Role-Based Experience & Relieving Certificate"
+                            >
+                              <Award size={13} />
+                            </button>
+                            <button
+                              onClick={() => setStaffForRemove(st)}
+                              className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-lg text-xs cursor-pointer border border-rose-200"
+                              title="Relieve or Remove Staff Member"
+                            >
+                              <UserMinus size={13} />
                             </button>
                           </div>
                         </td>
@@ -1096,7 +1124,7 @@ const ManageStaff = () => {
             </button>
 
             <h3 className="text-xl font-black text-slate-950 mb-1">
-              {staffToEdit ? 'Edit Staff Member' : 'Onboard New Staff Member'}
+              {staffToEdit ? 'Edit Staff Member' : 'Add New Staff Member'}
             </h3>
             <p className="text-xs text-slate-500 mb-4">Enter employee credentials, designation, and salary details.</p>
 
@@ -1199,9 +1227,9 @@ const ManageStaff = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow"
+                  className="px-5 py-2 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow cursor-pointer"
                 >
-                  {staffToEdit ? 'Save Changes' : 'Confirm Onboarding'}
+                  {staffToEdit ? 'Save Changes' : 'Confirm & Add Staff'}
                 </button>
               </div>
             </form>
@@ -1209,73 +1237,39 @@ const ManageStaff = () => {
         </div>
       )}
 
-      {/* Staff Profile Quick View Modal */}
+      {/* Official Staff Profile Dossier with Scannable QR Code */}
       {selectedStaffForView && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3.5 bg-slate-950/80 backdrop-blur-sm animate-fade-in"
-          onClick={() => setSelectedStaffForView(null)}
-        >
-          <div
-            className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative animate-scale-in text-xs"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setSelectedStaffForView(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1 cursor-pointer"
-            >
-              <X size={20} />
-            </button>
+        <StaffProfileDocModal
+          staff={selectedStaffForView}
+          onClose={() => setSelectedStaffForView(null)}
+        />
+      )}
 
-            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-slate-100">
-              <div className="w-12 h-12 rounded-2xl bg-amber-400 text-slate-950 font-black text-lg flex items-center justify-center">
-                {selectedStaffForView.fullName?.[0]}
-              </div>
-              <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 block">
-                  {selectedStaffForView.employeeId}
-                </span>
-                <h3 className="text-base font-black text-slate-900">{selectedStaffForView.fullName}</h3>
-                <span className="text-slate-500 font-semibold">{selectedStaffForView.role} • {selectedStaffForView.department}</span>
-              </div>
-            </div>
+      {/* Official Role-Based Experience & Relieving Certificate Modal */}
+      {staffForExperienceLetter && (
+        <StaffExperienceLetterModal
+          staff={staffForExperienceLetter}
+          onClose={() => setStaffForExperienceLetter(null)}
+        />
+      )}
 
-            <div className="space-y-2.5">
-              <div className="flex justify-between py-1.5 border-b border-slate-50">
-                <span className="text-slate-500">Employment Type:</span>
-                <span className="font-bold text-slate-900">{selectedStaffForView.employmentType}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-50">
-                <span className="text-slate-500">Phone Contact:</span>
-                <span className="font-bold text-slate-900">{selectedStaffForView.phone || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-50">
-                <span className="text-slate-500">Email Address:</span>
-                <span className="font-bold text-slate-900">{selectedStaffForView.email || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-50">
-                <span className="text-slate-500">Monthly Base Salary:</span>
-                <span className="font-bold text-emerald-600">₹{selectedStaffForView.monthlySalary?.toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-50">
-                <span className="text-slate-500">Aadhaar Card:</span>
-                <span className="font-mono font-bold text-slate-900">{selectedStaffForView.aadhaarNo || 'Verified'}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-50">
-                <span className="text-slate-500">Bank Account:</span>
-                <span className="font-bold text-slate-900">{selectedStaffForView.bankAccount?.bankName || 'SBI Pipariya'}</span>
-              </div>
-            </div>
-
-            <div className="mt-5 pt-3 border-t border-slate-100 flex justify-end">
-              <button
-                onClick={() => setSelectedStaffForView(null)}
-                className="px-5 py-2 bg-slate-900 text-white font-bold rounded-xl text-xs cursor-pointer"
-              >
-                Close Profile
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* Relieve / Remove Staff Modal */}
+      {staffForRemove && (
+        <RemoveStaffModal
+          staff={staffForRemove}
+          onClose={() => setStaffForRemove(null)}
+          onSuccess={(updatedStaff, isDeleted) => {
+            if (isDeleted) {
+              setIsToast('Staff member permanently deleted.');
+            } else if (updatedStaff) {
+              setIsToast(`Staff member ${updatedStaff.fullName} relieved successfully. Experience letter ready.`);
+            }
+            setTimeout(() => setIsToast(''), 4000);
+            fetchStaffList();
+            fetchOverview();
+          }}
+          onOpenExperienceLetter={(st) => setStaffForExperienceLetter(st)}
+        />
       )}
 
       {/* Selfie Photo Preview Modal */}

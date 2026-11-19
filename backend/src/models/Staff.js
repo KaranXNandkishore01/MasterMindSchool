@@ -90,9 +90,32 @@ const staffSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Active', 'On Leave', 'Resigned', 'Terminated'],
+    enum: ['Active', 'On Leave', 'Resigned', 'Terminated', 'Relieved'],
     default: 'Active',
     index: true,
+  },
+  relievingDate: {
+    type: Date,
+  },
+  relievingReason: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  relievingRemarks: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  conductRating: {
+    type: String,
+    trim: true,
+    default: 'Exemplary',
+  },
+  experienceRefNo: {
+    type: String,
+    trim: true,
+    default: '',
   },
   photoUrl: {
     type: String,

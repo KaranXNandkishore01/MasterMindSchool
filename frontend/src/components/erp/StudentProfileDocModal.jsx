@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { X, Printer, User, Award, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import sitelogo from '../../assets/sitelogo.png';
+import QRCodeView from '../common/QRCodeView';
 
 // Number to English words helper for authentic Date of Birth rendering
 const numberToWords = (num) => {
@@ -73,6 +74,22 @@ const StudentProfileDocModal = ({ student, onClose }) => {
   const dobNumeric = formatDateNumeric(student.dob);
   const admissionDateNumeric = formatDateNumeric(student.admissionDate);
   const studentFullName = `${student.firstName || ''} ${student.lastName || ''}`.trim();
+
+  // Structured verification text for QR code
+  const studentVerificationQRText = [
+    `MASTER MIND PUBLIC SCHOOL, PIPARIYA (M.P.)`,
+    `CBSE AFFILIATION: 1030456 | SCHOOL CODE: 50412`,
+    `OFFICIAL STUDENT RECORD VERIFICATION`,
+    `Scholar No: ${student.scholarNo}`,
+    `Student: ${studentFullName}`,
+    `Class & Sec: ${student.class} - ${student.section}`,
+    `Roll No: ${student.rollNo}`,
+    `Father: ${student.fatherName || 'On Record'}`,
+    `DOB: ${dobNumeric}`,
+    `Status: ${student.status || 'Active'}`,
+    `Auth: MMPS ERP Official Registry`,
+    `Verify: https://mastermindpipariya.com/verify/student/${student.scholarNo}`
+  ].join('\n');
 
   return (
     <div
@@ -365,11 +382,18 @@ const StudentProfileDocModal = ({ student, onClose }) => {
             </div>
           )}
 
-          {/* Official Signatures & Seal Section */}
-          <div className="grid grid-cols-3 gap-4 pt-10 mt-6 text-center text-xs font-bold border-t border-slate-400">
+          {/* Official Verification QR, Signatures & Seal Section */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-8 mt-6 text-center text-xs font-bold border-t border-slate-400 items-end">
+            <div className="flex flex-col items-center justify-center text-center">
+              <QRCodeView value={studentVerificationQRText} size={84} />
+              <span className="text-[8px] font-bold text-slate-500 uppercase mt-1">
+                Scan to Verify Student
+              </span>
+            </div>
+
             <div>
               <div className="h-8"></div>
-              <div className="border-t border-slate-800 pt-1 inline-block w-36">
+              <div className="border-t border-slate-800 pt-1 inline-block w-32">
                 <span>Class Teacher</span>
                 <span className="block text-[9px] text-slate-500 font-normal">Signature & Date</span>
               </div>
@@ -377,7 +401,7 @@ const StudentProfileDocModal = ({ student, onClose }) => {
 
             <div>
               <div className="h-8"></div>
-              <div className="border-t border-slate-800 pt-1 inline-block w-36">
+              <div className="border-t border-slate-800 pt-1 inline-block w-32">
                 <span>Admission Incharge</span>
                 <span className="block text-[9px] text-slate-500 font-normal">Verified & Entered</span>
               </div>
@@ -387,7 +411,7 @@ const StudentProfileDocModal = ({ student, onClose }) => {
               <div className="w-14 h-14 rounded-full border-2 border-dashed border-slate-700 text-[7px] font-black uppercase text-slate-600 flex items-center justify-center text-center p-1 mx-auto mb-1 opacity-70">
                 MMPS PIPARIYA<br/>OFFICIAL SEAL
               </div>
-              <div className="border-t border-slate-800 pt-1 inline-block w-36">
+              <div className="border-t border-slate-800 pt-1 inline-block w-32">
                 <span>Principal</span>
                 <span className="block text-[9px] text-slate-500 font-normal">Master Mind Public School</span>
               </div>

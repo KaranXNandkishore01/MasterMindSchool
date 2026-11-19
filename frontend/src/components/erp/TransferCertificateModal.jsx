@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { X, Printer, Download, Award, ShieldCheck, FileCheck } from 'lucide-react';
 import sitelogo from '../../assets/sitelogo.png';
+import QRCodeView from '../common/QRCodeView';
 
 // Number to English words helper for authentic Date of Birth rendering
 const numberToWords = (num) => {
@@ -76,6 +77,22 @@ const TransferCertificateModal = ({ student, onClose }) => {
   const dobNumeric = formatDateNumeric(student.dob);
   const admissionDateNumeric = formatDateNumeric(student.admissionDate);
   const studentFullName = `${student.firstName || ''} ${student.lastName || ''}`.trim();
+
+  // Structured verification text for QR code
+  const tcVerificationQRText = [
+    `MASTER MIND PUBLIC SCHOOL, PIPARIYA (M.P.)`,
+    `CBSE AFFILIATION: 1030456 | SCHOOL CODE: 50412`,
+    `OFFICIAL TRANSFER CERTIFICATE VERIFICATION`,
+    `TC Serial No: ${tcNo}`,
+    `Scholar No: ${student.scholarNo}`,
+    `Pupil: ${studentFullName}`,
+    `Class: ${student.class} (Sec ${student.section})`,
+    `DOB: ${dobNumeric}`,
+    `Issue Date: ${formatDateNumeric(issueDate)}`,
+    `Status: Formally Withdrawn & Relieved`,
+    `Auth: MMPS ERP TC Ledger`,
+    `Verify: https://mastermindpipariya.com/verify/tc/${tcNo.replace(/[^A-Z0-9]/gi, '')}`
+  ].join('\n');
 
   // Class subjects heuristic based on school standard
   const isSeniorSec = student.class?.includes('11') || student.class?.includes('12');
@@ -341,19 +358,26 @@ const TransferCertificateModal = ({ student, onClose }) => {
             </div>
           </div>
 
-          {/* Signatures & Seal Section */}
-          <div className="grid grid-cols-3 gap-4 pt-12 mt-8 text-center text-xs font-bold border-t border-slate-400">
+          {/* Verification QR, Signatures & Seal Section */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-8 mt-6 text-center text-xs font-bold border-t border-slate-400 items-end">
+            <div className="flex flex-col items-center justify-center text-center">
+              <QRCodeView value={tcVerificationQRText} size={82} />
+              <span className="text-[8px] font-bold text-slate-500 uppercase mt-1">
+                Scan to Verify TC
+              </span>
+            </div>
+
             <div>
-              <div className="h-10"></div>
-              <div className="border-t border-slate-800 pt-1.5 inline-block w-36">
+              <div className="h-8"></div>
+              <div className="border-t border-slate-800 pt-1.5 inline-block w-32">
                 <span>Class Teacher</span>
                 <span className="block text-[10px] text-slate-500 font-normal">Signature</span>
               </div>
             </div>
 
             <div>
-              <div className="h-10"></div>
-              <div className="border-t border-slate-800 pt-1.5 inline-block w-36">
+              <div className="h-8"></div>
+              <div className="border-t border-slate-800 pt-1.5 inline-block w-32">
                 <span>Checked & Verified By</span>
                 <span className="block text-[10px] text-slate-500 font-normal">(Office Superintendent)</span>
               </div>
@@ -364,7 +388,7 @@ const TransferCertificateModal = ({ student, onClose }) => {
               <div className="w-16 h-16 rounded-full border-2 border-dashed border-slate-700 text-[8px] font-black uppercase text-slate-600 flex items-center justify-center text-center p-1 mx-auto mb-1 opacity-70">
                 MMPS PIPARIYA<br/>SEAL
               </div>
-              <div className="border-t border-slate-800 pt-1.5 inline-block w-36">
+              <div className="border-t border-slate-800 pt-1.5 inline-block w-32">
                 <span>Principal</span>
                 <span className="block text-[10px] text-slate-500 font-normal">Master Mind Public School</span>
               </div>

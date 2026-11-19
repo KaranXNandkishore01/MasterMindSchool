@@ -213,15 +213,14 @@ const Login = () => {
               </button>
             </div>
             
-            <div className="mt-4 pt-4 border-t border-gray-100 text-center text-xs">
-              <span className="text-gray-500">School Staff Member? </span>
-              <Link to="/staff/portal" className="font-bold text-blue-600 hover:text-blue-800 underline">
-                Staff Attendance & Employee Portal →
-              </Link>
+            <div className="mt-6 text-center text-xs text-gray-500">
+               Support Line: <span className="font-semibold text-gray-700">1800-MMPS-HELP</span>
             </div>
 
-            <div className="mt-4 text-center text-xs text-gray-500">
-               Support Line: <span className="font-semibold text-gray-700">1800-MMPS-HELP</span>
+            <div className="mt-4 text-center text-xs">
+              <Link to="/" className="text-gray-400 hover:text-gray-600 transition-colors">
+                ← Return to MMPS Home
+              </Link>
             </div>
           </form>
         </div>
