@@ -12,7 +12,9 @@ const userSchema = new mongoose.Schema({
   },
   assignedClass: { type: String, default: 'Class 10' },
   assignedSection: { type: String, default: 'A' },
-  lastLogin: { type: Date }
+  lastLogin: { type: Date },
+  tokenVersion: { type: Number, default: 2 },
+  sessionRevokedAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
 userSchema.methods.matchPassword = async function (enteredPassword) {

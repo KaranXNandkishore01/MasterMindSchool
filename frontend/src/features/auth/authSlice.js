@@ -1,8 +1,29 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// Parse user from local storage
-const user = JSON.parse(localStorage.getItem('user'));
+// All-device session revocation epoch (sessions before this timestamp are purged immediately)
+export const GLOBAL_REVOCATION_EPOCH = 1795337000000;
+
+const getStoredUser = () => {
+  try {
+    const raw = localStorage.getItem('user');
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !parsed.sessionEpoch || parsed.sessionEpoch < GLOBAL_REVOCATION_EPOCH) {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('mmps_staff_user');
+      return null;
+    }
+    return parsed;
+  } catch {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    return null;
+  }
+};
+
+const user = getStoredUser();
 
 const initialState = {
   user: user || null,
@@ -17,49 +38,24 @@ export const login = createAsyncThunk('auth/login', async (userData, thunkAPI) =
   try {
     const response = await axios.post('/api/auth/login', userData);
     if (response.data) {
-      localStorage.setItem('user', JSON.stringify(response.data));
+      const userWithEpoch = {
+        ...response.data,
+        sessionEpoch: Date.now(),
+      };
+      localStorage.setItem('user', JSON.stringify(userWithEpoch));
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
       }
+      return userWithEpoch;
     }
     return response.data;
   } catch (error) {
-    // Resilient offline / local demo fallback
-    const id = userData.managementId?.trim();
-    const pass = userData.password?.trim();
-    if (id === 'mastersagar_mgt' && pass === 'Madam28$$') {
-      const demoUser = {
-        _id: '6ae9d480f2a58538d9c90562',
-        managementId: 'mastersagar_mgt',
-        name: 'Management Admin',
-        role: 'Management',
-        token: 'local_demo_token',
-      };
-      localStorage.setItem('user', JSON.stringify(demoUser));
-      localStorage.setItem('token', 'local_demo_token');
-      return demoUser;
-    }
-    if ((id === 'teacher_mmps' || id === 'teacher') && (pass === 'Teacher28$$' || pass === 'Teacher@123')) {
-      const demoTeacher = {
-        _id: '6be9d480f2a58538d9c90563',
-        managementId: 'teacher_mmps',
-        name: 'Class Teacher',
-        role: 'Teacher',
-        assignedClass: 'Class 10',
-        assignedSection: 'A',
-        token: 'local_teacher_token',
-      };
-      localStorage.setItem('user', JSON.stringify(demoTeacher));
-      localStorage.setItem('token', 'local_teacher_token');
-      return demoTeacher;
-    }
-
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
     return thunkAPI.rejectWithValue(message);
   }
 });
 
-// Logout user
+// Logout user (single device)
 export const logout = createAsyncThunk('auth/logout', async () => {
   try {
     await axios.post('/api/auth/logout');
@@ -68,6 +64,19 @@ export const logout = createAsyncThunk('auth/logout', async () => {
   }
   localStorage.removeItem('user');
   localStorage.removeItem('token');
+  localStorage.removeItem('mmps_staff_user');
+});
+
+// Logout all devices immediately (teachers & admin)
+export const logoutAll = createAsyncThunk('auth/logoutAll', async () => {
+  try {
+    await axios.post('/api/auth/logout-all');
+  } catch {
+    // Non-fatal
+  }
+  localStorage.removeItem('user');
+  localStorage.removeItem('token');
+  localStorage.removeItem('mmps_staff_user');
 });
 
 export const authSlice = createSlice({
@@ -102,6 +111,9 @@ export const authSlice = createSlice({
         state.user = null;
       })
       .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+      })
+      .addCase(logoutAll.fulfilled, (state) => {
         state.user = null;
       });
   },

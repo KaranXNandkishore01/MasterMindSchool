@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useId } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../../features/auth/authSlice';
+import { logout, logoutAll, reset } from '../../features/auth/authSlice';
 import { broadcastUpdate, subscribeToUpdates } from '../../utils/realtimeSync';
 import {
   Calendar,
@@ -25,7 +25,8 @@ import {
   LogOut,
   RefreshCw,
   X,
-  GraduationCap
+  GraduationCap,
+  ShieldAlert
 } from 'lucide-react';
 import sitelogo from '../../assets/sitelogo.png';
 
@@ -98,7 +99,17 @@ const TeacherDashboard = () => {
   // Handle Logout
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(reset());
     navigate('/login');
+  };
+
+  // Handle Logout All Devices
+  const handleLogoutAll = async () => {
+    if (window.confirm('Are you sure you want to log out all devices immediately for teachers and admin?')) {
+      await dispatch(logoutAll());
+      dispatch(reset());
+      navigate('/login');
+    }
   };
 
   // 1. Fetch Daily Attendance Roster
@@ -444,6 +455,14 @@ const TeacherDashboard = () => {
             >
               <LogOut size={14} />
               <span>Logout</span>
+            </button>
+            <button
+              onClick={handleLogoutAll}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-600/90 text-rose-200 hover:text-white text-xs font-bold transition-all cursor-pointer border border-rose-500/40"
+              title="Immediately revoke all active sessions across all devices for teachers and admin"
+            >
+              <ShieldAlert size={13} />
+              <span className="hidden md:inline">Logout All Devices</span>
             </button>
           </div>
         </div>

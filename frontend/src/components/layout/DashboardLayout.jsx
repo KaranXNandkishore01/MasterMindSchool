@@ -15,9 +15,10 @@ import {
   GraduationCap,
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  ShieldAlert
 } from 'lucide-react';
-import { logout, reset } from '../../features/auth/authSlice';
+import { logout, logoutAll, reset } from '../../features/auth/authSlice';
 
 const DashboardLayout = () => {
   const { user } = useSelector((state) => state.auth);
@@ -37,6 +38,14 @@ const DashboardLayout = () => {
     dispatch(logout());
     dispatch(reset());
     navigate('/');
+  };
+
+  const onLogoutAll = async () => {
+    if (window.confirm('Are you sure you want to log out all devices immediately for teachers and admin?')) {
+      await dispatch(logoutAll());
+      dispatch(reset());
+      navigate('/login');
+    }
   };
 
   const erpNavLinks = [
@@ -187,12 +196,21 @@ const DashboardLayout = () => {
               </p>
             </div>
           </div>
-          <button
-            onClick={onLogout}
-            className="flex items-center justify-center gap-2 w-full py-2 bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 text-slate-300 rounded-xl transition-all font-bold text-xs border border-white/10 cursor-pointer"
-          >
-            <LogOut size={15} /> Logout
-          </button>
+          <div className="flex flex-col gap-1.5 w-full">
+            <button
+              onClick={onLogout}
+              className="flex items-center justify-center gap-2 w-full py-2 bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 text-slate-300 rounded-xl transition-all font-bold text-xs border border-white/10 cursor-pointer"
+            >
+              <LogOut size={14} /> Logout
+            </button>
+            <button
+              onClick={onLogoutAll}
+              className="flex items-center justify-center gap-1.5 w-full py-1.5 bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 rounded-xl transition-all font-bold text-[11px] border border-rose-500/30 cursor-pointer"
+              title="Immediately revoke all active sessions across all devices for teachers and admin"
+            >
+              <ShieldAlert size={13} /> Logout All Devices
+            </button>
+          </div>
         </div>
       </aside>
 

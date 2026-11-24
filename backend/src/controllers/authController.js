@@ -83,13 +83,15 @@ const loginUser = async (req, res) => {
     }
 
     if (isMatch) {
+      const jwtSecret = process.env.JWT_SECRET || 'mmps_sec_6c9ba1c3c060bbbef50fc02e0117e19eb3ca77e8a1219ae6558903a107a9c548';
       const token = jwt.sign(
         {
           userId: String(user._id),
           managementId: user.managementId,
           role: user.role || 'Management',
+          tokenVersion: user.tokenVersion || 2,
         },
-        process.env.JWT_SECRET || 'your_super_secret_jwt_key',
+        jwtSecret,
         { expiresIn: '30d' }
       );
 
@@ -168,8 +170,56 @@ const logoutUser = (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 };
 
+// @desc    Verify current authenticated session
+// @route   GET /api/auth/verify
+// @access  Private
+const verifySession = async (req, res) => {
+  res.status(200).json({
+    success: true,
+    user: {
+      _id: req.user._id,
+      managementId: req.user.managementId,
+      name: req.user.name,
+      role: req.user.role,
+      assignedClass: req.user.assignedClass,
+      assignedSection: req.user.assignedSection,
+      tokenVersion: req.user.tokenVersion,
+    },
+  });
+};
+
+// @desc    Logout all devices immediately for teachers and admin
+// @route   POST /api/auth/logout-all
+// @access  Private
+const logoutAllDevices = async (req, res) => {
+  try {
+    const revokedAt = new Date();
+    if (isDbConnected()) {
+      await User.updateMany({}, {
+        $inc: { tokenVersion: 1 },
+        $set: { sessionRevokedAt: revokedAt },
+      });
+    }
+
+    res.cookie('jwt', '', {
+      httpOnly: true,
+      expires: new Date(0),
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'All devices logged out immediately across all accounts.',
+      revokedAt,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   loginUser,
   registerUser,
   logoutUser,
+  verifySession,
+  logoutAllDevices,
 };
