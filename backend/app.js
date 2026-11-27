@@ -3,13 +3,14 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
-
 const path = require('path');
 const fs = require('fs');
+const { apiLimiter } = require('./src/middleware/rateLimiter');
 
 const app = express();
+app.disable('x-powered-by');
 
-// Middleware
+// Strict CORS Configuration to prevent cross-origin credential theft
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
@@ -18,21 +19,32 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
-      callback(null, true);
-    } else {
-      callback(null, true);
+    // Allow non-browser requests (e.g. mobile apps, health checks)
+    if (!origin) return callback(null, true);
+    
+    // Check against explicit whitelist or legitimate vercel deployments
+    const isWhitelisted = allowedOrigins.includes(origin) || origin.endsWith('.vercel.app');
+    if (isWhitelisted) {
+      return callback(null, true);
     }
+    return callback(new Error('CORS policy: Access denied for this origin.'));
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
+
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" }
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: false, // Managed at client/CDN level
 }));
 app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
+
+// Apply global rate limiting on all API routes
+app.use('/api', apiLimiter);
 
 // Static uploads directory with guaranteed resolution
 const uploadsDir = path.join(__dirname, 'uploads');

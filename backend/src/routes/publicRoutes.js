@@ -6,10 +6,11 @@ const {
   getJobs,
   submitContactMessage
 } = require('../controllers/publicController');
+const { publicFormLimiter } = require('../middleware/rateLimiter');
 
 router.get('/images', getImages);
 router.get('/announcements', getAnnouncements);
 router.get('/jobs', getJobs);
-router.post('/contact', submitContactMessage);
+router.post('/contact', publicFormLimiter, submitContactMessage);
 
 module.exports = router;

@@ -8,8 +8,9 @@ const {
   logoutAllDevices,
 } = require('../controllers/authController');
 const { protect, authorize } = require('../middleware/authMiddleware');
+const { authLimiter } = require('../middleware/rateLimiter');
 
-router.post('/login', loginUser);
+router.post('/login', authLimiter, loginUser);
 router.post('/logout', logoutUser);
 router.get('/verify', protect, verifySession);
 router.post('/logout-all', protect, logoutAllDevices);

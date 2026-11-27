@@ -68,8 +68,6 @@ const StaffPortal = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [demoAccounts, setDemoAccounts] = useState([]);
-  const [showDemoModal, setShowDemoModal] = useState(false);
 
   // Active Dashboard Tab: 'punch' | 'history' | 'profile' | 'helpdesk'
   const [activeTab, setActiveTab] = useState('punch');
@@ -114,21 +112,6 @@ const StaffPortal = () => {
   const [isSubmittingTicket, setIsSubmittingTicket] = useState(false);
   const [ticketSuccess, setTicketSuccess] = useState('');
 
-  // Fetch active employee login helpers if available
-  useEffect(() => {
-    axios.get('/api/staff/portal/demo-credentials')
-      .then((res) => {
-        if (res.data?.success && Array.isArray(res.data.data)) {
-          setDemoAccounts(res.data.data);
-        } else {
-          setDemoAccounts([]);
-        }
-      })
-      .catch(() => {
-        setDemoAccounts([]);
-      });
-  }, []);
-
   // Handle Login Submit
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -157,29 +140,7 @@ const StaffPortal = () => {
         setLoginError(res.data?.message || 'Login failed. Please verify credentials.');
       }
     } catch (err) {
-      // Check if fallback simulation for demo phone
-      const matchedDemo = demoAccounts.find(d => d.phone.endsWith(cleanPhone));
-      if (matchedDemo && cleanPass.toLowerCase() === matchedDemo.samplePassword.toLowerCase()) {
-        const mockStaff = {
-          _id: `demo-${cleanPhone}`,
-          employeeId: `MMPS-${matchedDemo.role.slice(0,3).toUpperCase()}-001`,
-          fullName: matchedDemo.name,
-          role: matchedDemo.role,
-          employmentType: 'Full-Time',
-          department: matchedDemo.role === 'Teacher' ? 'Academic' : 'Administration',
-          phone: matchedDemo.phone,
-          aadhaarMasked: `XXXX-XXXX-${matchedDemo.aadhaarLast4}`,
-          aadhaarLast4: matchedDemo.aadhaarLast4,
-          status: 'Active',
-          monthlySalary: 28000,
-          dailyRate: 1077,
-          joiningDate: '2023-07-01',
-        };
-        localStorage.setItem('mmps_staff_user', JSON.stringify(mockStaff));
-        setStaffUser(mockStaff);
-      } else {
-        setLoginError(err.response?.data?.message || 'Invalid User ID or Password. Password format is Employee@mmps<last4OfAadhaar>.');
-      }
+      setLoginError(err.response?.data?.message || 'Invalid User ID or Password. Password format is Employee@mmps<last4OfAadhaar>.');
     } finally {
       setIsLoggingIn(false);
     }
@@ -476,13 +437,6 @@ const StaffPortal = () => {
     }
   };
 
-  // Auto-fill from demo helper
-  const handleSelectDemoAccount = (acc) => {
-    setLoginPhone(acc.phone);
-    setLoginPassword(acc.samplePassword);
-    setShowDemoModal(false);
-  };
-
   // ==========================================
   // RENDER: LOGIN VIEW (IF NOT AUTHENTICATED)
   // ==========================================
@@ -588,15 +542,14 @@ const StaffPortal = () => {
               </button>
             </form>
 
-            {/* Quick Demo Helper */}
-            <div className="mt-5 pt-4 border-t border-slate-100 text-center">
-              <button
-                type="button"
-                onClick={() => setShowDemoModal(true)}
-                className="text-xs font-extrabold text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 cursor-pointer"
-              >
-                <User size={13} /> 1-Click Demo Staff Credentials Helper
-              </button>
+            {/* Security Notice */}
+            <div className="mt-5 pt-4 border-t border-slate-100 text-center text-xs text-slate-500">
+              <span className="flex items-center justify-center gap-1.5 text-slate-600 font-semibold">
+                <Lock size={12} className="text-slate-400" /> Secure Personnel Authentication
+              </span>
+              <p className="text-[11px] text-slate-400 mt-1">
+                Password format: <code className="font-mono text-slate-600 bg-slate-100 px-1 py-0.5 rounded">Employee@mmpsXXXX</code> (last 4 digits of Aadhaar)
+              </p>
             </div>
           </div>
 
@@ -606,73 +559,6 @@ const StaffPortal = () => {
             </Link>
           </div>
         </div>
-
-        {/* Demo Accounts Modal */}
-        {showDemoModal && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-3.5 bg-slate-950/80 backdrop-blur-sm animate-fade-in"
-            onClick={() => setShowDemoModal(false)}
-          >
-            <div
-              className="bg-white text-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative animate-scale-in text-xs max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                <div>
-                  <h3 className="text-base font-black text-slate-900">Demo Staff Credentials</h3>
-                  <p className="text-xs text-slate-500">Click any role to auto-fill phone (User ID) & password.</p>
-                </div>
-                <button
-                  onClick={() => setShowDemoModal(false)}
-                  className="text-slate-400 hover:text-slate-700 font-bold p-1"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div className="divide-y divide-slate-100 mt-3">
-                {demoAccounts.length === 0 ? (
-                  <div className="py-8 text-center text-slate-500">
-                    <p className="font-bold text-slate-800 text-sm">No Sample Accounts Active</p>
-                    <p className="text-xs text-slate-500 mt-1.5 max-w-sm mx-auto leading-relaxed">
-                      Staff accounts will appear once registered. Add staff members in the <strong>Admin Staff ERP</strong>, and their login credentials will automatically be active:
-                    </p>
-                    <div className="mt-3 inline-block bg-slate-50 border border-slate-200 rounded-xl p-3 text-left font-mono text-[11px] text-slate-700">
-                      <div>User ID: <strong>Registered 10-Digit Mobile Phone</strong></div>
-                      <div className="mt-1">Password: <strong>Employee@mmps[Last 4 Digits of Aadhaar]</strong></div>
-                    </div>
-                  </div>
-                ) : (
-                  demoAccounts.map((acc, idx) => (
-                    <div
-                      key={idx}
-                      onClick={() => handleSelectDemoAccount(acc)}
-                      className="py-3 px-2 flex items-center justify-between hover:bg-slate-50 rounded-xl cursor-pointer transition-colors group"
-                    >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-extrabold text-slate-900">{acc.name}</span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                            {acc.role}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 mt-0.5">
-                          User ID: <span className="font-mono font-bold text-blue-900">{acc.phone}</span> • Last 4 Aadhaar: <span className="font-mono font-bold">{acc.aadhaarLast4}</span>
-                        </p>
-                        <p className="text-[11px] text-slate-400">
-                          Password: <code className="bg-slate-100 text-slate-700 px-1 py-0.5 rounded font-mono">{acc.samplePassword}</code>
-                        </p>
-                      </div>
-                      <span className="text-xs font-bold text-blue-600 group-hover:translate-x-1 transition-transform">
-                        Use →
-                      </span>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
   }

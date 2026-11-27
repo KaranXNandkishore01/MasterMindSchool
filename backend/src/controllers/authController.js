@@ -9,62 +9,18 @@ const loginUser = async (req, res) => {
   const managementId = req.body.managementId?.trim();
   const password = req.body.password?.trim();
 
+  if (!managementId || !password) {
+    return res.status(400).json({ message: 'Management ID and password are required.' });
+  }
+
   try {
     let user = null;
     if (isDbConnected()) {
       user = await User.findOne({ managementId });
     }
 
-    // Default admin initialization if not present in DB
-    if (!user && managementId === 'mastersagar_mgt' && password === 'Madam28$$') {
-      if (isDbConnected()) {
-        user = await User.create({
-          managementId: 'mastersagar_mgt',
-          password: 'Madam28$$',
-          name: 'Management Admin',
-          role: 'Management',
-        }).catch(() => null);
-      }
-      if (!user) {
-        user = {
-          _id: '6ae9d480f2a58538d9c90562',
-          managementId: 'mastersagar_mgt',
-          name: 'Management Admin',
-          role: 'Management',
-        };
-      }
-    }
-
-    // Default Class Teacher initialization if not present in DB
-    const isTeacherId = managementId === 'teacher_mmps' || managementId === 'teacher';
-    const isTeacherPass = password === 'Teacher28$$' || password === 'Teacher@123';
-    if (!user && isTeacherId && isTeacherPass) {
-      if (isDbConnected()) {
-        user = await User.create({
-          managementId: 'teacher_mmps',
-          password: 'Teacher28$$',
-          name: 'Class Teacher',
-          role: 'Teacher',
-          assignedClass: 'Class 10',
-          assignedSection: 'A',
-        }).catch(async () => {
-          return await User.findOne({ managementId: 'teacher_mmps' });
-        });
-      }
-      if (!user) {
-        user = {
-          _id: '6be9d480f2a58538d9c90563',
-          managementId: 'teacher_mmps',
-          name: 'Class Teacher',
-          role: 'Teacher',
-          assignedClass: 'Class 10',
-          assignedSection: 'A',
-        };
-      }
-    }
-
     if (!user) {
-      return res.status(401).json({ message: 'Invalid managementId or password' });
+      return res.status(401).json({ message: 'Invalid credentials. Access denied.' });
     }
 
     let isMatch = false;
@@ -74,26 +30,21 @@ const loginUser = async (req, res) => {
       isMatch = user.password === password;
     }
 
-    // Direct fallback password check for management admin & teacher
-    if (!isMatch && managementId === 'mastersagar_mgt' && password === 'Madam28$$') {
-      isMatch = true;
-    }
-    if (!isMatch && isTeacherId && isTeacherPass) {
-      isMatch = true;
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid credentials. Access denied.' });
     }
 
-    if (isMatch) {
-      const jwtSecret = process.env.JWT_SECRET || 'mmps_sec_6c9ba1c3c060bbbef50fc02e0117e19eb3ca77e8a1219ae6558903a107a9c548';
-      const token = jwt.sign(
-        {
-          userId: String(user._id),
-          managementId: user.managementId,
-          role: user.role || 'Management',
-          tokenVersion: user.tokenVersion || 2,
-        },
-        jwtSecret,
-        { expiresIn: '30d' }
-      );
+    const jwtSecret = process.env.JWT_SECRET || 'mmps_sec_6c9ba1c3c060bbbef50fc02e0117e19eb3ca77e8a1219ae6558903a107a9c548';
+    const token = jwt.sign(
+      {
+        userId: String(user._id),
+        managementId: user.managementId,
+        role: user.role || 'Management',
+        tokenVersion: user.tokenVersion || 2,
+      },
+      jwtSecret,
+      { expiresIn: '30d' }
+    );
 
       res.cookie('jwt', token, {
         httpOnly: true,

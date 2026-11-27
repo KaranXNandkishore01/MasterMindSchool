@@ -3,6 +3,9 @@ const Attendance = require('../models/Attendance');
 const FeeRecord = require('../models/FeeRecord');
 const { getCache, setCache, clearCache, invalidateCache } = require('../utils/cache');
 
+// ReDoS prevention helper: escapes special regex control characters
+const escapeRegex = (str) => String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // Standard MPBSE Class fee structures (can be adjusted)
 const CLASS_FEES = {
   'Nursery': 18000,
@@ -142,7 +145,7 @@ exports.getStudents = async (req, res) => {
       query.section = section.toUpperCase();
     }
     if (search && search.trim() !== '') {
-      const term = search.trim();
+      const term = escapeRegex(search.trim());
       query.$or = [
         { scholarNo: { $regex: term, $options: 'i' } },
         { firstName: { $regex: term, $options: 'i' } },
@@ -829,7 +832,7 @@ exports.getFeeRecords = async (req, res) => {
       query.status = status;
     }
     if (search && search.trim() !== '') {
-      const term = search.trim();
+      const term = escapeRegex(search.trim());
       query.$or = [
         { scholarNo: { $regex: term, $options: 'i' } },
         { studentName: { $regex: term, $options: 'i' } },

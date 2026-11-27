@@ -20,20 +20,18 @@ const {
   getStaffPersonalAttendance,
   submitStaffTicket,
   getStaffTickets,
-  getStaffDemoCredentials,
 } = require('../controllers/staffController');
 const { protect, authorize } = require('../middleware/authMiddleware');
+const { authLimiter, publicFormLimiter } = require('../middleware/rateLimiter');
 
 // Public / Mobile Attendance punch route (staff can punch directly from smartphone with camera & geolocation)
-router.post('/attendance/punch', punchSelfieAttendance);
-router.get('/public-overview', getStaffOverview);
+router.post('/attendance/punch', publicFormLimiter, punchSelfieAttendance);
 
-// Staff Self-Service Portal Routes (Publicly accessible with Phone UserID & Aadhaar-derived Password)
-router.post('/portal/login', staffPortalLogin);
+// Staff Self-Service Portal Routes (Protected by login credentials & rate-limited)
+router.post('/portal/login', authLimiter, staffPortalLogin);
 router.get('/portal/my-attendance', getStaffPersonalAttendance);
-router.post('/portal/helpdesk', submitStaffTicket);
+router.post('/portal/helpdesk', publicFormLimiter, submitStaffTicket);
 router.get('/portal/helpdesk', getStaffTickets);
-router.get('/portal/demo-credentials', getStaffDemoCredentials);
 
 // Protected ERP Routes for Management, Admin & Accountant
 router.use(protect);

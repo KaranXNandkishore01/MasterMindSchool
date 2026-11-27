@@ -5,6 +5,9 @@ const StaffPayroll = require('../models/StaffPayroll');
 const StaffTicket = require('../models/StaffTicket');
 const { seedStaffDatabase } = require('../utils/seedStaff');
 
+// ReDoS prevention helper: escapes special regex characters
+const escapeRegex = (str) => String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // School Campus Geolocation Coordinates (Master Mind Public School, Pipariya, M.P.)
 const SCHOOL_COORDINATES = {
   latitude: 22.7562,
@@ -143,7 +146,7 @@ exports.getStaff = async (req, res) => {
       query.status = status;
     }
     if (search && search.trim() !== '') {
-      const term = search.trim();
+      const term = escapeRegex(search.trim());
       query.$or = [
         { employeeId: { $regex: term, $options: 'i' } },
         { fullName: { $regex: term, $options: 'i' } },
@@ -426,7 +429,6 @@ exports.punchSelfieAttendance = async (req, res) => {
       latitude,
       longitude,
       deviceTimestamp,
-      forceBypassGeofence = false, // for demo testing if needed
     } = req.body;
 
     if (!employeeId) {
@@ -905,9 +907,7 @@ exports.staffPortalLogin = async (req, res) => {
 
     // Verify Password (case-insensitive for convenience)
     const isPasswordMatch =
-      cleanPassword.toLowerCase() === expectedPassword.toLowerCase() ||
-      cleanPassword.toLowerCase() === 'employee@mmps4321' ||
-      cleanPassword === 'admin123';
+      cleanPassword.toLowerCase() === expectedPassword.toLowerCase();
 
     if (!isPasswordMatch) {
       return res.status(401).json({
@@ -1041,41 +1041,6 @@ exports.getStaffTickets = async (req, res) => {
       success: true,
       count: tickets.length,
       data: tickets,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// @desc    Quick Demo Credentials for Testing / Evaluator Helper
-// @route   GET /api/staff/portal/demo-credentials
-// @access  Public
-exports.getStaffDemoCredentials = async (req, res) => {
-  try {
-    await ensureSeed();
-
-    const roles = ['Teacher', 'Driver', 'Maid', 'Assistant', 'Gardener', 'Manager', 'Staff Assistant', 'Security Guard'];
-    const demoAccounts = [];
-
-    for (const role of roles) {
-      const staffMember = await Staff.findOne({ role }).lean();
-      if (staffMember) {
-        const cleanAadhaar = (staffMember.aadhaarNo || '').replace(/\D/g, '');
-        const last4 = cleanAadhaar.length >= 4 ? cleanAadhaar.slice(-4) : '4321';
-        demoAccounts.push({
-          role: staffMember.role,
-          name: staffMember.fullName,
-          phone: staffMember.phone,
-          aadhaarLast4: last4,
-          samplePassword: `Employee@mmps${last4}`,
-          employmentType: staffMember.employmentType,
-        });
-      }
-    }
-
-    res.json({
-      success: true,
-      data: demoAccounts,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
