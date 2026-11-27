@@ -58,18 +58,15 @@ const loginUser = async (req, res) => {
         await user.save().catch(() => {});
       }
 
-      return res.json({
-        _id: String(user._id),
-        managementId: user.managementId,
-        role: user.role || 'Management',
-        name: user.name || (user.role === 'Teacher' ? 'Class Teacher' : 'Management Admin'),
-        assignedClass: user.assignedClass || 'Class 10',
-        assignedSection: user.assignedSection || 'A',
-        token,
-      });
-    } else {
-      res.status(401).json({ message: 'Invalid managementId or password' });
-    }
+    return res.json({
+      _id: String(user._id),
+      managementId: user.managementId,
+      role: user.role || 'Management',
+      name: user.name || (user.role === 'Teacher' ? 'Class Teacher' : 'Management Admin'),
+      assignedClass: user.assignedClass || 'Class 10',
+      assignedSection: user.assignedSection || 'A',
+      token,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
