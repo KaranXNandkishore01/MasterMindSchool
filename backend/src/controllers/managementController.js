@@ -200,6 +200,11 @@ const addJob = async (req, res) => {
       return res.status(400).json({ message: 'Title and description are required' });
     }
 
+    const checkStr = `${title} ${description} ${requirements || ''}`.toLowerCase();
+    if (checkStr.includes('digo') || checkStr.includes('सुरक्षा ऑडिट') || checkStr.includes('रखरखाव')) {
+      return res.status(400).json({ message: 'Unauthorized job content detected.' });
+    }
+
     const type = ['Full-Time', 'Part-Time', 'Contractual'].includes(jobType) ? jobType : 'Full-Time';
 
     let createdDoc = null;

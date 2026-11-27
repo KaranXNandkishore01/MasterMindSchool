@@ -43,13 +43,29 @@ const DEFAULT_JOBS = [
   }
 ];
 
+const isLegitimateJob = (j) => {
+  if (!j || !j.title) return false;
+  const text = `${j.title} ${j.description || ''} ${j.requirements || ''}`.toLowerCase();
+  return !text.includes('digo') && !text.includes('सुरक्षा ऑडिट') && !text.includes('रखरखाव') && !text.includes('क्रेडेंशियल्स');
+};
+
+const sanitizeJobs = (list) => {
+  if (!Array.isArray(list)) return DEFAULT_JOBS;
+  const valid = list.filter(isLegitimateJob);
+  return valid.length > 0 ? valid : DEFAULT_JOBS;
+};
+
 const Careers = () => {
   const [jobs, setJobs] = useState(() => {
     const saved = localStorage.getItem('mmps_jobs');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed)) {
+          const sanitized = sanitizeJobs(parsed);
+          localStorage.setItem('mmps_jobs', JSON.stringify(sanitized));
+          return sanitized;
+        }
       } catch {
         // Fallback
       }
@@ -63,8 +79,9 @@ const Careers = () => {
     axios.get('/api/public/jobs')
       .then((res) => {
         if (isMounted && Array.isArray(res.data)) {
-          setJobs(res.data);
-          localStorage.setItem('mmps_jobs', JSON.stringify(res.data));
+          const sanitized = sanitizeJobs(res.data);
+          setJobs(sanitized);
+          localStorage.setItem('mmps_jobs', JSON.stringify(sanitized));
         }
       })
       .catch(() => {});
@@ -73,8 +90,9 @@ const Careers = () => {
       axios.get('/api/public/jobs')
         .then((res) => {
           if (isMounted && Array.isArray(res.data)) {
-            setJobs(res.data);
-            localStorage.setItem('mmps_jobs', JSON.stringify(res.data));
+            const sanitized = sanitizeJobs(res.data);
+            setJobs(sanitized);
+            localStorage.setItem('mmps_jobs', JSON.stringify(sanitized));
           }
         })
         .catch(() => {});

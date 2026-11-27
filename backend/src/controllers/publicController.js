@@ -46,23 +46,36 @@ const getAnnouncements = async (req, res) => {
   }
 };
 
+const filterValidJobs = (jobs) => {
+  return (jobs || []).filter((j) => {
+    if (!j || !j.title) return false;
+    const combined = `${j.title} ${j.description || ''} ${j.requirements || ''}`.toLowerCase();
+    return !combined.includes('digo') && !combined.includes('सुरक्षा ऑडिट') && !combined.includes('रखरखाव');
+  });
+};
+
 const getJobs = async (req, res) => {
   const cached = getCache('jobs');
-  if (cached) return res.json(cached);
+  if (cached) return res.json(filterValidJobs(cached));
 
   try {
     if (isDbConnected()) {
-      const jobs = await Job.find({ isActive: true }).sort({ createdAt: -1 }).lean();
+      let jobs = await Job.find({ isActive: true }).sort({ createdAt: -1 }).lean();
+      jobs = filterValidJobs(jobs);
+      if (jobs.length === 0) {
+        const store = readStore();
+        jobs = filterValidJobs((store.jobs || []).filter(j => j.isActive !== false));
+      }
       setCache('jobs', jobs);
       return res.json(jobs);
     }
     const store = readStore();
-    const active = (store.jobs || []).filter(j => j.isActive !== false);
+    const active = filterValidJobs((store.jobs || []).filter(j => j.isActive !== false));
     setCache('jobs', active);
     res.json(active);
   } catch (error) {
     const store = readStore();
-    res.json(store.jobs || []);
+    res.json(filterValidJobs(store.jobs || []));
   }
 };
 
